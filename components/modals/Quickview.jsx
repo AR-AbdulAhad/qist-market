@@ -26,7 +26,7 @@ export default function Quickview() {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`https://qistbackend-1.onrender.com/api/product/${quickViewItem.id}`);
+      const response = await fetch(`http://localhost:5000/api/product/${quickViewItem.id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

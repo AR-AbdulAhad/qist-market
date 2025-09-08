@@ -6,10 +6,6 @@ import OrderTraking from "@/components/shop-cart/OrderTraking";
 import Link from "next/link";
 import React from "react";
 
-export const metadata = {
-  title: "Track Your Order || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
 export default function page() {
   return (
     <>

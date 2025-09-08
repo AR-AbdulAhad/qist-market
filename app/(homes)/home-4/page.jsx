@@ -13,10 +13,7 @@ import Product2 from "@/components/homes/home-4/Products2";
 import Products4 from "@/components/homes/home-4/Products4";
 import React from "react";
 
-export const metadata = {
-  title: "Home 04 || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
+
 export default function page() {
   return (
     <>

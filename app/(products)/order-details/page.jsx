@@ -7,10 +7,6 @@ import OrderDetails from "@/components/shop-cart/OrderDetails";
 import Link from "next/link";
 import React from "react";
 
-export const metadata = {
-  title: "Order Details || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
 export default function page() {
   return (
     <>

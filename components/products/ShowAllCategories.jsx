@@ -10,7 +10,7 @@ function ShowAllCategories() {
         const fetchCategories = async () => {
           try {
             setLoading(true);
-            const response = await fetch('https://qistbackend-1.onrender.com/api/categories', {
+            const response = await fetch('http://localhost:5000/api/categories', {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',

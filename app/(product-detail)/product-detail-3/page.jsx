@@ -8,10 +8,7 @@ import Relatedproducts from "@/components/product-detail/Relatedproducts";
 import SimilerProducts from "@/components/product-detail/SimilerProducts";
 import React from "react";
 import Link from "next/link";
-export const metadata = {
-  title: "Product Details 03 || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
+
 export default function page() {
   return (
     <>

@@ -59,7 +59,7 @@ export default function Products1() {
   useEffect(() => {
     const fetchSubcategories = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/subcategories/active", {
+        const response = await fetch("http://localhost:5000/api//subcategories/active", {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });

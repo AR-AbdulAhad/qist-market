@@ -20,10 +20,7 @@ import Products6 from "@/components/homes/home-5/Products6";
 import Products7 from "@/components/homes/home-5/Products7";
 import React from "react";
 
-export const metadata = {
-  title: "Home 05 || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
+
 export default function page() {
   return (
     <>

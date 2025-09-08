@@ -4,10 +4,7 @@ import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
 import React from "react";
 import Link from "next/link";
-export const metadata = {
-  title: "My Account Edit || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
+
 export default function page() {
   return (
     <>

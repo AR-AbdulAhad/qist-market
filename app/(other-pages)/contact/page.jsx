@@ -4,10 +4,7 @@ import Header4 from "@/components/headers/Header4";
 import Contact from "@/components/otherPages/Contact";
 import React from "react";
 import Link from "next/link";
-export const metadata = {
-  title: "Contact || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
+
 export default function page() {
   return (
     <>

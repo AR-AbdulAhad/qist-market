@@ -4,13 +4,8 @@ import RecentProducts from "@/components/common/RecentProducts";
 import Features2 from "@/components/common/Features2";
 import Footer1 from "@/components/footers/Footer1";
 import Link from "next/link";
-import Products2 from "@/components/products/Products2";
 import Products3 from "@/components/products/Products3";
 
-export const metadata = {
-  title: "Products || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
 export default function page() {
   return (
     <>

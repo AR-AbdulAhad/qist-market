@@ -7,10 +7,7 @@ import Hero from "@/components/otherPages/about/Hero";
 import Testimonials from "@/components/otherPages/about/Testimonials";
 import React from "react";
 import Link from "next/link";
-export const metadata = {
-  title: "About || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
+
 export default function page() {
   return (
     <>

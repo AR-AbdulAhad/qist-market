@@ -3,10 +3,7 @@ import Header4 from "@/components/headers/Header4";
 import Faqs from "@/components/otherPages/Faqs";
 import React from "react";
 import Link from "next/link";
-export const metadata = {
-  title: "Faq || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
+
 export default function page() {
   return (
     <>

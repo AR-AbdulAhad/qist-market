@@ -4,8 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import SearchForm from "./SearchForm";
 import CartLength from "../common/CartLength";
-import WishlistLength from "../common/WishlistLength";
-import CompareLength from "../common/CompareLength";
 export default function Header1() {
   return (
     <header className="tf-header style-2">

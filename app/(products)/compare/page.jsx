@@ -3,10 +3,7 @@ import Header4 from "@/components/headers/Header4";
 import Compare from "@/components/shop-cart/Compare";
 import React from "react";
 import Link from "next/link";
-export const metadata = {
-  title: "Compare || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
+
 export default function page() {
   return (
     <>

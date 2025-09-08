@@ -11,10 +11,6 @@ import Banner2 from "@/components/common/Banner2";
 import RecentProducts from "@/components/common/RecentProducts";
 import Footer1 from "@/components/footers/Footer1";
 
-export const metadata = {
-  title: "Home 07 || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
 export default function page() {
   return (
     <>

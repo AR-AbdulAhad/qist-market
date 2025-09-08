@@ -8,6 +8,7 @@ import Relatedproducts from "@/components/product-detail/Relatedproducts";
 import SimilerProducts from "@/components/product-detail/SimilerProducts";
 import React from "react";
 import Link from "next/link";
+
 export default function page() {
   return (
     <>

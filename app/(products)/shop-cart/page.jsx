@@ -6,10 +6,7 @@ import ShopCart from "@/components/shop-cart/ShopCart";
 import Testimonials from "@/components/shop-cart/Testimonials";
 import React from "react";
 import Link from "next/link";
-export const metadata = {
-  title: "Shop Cart || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
+
 export default function page() {
   return (
     <>

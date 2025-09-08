@@ -6,10 +6,6 @@ import Checkout from "@/components/shop-cart/Checkout";
 import Link from "next/link";
 import React from "react";
 
-export const metadata = {
-  title: "Checkout || Onsus - Multipurpose React Nextjs eCommerce",
-  description: "Onsus - Multipurpose React Nextjs eCommerce",
-};
 export default function page() {
   return (
     <>

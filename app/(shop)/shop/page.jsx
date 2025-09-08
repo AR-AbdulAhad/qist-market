@@ -1,7 +1,5 @@
 import React from "react";
 import Products1 from "@/components/products/Products1";
-import RecentProducts from "@/components/common/RecentProducts";
-import Features2 from "@/components/common/Features2";
 import Footer1 from "@/components/footers/Footer1";
 import Link from "next/link";
 import Header4 from "@/components/headers/Header4";
@@ -28,10 +26,7 @@ export default function page() {
           </ul>
         </div>
       </div>
-
       <Products1 />
-      <RecentProducts />
-      <Features2 />
       <Footer1 />
       <div className="overlay-filter" id="overlay-filter" />
     </>

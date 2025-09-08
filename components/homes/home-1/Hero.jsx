@@ -3,17 +3,38 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import parse from "html-react-parser";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function Hero() {
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  // Hardcoded array of local banner images with links and alt text
+  const banners = [
+    {
+      imageUrl: '/images/banner/banner.jpg',
+      altText: 'Banner 1',
+      link: '/shop',
+    },
+    {
+      imageUrl: '/images/banner/banner.jpg',
+      altText: 'Banner 2',
+      link: '/shop',
+    },
+    {
+      imageUrl: '/images/banner/banner.jpg',
+      altText: 'Banner 3',
+      link: '/shop',
+    },
+  ];
 
   useEffect(() => {
+    // Fetch categories
     const fetchCategories = async () => {
       try {
-        setLoading(true);
-        const response = await fetch('http://localhost:5000/api/categories', {
+        setLoadingCategories(true);
+        const response = await fetch(`${BACKEND_URL}/api/categories`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -29,12 +50,12 @@ export default function Hero() {
       } catch (error) {
         console.error(error.message === 'Unauthorized' ? 'Please log in to access categories' : 'Failed to fetch categories');
       } finally {
-        setLoading(false);
+        setLoadingCategories(false);
       }
     };
+
     fetchCategories();
   }, []);
-
 
   return (
     <section className="tf-sp-5">
@@ -47,7 +68,7 @@ export default function Hero() {
                   <i className="icon-menu-dots" />
                   All Categories
                 </h6>
-                {loading ? (
+                {loadingCategories ? (
                   <div className="loading-cs">
                     <div className="spinner-border spinner-border-sm text-primary" role="status">
                       <span className="visually-hidden">Loading...</span>
@@ -87,7 +108,7 @@ export default function Hero() {
                         )}
                       </li>
                     ))}
-                    {categories.length === 0 && !loading && (
+                    {categories.length === 0 && !loadingCategories && (
                       <li className="menu-item">
                         <span className="body-text-3">No categories available</span>
                       </li>
@@ -98,56 +119,62 @@ export default function Hero() {
             </div>
           </div>
           <div className="wrap-item-2">
-            <div
-              className="banner-image-product-4 style-2 hover-img has-bg-img"
-              style={{ backgroundImage: "url(/images/banner/banner-30.jpg)" }}
-            >
-              <div className="content">
-                <div className="box-title">
-                  <div className="d-grid gap-10">
-                    <h2 className="fw-normal">
-                      <Link
-                        href={`/shop-default`}
-                        className="link font-5 text-white"
-                      >
-                        The New <br />
-                        Standard
-                      </Link>
-                    </h2>
-                    <p className="title-sidebar-2 font-5 text-white">
-                      Under favorable 360 cameras
-                    </p>
-                  </div>
-                  <div className="box-price">
-                    <p className="main-title-3 lh-19 text-cl-7">From</p>
-                    <h1 className="fw-bold text-secondary lh-xxl-71 text-third-2">
-                      $287
-                    </h1>
-                  </div>
-                </div>
-                <div className="box-btn">
-                  <Link
-                    href={`/shop-default`}
-                    className="tf-btn-icon type-2 style-white"
-                  >
-                    <i className="icon-circle-chevron-right" />
-                    <span>Shop now</span>
-                  </Link>
-                </div>
+            {banners.length === 0 ? (
+              <div className="text-center">
+                <p className="body-text-3">No banners available</p>
               </div>
-              <Link
-                href={`/shop-default`}
-                className="img-style img-item overflow-visible"
-              >
-                <Image
-                  src="/images/item/tivi-3.png"
-                  alt=""
-                  className="lazyload"
-                  width={800}
-                  height={794}
-                />
-              </Link>
-            </div>
+            ) : (
+              <div id="bannerCarousel" className="carousel slide" data-bs-ride="carousel">
+                <div className="carousel-indicators">
+                  {banners.map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      data-bs-target="#bannerCarousel"
+                      data-bs-slide-to={index}
+                      className={index === 0 ? 'active' : ''}
+                      aria-current={index === 0 ? 'true' : 'false'}
+                      aria-label={`Slide ${index + 1}`}
+                    ></button>
+                  ))}
+                </div>
+                <div className="carousel-inner">
+                  {banners.map((banner, index) => (
+                    <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                      <Link href={banner.link} className="d-block w-100">
+                        <Image
+                          src={banner.imageUrl}
+                          alt={banner.altText}
+                          className="d-block w-100 lazyload"
+                          width={1200}
+                          height={600}
+                          style={{ objectFit: 'cover', height: '100%' }}
+                          priority={index === 0} // Prioritize loading of the first image
+                        />
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  className="carousel-control-prev"
+                  type="button"
+                  data-bs-target="#bannerCarousel"
+                  data-bs-slide="prev"
+                >
+                  <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span className="visually-hidden">Previous</span>
+                </button>
+                <button
+                  className="carousel-control-next"
+                  type="button"
+                  data-bs-target="#bannerCarousel"
+                  data-bs-slide="next"
+                >
+                  <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span className="visually-hidden">Next</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

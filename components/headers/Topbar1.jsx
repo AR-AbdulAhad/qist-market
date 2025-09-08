@@ -13,7 +13,7 @@ export default function Topbar1({ parentClass = "tf-topbar line-bt" }) {
                   href="tel:021-111-11-55-66"
                   className="text-primary link-secondary fw-semibold"
                 >
-                  021-111-11-55-66
+                  0328 1125500
                 </a>
               </p>
             </div>

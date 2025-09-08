@@ -1,6 +1,85 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 export default function OrderDetails() {
+  const [orderData, setOrderData] = useState(null);
+  const [error, setError] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchOrderData = () => {
+      try {
+        const storedOrderData = sessionStorage.getItem("orderData");
+        if (storedOrderData) {
+          setOrderData(JSON.parse(storedOrderData));
+        } else {
+          setError(
+            "You can monitor your order status by using your order number."
+          );
+        }
+      } catch (err) {
+        console.error("Error parsing order data:", err);
+        setError("Failed to load order details.");
+      }
+    };
+
+    fetchOrderData();
+
+    const handleBeforeUnload = () => {
+      sessionStorage.removeItem("orderData");
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  const handleTrackOrderClick = () => {
+    router.push("/track-your-order");
+  };
+
+  if (error) {
+    return (
+      <section className="tf-sp-2">
+        <div className="container">
+          <div className="tf-order-detail text-center">
+            <p className="fs-32">
+              {error}{" "}
+              <a
+                href="#"
+                onClick={handleTrackOrderClick}
+                className="text-primary"
+              >
+                Click Here
+              </a>
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!orderData) {
+    return (
+      <section className="tf-sp-2">
+        <div className="container">
+          <div className="tf-order-detail">
+            <div className="w-100 d-flex justify-content-center align-items-center">
+              <div className="spinner-border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Rest of the component remains unchanged
   return (
     <section className="tf-sp-2">
       <div className="container">
@@ -11,7 +90,7 @@ export default function OrderDetails() {
               <span className="icon">
                 <i className="icon-shop-cart-1" />
               </span>
-              <Link href={`/shop-cart`} className="link-secondary body-text-3">
+              <Link href="/shop-cart" className="link-secondary body-text-3">
                 Shopping Cart
               </Link>
             </div>
@@ -19,7 +98,7 @@ export default function OrderDetails() {
               <span className="icon">
                 <i className="icon-shop-cart-2" />
               </span>
-              <Link href={`/checkout`} className="link-secondary body-text-3">
+              <Link href="/checkout" className="link-secondary body-text-3">
                 Shopping &amp; Checkout
               </Link>
             </div>
@@ -27,10 +106,7 @@ export default function OrderDetails() {
               <span className="icon">
                 <i className="icon-shop-cart-3" />
               </span>
-              <Link
-                href={`/order-details`}
-                className="text-secondary body-text-3"
-              >
+              <Link href="/order-details" className="text-secondary body-text-3">
                 Confirmation
               </Link>
             </div>
@@ -53,16 +129,19 @@ export default function OrderDetails() {
           </div>
           <ul className="order-overview-list">
             <li>
-              Order number: <strong>6284</strong>
+              Order number: <strong>{orderData.id}</strong>
             </li>
             <li>
-              Date: <strong>March 6, 2025</strong>
+              Date:{" "}
+              <strong>
+                {new Date(orderData.createdAt).toLocaleDateString()}
+              </strong>
             </li>
             <li>
-              Total: <strong>$109.91</strong>
+              Advance: <strong>Rs. {orderData.advanceAmount}</strong>
             </li>
             <li>
-              Payment method: <strong>Direct bank transfer</strong>
+              Payment method: <strong>{orderData.paymentMethod}</strong>
             </li>
           </ul>
           <div className="order-detail-wrap">
@@ -74,88 +153,123 @@ export default function OrderDetails() {
                     <h6 className="fw-semibold">Product</h6>
                   </td>
                   <td>
-                    <h6 className="fw-semibold">Total</h6>
+                    <h6 className="fw-semibold">Total Advance</h6>
                   </td>
                 </tr>
               </thead>
               <tbody>
                 <tr className="tf-order-item">
                   <td className="tf-order-item_product">
-                    <Link href={`/shop-default`} className="link fw-normal">
-                      SAMSUNG 34-Inch Odyssey G5 Ultra-Wide Gaming Monitor with
-                      1000R Curved Screen, Black
-                      <span className="text-black">×1</span>
-                    </Link>
+                    {orderData.productName} <span className="text-black"></span>
                   </td>
                   <td>
-                    <span className="fw-medium">10.00$</span>
+                    <span className="fw-medium">Rs. {orderData.advanceAmount}</span>
                   </td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr>
                   <th>
-                    <span>Subtotal:</span>
-                  </th>
-                  <td>
-                    <span>10.00$</span>
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                    <span>Shipping:</span>
-                  </th>
-                  <td>
-                    <span>Free shipping</span>
-                  </td>
-                </tr>
-                <tr>
-                  <th>
                     <span>Payment method:</span>
                   </th>
                   <td>
-                    <span>Direct bank transfer</span>
-                  </td>
-                </tr>
-                <tr>
-                  <th>
-                    <p className="fw-semibold product-title text-uppercase">
-                      Total:
-                    </p>
-                  </th>
-                  <td>
-                    <span className="fw-semibold">10.00$</span>
+                    <span>{orderData.paymentMethod}</span>
                   </td>
                 </tr>
               </tfoot>
             </table>
+            <table className="tf-table-order-detail">
+              <thead>
+                <tr>
+                  <td>
+                    <h6 className="fw-semibold">Advance Amount</h6>
+                  </td>
+                  <td>
+                    <h6 className="fw-semibold">Installment Amount</h6>
+                  </td>
+                  <td>
+                    <h6 className="fw-semibold">Months Plan</h6>
+                  </td>
+                  <td>
+                    <h6 className="fw-semibold">Total Deal Value</h6>
+                  </td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="tf-order-item">
+                  <td>
+                    <span className="fw-medium">Rs. {orderData.advanceAmount}</span>
+                  </td>
+                  <td>
+                    <span className="fw-medium">Rs. {orderData.monthlyAmount}</span>
+                  </td>
+                  <td>
+                    <span className="fw-medium">Months: {orderData.months}</span>
+                  </td>
+                  <td>
+                    <span className="fw-medium">Rs. {orderData.totalDealValue}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <div className="row gap-30 gap-sm-0">
-            <div className="col-sm-6 col-12">
+            <div>
               <div className="order-detail-wrap">
                 <h5 className="fw-bold">Billing Address</h5>
-                <div className="billing-info">
-                  <p>Onsus</p>
-                  <p>Themeflat</p>
-                  <p>Amsterdam Netherlands</p>
-                  <p>8500 Lorem Street Chicago, IL 55030 Dolor sit amet</p>
-                  <p>+8(800) 123 4567</p>
-                  <p>onsus@support.com</p>
-                </div>
-              </div>
-            </div>
-            <div className="col-sm-6 col-12">
-              <div className="order-detail-wrap">
-                <h5 className="fw-bold">Shipping address</h5>
-                <div className="billing-info">
-                  <p>Themeflat</p>
-                  <p>Amsterdam Netherlands</p>
-                  <p>8500 Lorem Street Chicago, IL 55030 Dolor sit amet</p>
-                  <p>+8(800) 123 4567</p>
-                </div>
+                <table className="tf-table-order-detail">
+                  <tbody>
+                    <tr className="tf-order-item">
+                      <td>
+                        <span className="fw-medium">Customer Name:</span>
+                      </td>
+                      <td>
+                        <span className="fw-medium">{orderData.firstName} {orderData.lastName}</span>
+                      </td>
+                    </tr>
+                    <tr className="tf-order-item">
+                      <td>
+                        <span className="fw-medium">Phone:</span>
+                      </td>
+                      <td>
+                        <span className="fw-medium">{orderData.phone}</span>
+                      </td>
+                    </tr>
+                    <tr className="tf-order-item">
+                      <td>
+                        <span className="fw-medium">Email:</span>
+                      </td>
+                      <td>
+                        <span className="fw-medium">{orderData.email}</span>
+                      </td>
+                    </tr>
+                    <tr className="tf-order-item">
+                      <td>
+                        <span className="fw-medium">Address:</span>
+                      </td>
+                      <td>
+                        <span className="fw-medium">{orderData.address}</span>
+                      </td>
+                    </tr>
+                    <tr className="tf-order-item">
+                      <td>
+                        <span className="fw-medium">Area / City</span>
+                      </td>
+                      <td>
+                        <span className="fw-medium">{orderData.area}, {orderData.city}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
+          {orderData.orderNotes && (
+            <div className="order-detail-wrap">
+              <h5 className="fw-bold">Order Notes</h5>
+              <p>{orderData.orderNotes}</p>
+            </div>
+          )}
         </div>
       </div>
     </section>

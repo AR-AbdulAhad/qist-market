@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ShowAllCategories from "./ShowAllCategories";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 export default function FilterOptions({ allProps }) {
   const [priceRange, setPriceRange] = useState([null, null]);
   const [subcategories, setSubcategories] = useState([]);
@@ -9,7 +11,7 @@ export default function FilterOptions({ allProps }) {
   useEffect(() => {
     const fetchSubcategories = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/subcategories/active", {
+        const response = await fetch(`${BACKEND_URL}/api/subcategories/active`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });

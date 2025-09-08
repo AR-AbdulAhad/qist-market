@@ -5,11 +5,10 @@ import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
 import Description from "@/components/product-detail/Description";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import Details1 from "@/components/product-detail/Details1";
-import Details3 from "@/components/product-detail/Details2";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function ProductDetailPage() {
   const { slugName } =  useParams();
@@ -20,7 +19,7 @@ export default function ProductDetailPage() {
         const fetchSingleProduct = async () => {
           try {
             setLoading(true);
-            const response = await fetch(`https://qistbackend-1.onrender.com/api/product/name/${slugName}`, {
+            const response = await fetch(`${BACKEND_URL}/api/product/name/${slugName}`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',

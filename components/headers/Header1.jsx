@@ -45,7 +45,7 @@ export default function Header1() {
                         href="tel:021-111-11-55-66"
                         className="text-primary link-main body-md-2"
                       >
-                        021-111-11-55-66
+                        0328 1125500
                       </a>
                     </p>
                     <p className="mail-us body-text-3">
@@ -54,7 +54,7 @@ export default function Header1() {
                         href="mailto:support@qistbazaar.pk"
                         className="text-secondary link-main"
                       >
-                        support@qistbazaar.pk
+                        support@qistmarket.com
                       </a>
                     </p>
                   </div>

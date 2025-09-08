@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useReducer, useState } from "react";
-import FilterOptions from "./FilterOptions";
+import FilterOptions2 from "./FilterOptions2";
 import ShowLength from "./ShowLength";
 import { initialState, reducer } from "@/reducer/filterReducer";
 import LayoutHandler from "./LayoutHandler";
@@ -9,15 +9,16 @@ import ProductCards3 from "../productCards/ProductCards3";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export default function Products1() {
+export default function ProductsCategory1({ categorySlug }) {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
     itemPerPage: 10,
   });
   const {
     price,
-    subcategories,
+    filtered,
     sortingOption,
+    sorted,
     currentPage,
     itemPerPage,
   } = state;
@@ -25,18 +26,6 @@ export default function Products1() {
   const allProps = {
     ...state,
     setPrice: (value) => dispatch({ type: "SET_PRICE", payload: value }),
-    setSubcategories: (newSubcategory) => {
-      if (subcategories.includes(newSubcategory)) {
-        const updated = [...subcategories].filter((sub) => sub !== newSubcategory);
-        dispatch({ type: "SET_SUBCATEGORIES", payload: updated });
-      } else {
-        dispatch({ type: "SET_SUBCATEGORIES", payload: [...subcategories, newSubcategory] });
-      }
-    },
-    removeSubcategory: (newSubcategory) => {
-      const updated = [...subcategories].filter((sub) => sub !== newSubcategory);
-      dispatch({ type: "SET_SUBCATEGORIES", payload: updated });
-    },
     setSortingOption: (value) =>
       dispatch({ type: "SET_SORTING_OPTION", payload: value }),
     setCurrentPage: (value) =>
@@ -54,49 +43,6 @@ export default function Products1() {
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [subcategoryNames, setSubcategoryNames] = useState({});
-
-  useEffect(() => {
-    const fetchSubcategories = async () => {
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/subcategories/active`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        if (!response.ok) throw new Error("Failed to fetch subcategories");
-        const responseData = await response.json();
-        let subcategories = [];
-
-        if (responseData.data?.data) {
-          subcategories = responseData.data.data;
-        } else if (responseData.data?.results) {
-          subcategories = responseData.data.results;
-        } else if (responseData.data?.subcategories) {
-          subcategories = responseData.data.subcategories;
-        } else if (Array.isArray(responseData.data)) {
-          subcategories = responseData.data;
-        } else if (Array.isArray(responseData)) {
-          subcategories = responseData;
-        } else {
-          console.warn("Unexpected subcategory response structure:", responseData);
-          return;
-        }
-
-        const names = {};
-        subcategories.forEach((subcategory) => {
-          if (subcategory.id && subcategory.name) {
-            names[subcategory.id] = subcategory.name;
-          } else {
-            console.warn("Invalid subcategory data:", subcategory);
-          }
-        });
-        setSubcategoryNames(names);
-      } catch (error) {
-        console.error("Failed to fetch subcategories:", error);
-      }
-    };
-    fetchSubcategories();
-  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -105,14 +51,13 @@ export default function Products1() {
         const query = new URLSearchParams({
           page: currentPage,
           limit: itemPerPage,
-          ...(subcategories.length && { subcategory_id: subcategories.join(",") }),
           ...(price[0] !== 0 && { minPrice: price[0] }),
           ...(price[1] !== 100 && { maxPrice: price[1] }),
           sort: "name",
           order: sortingOption === "Title Descending" ? "desc" : "asc",
         }).toString();
 
-        const response = await fetch(`${BACKEND_URL}/api/product/pagination?${query}`, {
+        const response = await fetch(`${BACKEND_URL}/api/product/category/${categorySlug}?${query}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
         });
@@ -123,7 +68,6 @@ export default function Products1() {
 
         const { data, pagination } = await response.json();
         setProductData(data);
-        console.log("Fetched products:", data);
         setTotalItems(pagination.totalItems);
         setTotalPages(pagination.totalPages);
       } catch (error) {
@@ -133,7 +77,7 @@ export default function Products1() {
       }
     };
     fetchProducts();
-  }, [currentPage, itemPerPage, subcategories, price, sortingOption]);
+  }, [currentPage, itemPerPage, price, sortingOption]);
 
   useEffect(() => {
     const handleOpenFilter = () => {
@@ -162,6 +106,14 @@ export default function Products1() {
     };
   }, []);
 
+  const formatSlugName = (slug) => {
+    if (!slug) return "";
+    return slug
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "); 
+  };
+
   return (
     <div className="flat-content">
       <div className="container">
@@ -173,7 +125,7 @@ export default function Products1() {
                 <span className="icon-close link icon-close-popup close-filter" />
               </div>
               <div className="canvas-body">
-                <FilterOptions allProps={allProps} />
+                <FilterOptions2 allProps={allProps} />
               </div>
               <div className="canvas-bottom d-flex d-xl-none">
                 <button
@@ -204,6 +156,10 @@ export default function Products1() {
                   <span className="body-md-2 fw-medium">Filter</span>
                 </button>
                 <p className="body-text-3">
+                  <span className="count">{formatSlugName(categorySlug)}</span>
+                </p>
+                |
+                <p className="body-text-3">
                   <span className="count">{totalItems}</span> Products Found
                 </p>
               </div>
@@ -233,19 +189,9 @@ export default function Products1() {
               </div>
             </div>
 
-            {(price[0] !== 0 || price[1] !== 100 || subcategories.length > 0) && (
+            {(price[0] !== 0 || price[1] !== 100) && (
               <div className="meta-filter-shop">
                 <div id="applied-filters">
-                  {subcategories.map((sub, i) => (
-                    <span
-                      key={i}
-                      className="filter-tag"
-                      onClick={() => allProps.removeSubcategory(sub)}
-                    >
-                      {subcategoryNames[sub] || `Subcategory ${sub}`}
-                      <span className="remove-tag icon-close" />
-                    </span>
-                  ))}
                   {(price[0] !== 0 || price[1] !== 100) && (
                     <span
                       className="filter-tag"

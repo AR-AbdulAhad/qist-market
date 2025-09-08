@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next/env": "^15.5.2",
     "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
     "drift-zoom": "^1.5.1",

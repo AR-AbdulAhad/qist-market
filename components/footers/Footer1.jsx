@@ -68,7 +68,7 @@ export default function Footer1({ fullWidth = false }) {
   }, []); // Empty dependency array means this will run only once on mount
 
   return (
-    <footer className="tf-footer">
+    <footer className="tf-footer mt-5">
       <div className="ft-body-wrap">
         <div className="ft-body-inner">
           <div className={`container${fullWidth ? "-full" : ""}`}>
@@ -77,152 +77,54 @@ export default function Footer1({ fullWidth = false }) {
                 <Link href={`/`} className="logo-site">
                   <Image
                     alt="Logo"
-                    src="/images/logo/logo.svg"
+                    src="/images/logo/logo.png"
                     width={185}
                     height={41}
                   />
                 </Link>
-                <div className="method-payment">
-                  <p>We accept:</p>
-                  <ul className="method-list">
-                    <li>
-                      <Image
-                        alt="Payment"
-                        src="/images/payment/visa.svg"
-                        width={50}
-                        height={50}
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        alt="Payment"
-                        src="/images/payment/paypal.svg"
-                        width={50}
-                        height={50}
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        alt="Payment"
-                        src="/images/payment/discover.svg"
-                        width={50}
-                        height={50}
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        alt="Payment"
-                        src="/images/payment/master.svg"
-                        width={50}
-                        height={50}
-                      />
-                    </li>
-                  </ul>
+                <div className="tf-collapse-content">
+                 <ul className="ft-menu-list ft-contact-list d-flex flex-column gap-3 ">
+                      <li className="d-flex gap-2">
+                        <span className="icon mt-1">
+                          <i className="icon-location" />
+                        </span>
+                        <a href="#" className="link">
+                          Shop-4, Plot # 43-C, <br/>DHA Phase 5 Badar  Commercial Area <br/> Defence V Defence Housing Authority, <br/> Karachi, 75500
+                        </a>
+                      </li>
+                      <li className="d-flex gap-2">
+                        <span className="icon">
+                          <i className="icon-phone" />
+                        </span>
+                        <a href="#" className="product-title">
+                          <span className="product-title text-primary">
+                            0328 1125500
+                          </span>
+                        </a>
+                      </li>
+                      <li className="d-flex gap-2">
+                        <span className="icon">
+                          <i className="icon-direction" />
+                        </span>
+                        <a href="#" className="">
+                          <span className="text-primary">
+                            support@qistmarket.com
+                          </span>
+                        </a>
+                      </li>
+                    </ul>
                 </div>
               </div>
-              <ul className="ft-link-wrap w-100 tf-grid-layout md-col-2 lg-col-4">
+              <ul className="ft-link-wrap w-100 tf-grid-layout md-col-2 lg-col-3">
                 <li className="footer-col-block">
                   <h6 className="ft-heading footer-heading-mobile fw-semibold">
-                    Get help
+                    About
                   </h6>
                   <div className="tf-collapse-content">
                     <ul className="ft-menu-list">
                       <li>
-                        <Link href={`/privacy`} className="link">
-                          Delivery Information
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/faq`} className="link">
-                          Sale Terms &amp; Conditions
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/privacy`} className="link">
-                          Returns &amp; Refunds
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/privacy`} className="link">
-                          Privacy Notice
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/faq`} className="link">
-                          Shopping FAQs
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-                <li className="footer-col-block">
-                  <h6 className="ft-heading footer-heading-mobile fw-semibold">
-                    Popular categories
-                  </h6>
-                  <div className="tf-collapse-content">
-                    <ul className="ft-menu-list">
-                      <li>
-                        <Link href={`/shop-default`} className="link">
-                          Laptops &amp; Computers
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/shop-default`} className="link">
-                          Cameras &amp; Photography
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/shop-default`} className="link">
-                          Smart Phones &amp; Tablets
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/shop-default`} className="link">
-                          Video Games &amp; Consoles
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/shop-default`} className="link">
-                          TV &amp; Audio
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/shop-default`} className="link">
-                          Gadgets
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/shop-default`} className="link">
-                          Waterproof Headphones
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-                <li className="footer-col-block">
-                  <h6 className="ft-heading footer-heading-mobile fw-semibold">
-                    Customer Care
-                  </h6>
-                  <div className="tf-collapse-content">
-                    <ul className="ft-menu-list">
-                      <li>
-                        <Link href={`/my-account`} className="link">
-                          My Account
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/track-your-order`} className="link">
-                          Track your Order
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/contact`} className="link">
-                          Customer Service
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href={`/privacy`} className="link">
-                          Returns/Exchange
+                        <Link href={`/about`} className="link">
+                          About Us
                         </Link>
                       </li>
                       <li>
@@ -232,45 +134,76 @@ export default function Footer1({ fullWidth = false }) {
                       </li>
                       <li>
                         <Link href={`/contact`} className="link">
-                          Product Support
+                          Contact
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href={`/visit-us`} className="link">
+                          Visit Us
                         </Link>
                       </li>
                     </ul>
                   </div>
                 </li>
-                <li className="footer-col-block type-sp-2">
+                <li className="footer-col-block">
                   <h6 className="ft-heading footer-heading-mobile fw-semibold">
-                    Contact
+                    Information
                   </h6>
                   <div className="tf-collapse-content">
-                    <ul className="ft-menu-list ft-contact-list">
+                    <ul className="ft-menu-list">
                       <li>
-                        <span className="icon">
-                          <i className="icon-location" />
-                        </span>
-                        <a href="#" className="link">
-                          8500 Lorem Street Chicago, IL 55030 Dolor sit amet
-                        </a>
+                        <Link href={`/my-account`} className="link">
+                          Account
+                        </Link>
                       </li>
                       <li>
-                        <span className="icon">
-                          <i className="icon-phone" />
-                        </span>
-                        <a href="#" className="product-title">
-                          <span className="product-title text-primary">
-                            +8(800) 123 4567
-                          </span>
-                        </a>
+                        <Link href={`/verification-process`} className="link">
+                          Verification Process
+                        </Link>
                       </li>
                       <li>
-                        <span className="icon">
-                          <i className="icon-direction" />
-                        </span>
-                        <a href="#" className="">
-                          <span className="text-primary">
-                            onsus@support.com
-                          </span>
-                        </a>
+                        <Link href={`/delivery-policy`} className="link">
+                          Delivery Policy
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href={`/agreement`} className="link">
+                          Agreement
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+                <li className="footer-col-block">
+                  <h6 className="ft-heading footer-heading-mobile fw-semibold">
+                    Quick Links
+                  </h6>
+                  <div className="tf-collapse-content">
+                    <ul className="ft-menu-list">
+                      <li>
+                        <Link href={`/terms-conditions`} className="link">
+                          Terms &amp; Conditions
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href={`/returns-refunds-policy`} className="link">
+                          Returns &amp; Refunds Policy
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href={`/track-your-order`} className="link">
+                          Track your Order
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href={`/privacy`} className="link">
+                          Privacy Policy
+                        </Link>
+                      </li>
+                      <li>
+                        <Link href={`/blog-grid`} className="link">
+                          Press &amp; Blog
+                        </Link>
                       </li>
                     </ul>
                   </div>
@@ -281,17 +214,13 @@ export default function Footer1({ fullWidth = false }) {
         </div>
         <div className="ft-body-center bg-gray">
           <div className={`container${fullWidth ? "-full" : ""}`}>
-            <div className="ft-center justify-content-xxl-between">
-              <p className="notice text-white justify-content-xxl-between">
-                <span className="main-title fw-semibold">
-                  <Image alt="" src="/images/mail.svg" width={24} height={21} />
-                  10% Off Your First Order
-                </span>
-                <span className="body-text-3">
-                  Be the first to know about offers, new products and discounted
-                  products
-                </span>
-              </p>
+            <div className="ft-center justify-content-xxl-between d-flex flex-column">
+              <div className="notice text-white justify-content-xxl-between">
+                <div className="main-title fw-semibold mb-4">
+                  Subscribe to Our Newsletter
+                </div>
+                
+              </div>
 
               <form
                 onSubmit={(e) => {
@@ -345,22 +274,22 @@ export default function Footer1({ fullWidth = false }) {
             <div className="ft-bottom">
               <ul className="social-list">
                 <li>
-                  <a href="https://www.facebook.com">
+                  <a href="https://facebook.com/Qistmarket">
                     <i className="icon-facebook" />
                   </a>
                 </li>
                 <li>
-                  <a href="https://x.com/">
-                    <i className="icon-x" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.instagram.com/">
+                  <a href="https://www.instagram.com/qistmarket/">
                     <i className="icon-instagram" />
                   </a>
                 </li>
+                {/* <li>
+                  <a href="https://www.youtube.com/channel/UCiIHGTHqO8vhmfZiKSS6pdQ">
+                    <i className="icon-youtube" />
+                  </a>
+                </li> */}
                 <li>
-                  <a href="https://www.linkedin.com/">
+                  <a href="https://www.linkedin.com/Qistmarket">
                     <i className="icon-linkin" />
                   </a>
                 </li>
@@ -370,59 +299,9 @@ export default function Footer1({ fullWidth = false }) {
                   </a>
                 </li>
               </ul>
-              <ul className="ft-menu-list-2 body-text-3">
-                <li>
-                  <Link
-                    href={`/blog-grid`}
-                    className="title-sidebar link fw-bold"
-                  >
-                    New arrivals
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={`/blog-grid`}
-                    className="title-sidebar link fw-bold"
-                  >
-                    Best sale
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={`/blog-grid`}
-                    className="title-sidebar link fw-bold"
-                  >
-                    Value of the day
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={`/blog-grid`}
-                    className="title-sidebar link fw-bold"
-                  >
-                    Top 100 offers
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={`/blog-grid`}
-                    className="title-sidebar link fw-bold"
-                  >
-                    Blog
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href={`/blog-grid`}
-                    className="title-sidebar link fw-bold"
-                  >
-                    <i className="icon-fire" /> 50% OFF
-                  </Link>
-                </li>
-              </ul>
               <p className="nocopy caption text-center">
-                <span className="fw-medium">Onsus.</span>© 2025. All right
-                reserved - Designed by ThemesFlat
+                <span className="fw-medium">Qist Market.</span>© 2025. All right
+                reserved - Developed by Elipse Studio
               </p>
             </div>
           </div>

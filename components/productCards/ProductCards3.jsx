@@ -67,6 +67,12 @@ export default function ProductCards3({ product }) {
         <div className="box-infor-detail">
           <span className="body-md-2 text-main-2">{product.short_description}</span>
         </div>
+        {/* Stock Status Display */}
+        {product.stock === false && (
+          <div className="bg-primary p-1 text-center rounded">
+            <span className="body-md-2 fw-medium text-white">Out of Stock</span>
+          </div>
+        )}
       </div>
       <div className="card-product-btn">
         <a

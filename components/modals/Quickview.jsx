@@ -14,6 +14,8 @@ import {
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 export default function Quickview() {
   const { quickViewItem } = useContextElement();
   const [productData, setProductData] = useState(null);
@@ -26,7 +28,7 @@ export default function Quickview() {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/api/product/${quickViewItem.id}`);
+      const response = await fetch(`${BACKEND_URL}/api/product/${quickViewItem.id}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -309,24 +311,39 @@ export default function Quickview() {
                       {loading ? (
                         <Skeleton height={100} />
                       ) : (
+                        <>
+                        {productData?.stock === false ? (
+                          <div className="bg-primary p-1 text-center rounded my-3">
+                            <span className="body-md-2 fw-medium text-white">Out of Stock</span>
+                          </div>
+                        ) : (
                         <div className="tf-product-info-choose-option mt-3">
                           <h5 className="product-info-name fw-semibold text-primary mb-3">
                             Choose Your Payment Plan
                           </h5>
+
                           <select
                             className="form-select"
                             onChange={handleSelectChange}
-                            defaultValue=""
+                            value={selectedPlan?.id || ""}
+                            aria-label="Select a payment plan"
                           >
                             <option value="" disabled>
                               -- Select a Plan --
                             </option>
-                            {productData?.ProductInstallments?.map((installment, index) => (
-                              <option key={installment.id} value={installment.id}>
-                                Plan {index + 1} - Rs {installment.monthlyAmount} x {installment.months}
+                            {productData?.ProductInstallments?.length > 0 ? (
+                              productData.ProductInstallments.map((installment, index) => (
+                                <option key={installment.id} value={installment.id}>
+                                  Plan {index + 1} - Rs {installment.monthlyAmount.toLocaleString()} x {installment.months} months
+                                </option>
+                              ))
+                            ) : (
+                              <option value="" disabled>
+                                No plans available
                               </option>
-                            ))}
+                            )}
                           </select>
+
                           {isPlanLoading ? (
                             <div className="card mt-2">
                               <div className="card-body text-center">
@@ -341,17 +358,18 @@ export default function Quickview() {
                                 <div className="card-body">
                                   <h6 className="product-info-name mb-3">Selected Plan Details</h6>
                                   <p className="mb-1">
-                                    <strong>Total Price:</strong> Rs {selectedPlan.totalPrice}
+                                    <strong>Total Price:</strong> Rs {selectedPlan.totalPrice.toLocaleString()}
                                   </p>
                                   <p className="mb-1">
-                                    <strong>Monthly:</strong> Rs {selectedPlan.monthlyAmount} x {selectedPlan.months} months
+                                    <strong>Monthly:</strong> Rs {selectedPlan.monthlyAmount.toLocaleString()} x {selectedPlan.months} months
                                   </p>
                                   <p className="mb-1">
-                                    <strong>Advance:</strong> Rs {selectedPlan.advance}
+                                    <strong>Advance:</strong> Rs {selectedPlan.advance.toLocaleString()}
                                   </p>
                                   <button
                                     onClick={handleNext}
                                     className="tf-btn mt-2 w-100 text-white"
+                                    disabled={!selectedPlan}
                                   >
                                     Next
                                   </button>
@@ -360,6 +378,8 @@ export default function Quickview() {
                             )
                           )}
                         </div>
+                        )}
+                      </>
                       )}
 
                       {/* Brand + Share */}

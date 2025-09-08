@@ -168,76 +168,74 @@ export default function Details1({ singleProduct, loading }) {
                       </div>
 
                       {/* Installment Dropdown */}
-                      {loading ? (
-                        <Skeleton height={100} />
-                      ) : (
-                        <div className="tf-product-info-choose-option mt-3">
-                          <h5 className="product-info-name fw-semibold text-primary mb-3">
-                            Choose Your Payment Plan
-                          </h5>
+                        {loading ? (
+                          <Skeleton height={100} />
+                        ) : (
+                          <>
+                            {singleProduct?.stock === false ? (
+                              <div className="bg-primary p-1 text-center rounded my-3">
+                                <span className="body-md-2 fw-medium text-white">Out of Stock</span>
+                              </div>
+                            ) : (
+                              <div className="tf-product-info-choose-option mt-3">
+                                <h5 className="product-info-name fw-semibold text-primary mb-3">
+                                  Choose Your Payment Plan
+                                </h5>
 
-                          <select
-                            className="form-select"
-                            onChange={handleSelectChange}
-                            defaultValue=""
-                          >
-                            <option value="" disabled>
-                              -- Select a Plan --
-                            </option>
-                            {singleProduct?.ProductInstallments?.map(
-                              (installment, index) => (
-                                <option key={installment.id} value={installment.id}>
-                                  Plan {index + 1} - Rs {installment.monthlyAmount} x{" "}
-                                  {installment.months}
-                                </option>
-                              )
-                            )}
-                          </select>
-
-                          {/* Plan Details with Spinner */}
-                          {isPlanLoading ? (
-                            <div className="card mt-2">
-                              <div className="card-body text-center">
-                                <div
-                                  className="spinner-border"
-                                  role="status"
+                                <select
+                                  className="form-select"
+                                  onChange={handleSelectChange}
+                                  value={selectedPlan?.id || ""}
+                                  aria-label="Select a payment plan"
                                 >
-                                  <span className="visually-hidden">Loading...</span>
-                                </div>
+                                  <option value="" disabled>
+                                    -- Select a Plan --
+                                  </option>
+                                  {singleProduct?.ProductInstallments?.map((installment, index) => (
+                                    <option key={installment.id} value={installment.id}>
+                                      Plan {index + 1} - Rs {installment.monthlyAmount} x {installment.months} months
+                                    </option>
+                                  ))}
+                                </select>
+
+                                {isPlanLoading ? (
+                                  <div className="card mt-2">
+                                    <div className="card-body text-center">
+                                      <div className="spinner-border" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  selectedPlan && (
+                                    <div className="card mt-2">
+                                      <div className="card-body">
+                                        <h6 className="product-info-name mb-3">Selected Plan Details</h6>
+                                        <p className="mb-1">
+                                          <strong>Total Price:</strong> Rs {selectedPlan.totalPrice.toLocaleString()}
+                                        </p>
+                                        <p className="mb-1">
+                                          <strong>Monthly:</strong> Rs {selectedPlan.monthlyAmount.toLocaleString()} x{" "}
+                                          {selectedPlan.months} months
+                                        </p>
+                                        <p className="mb-1">
+                                          <strong>Advance:</strong> Rs {selectedPlan.advance.toLocaleString()}
+                                        </p>
+                                        <button
+                                          onClick={handleNext}
+                                          className="tf-btn mt-2 w-100 text-white"
+                                          disabled={!selectedPlan}
+                                        >
+                                          Next
+                                        </button>
+                                      </div>
+                                    </div>
+                                  )
+                                )}
                               </div>
-                            </div>
-                          ) : (
-                            selectedPlan && (
-                              <div className="card mt-2">
-                                <div className="card-body">
-                                  <h6 className="product-info-name mb-3">
-                                    Selected Plan Details
-                                  </h6>
-                                  <p className="mb-1">
-                                    <strong>Total Price:</strong> Rs{" "}
-                                    {selectedPlan.totalPrice}
-                                  </p>
-                                  <p className="mb-1">
-                                    <strong>Monthly:</strong> Rs{" "}
-                                    {selectedPlan.monthlyAmount} x{" "}
-                                    {selectedPlan.months} months
-                                  </p>
-                                  <p className="mb-1">
-                                    <strong>Advance:</strong> Rs{" "}
-                                    {selectedPlan.advance}
-                                  </p>
-                                  <button
-                                    onClick={handleNext}
-                                    className="tf-btn mt-2 w-100 text-white"
-                                  >
-                                    Next
-                                  </button>
-                                </div>
-                              </div>
-                            )
-                          )}
-                        </div>
-                      )}
+                            )}
+                          </>
+                        )}
 
                       {/* Brand + Share */}
                       {loading ? (

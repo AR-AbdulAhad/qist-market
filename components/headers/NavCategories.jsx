@@ -2,6 +2,8 @@
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 export default function NavCategories({ styleClass = "" }) {
   const [activeDropdown, setActiveDropdown] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -25,7 +27,7 @@ export default function NavCategories({ styleClass = "" }) {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5000/api/categories', {
+        const response = await fetch(`${BACKEND_URL}/api/categories`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -48,9 +50,6 @@ export default function NavCategories({ styleClass = "" }) {
     fetchCategories();
   }, []);
 
-  const formatUrlName = (name) => {
-    return name.toLowerCase().replace(/\s+/g, '-');
-  };
 
   return (
     <div ref={navRef} className={`nav-category-wrap ${styleClass}`}>
@@ -77,7 +76,7 @@ export default function NavCategories({ styleClass = "" }) {
           <ul id="primary-menu" className="megamenu">
             {categories.map((category) => (
             <li key={category.id} className="menu-item">
-              <Link href={formatUrlName(category.name)}>
+              <Link href={`/product-category/${category.slugName}`} className="item-link body-text-3">
                 <span
                   className="w-6 h-6"
                   dangerouslySetInnerHTML={{ __html: category.icon || "" }}

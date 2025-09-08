@@ -16,7 +16,52 @@ export default function Register() {
                 <fieldset>
                   <label className="fw-semibold body-md-2">
                     {" "}
+                    First Name *{" "}
+                  </label>
+                  <input type="text" placeholder="First Name" />
+                </fieldset>
+              </div>
+              <div className="form-content">
+                <fieldset>
+                  <label className="fw-semibold body-md-2">
+                    {" "}
+                    Last Name *{" "}
+                  </label>
+                  <input type="text" placeholder="Last Name" />
+                </fieldset>
+              </div>
+              <div className="form-content">
+                <fieldset>
+                  <label className="fw-semibold body-md-2">
+                    {" "}
+                    Email *{" "}
+                  </label>
+                  <input type="email" placeholder="Your Email" />
+                </fieldset>
+              </div>
+              <div className="form-content">
+                <fieldset>
+                  <label className="fw-semibold body-md-2">
+                    {" "}
                     Phone number *{" "}
+                  </label>
+                  <input type="text" placeholder="Your email" />
+                </fieldset>
+              </div>
+              <div className="form-content">
+                <fieldset>
+                  <label className="fw-semibold body-md-2">
+                    {" "}
+                    Password *{" "}
+                  </label>
+                  <input type="text" placeholder="Your email" />
+                </fieldset>
+              </div>
+              <div className="form-content">
+                <fieldset>
+                  <label className="fw-semibold body-md-2">
+                    {" "}
+                    Confirm Password *{" "}
                   </label>
                   <input type="text" placeholder="Your email" />
                 </fieldset>
@@ -31,24 +76,6 @@ export default function Register() {
                 </a>
               </p>
             </form>
-            <div className="orther-log text-center">
-              <span className="br-line bg-gray-5" />
-              <p className="caption text-main-2">Or login with</p>
-            </div>
-            <ul className="list-log">
-              <li>
-                <a href="#" className="tf-btn btn-line w-100">
-                  <i className="icon icon-facebook-2" />
-                  <span className="body-md-2 fw-semibold">Facebook</span>
-                </a>
-              </li>
-              <li>
-                <a href="#" className="tf-btn btn-line w-100">
-                  <i className="icon icon-google" />
-                  <span className="body-md-2 fw-semibold">Google</span>
-                </a>
-              </li>
-            </ul>
           </div>
         </div>
       </div>

@@ -5,6 +5,8 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 export default function Checkout() {
   const [cartData, setCartData] = useState(null);
   const [errors, setErrors] = useState({});
@@ -88,8 +90,8 @@ export default function Checkout() {
         }
         break;
       case "phone":
-        if (!value || !/^\d{10,}$/.test(value)) {
-          error = "A valid phone number (minimum 10 digits) is required";
+        if (!value || !/^\d{11,}$/.test(value)) {
+          error = "A valid phone number (minimum 11 digits) is required";
         }
         break;
       case "firstName":
@@ -133,8 +135,8 @@ export default function Checkout() {
     if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = "A valid email is required";
     }
-    if (!formData.phone || !/^\d{10,}$/.test(formData.phone)) {
-      newErrors.phone = "A valid phone number (minimum 10 digits) is required";
+    if (!formData.phone || !/^\d{11,}$/.test(formData.phone)) {
+      newErrors.phone = "A valid phone number (minimum 11 digits) is required";
     }
     if (!formData.firstName) {
       newErrors.firstName = "First name is required";
@@ -154,11 +156,46 @@ export default function Checkout() {
     if (!formData.address) {
       newErrors.address = "Address is required";
     }
+    if (!formData.productName) {
+      newErrors.productName = "Product name is required";
+    }
+    if (isNaN(formData.totalDealValue) || formData.totalDealValue < 0) {
+      newErrors.totalDealValue = "Total deal value must be a non-negative number";
+    }
+    if (isNaN(formData.advanceAmount) || formData.advanceAmount < 0) {
+      newErrors.advanceAmount = "Advance amount must be a non-negative number";
+    }
+    if (isNaN(formData.monthlyAmount) || formData.monthlyAmount < 0) {
+      newErrors.monthlyAmount = "Monthly amount must be a non-negative number";
+    }
+    if (!Number.isInteger(formData.months) || formData.months < 0) {
+      newErrors.months = "Months must be a non-negative integer";
+    }
     return newErrors;
   };
 
   const handlePlaceOrder = async (e) => {
   e.preventDefault();
+
+  // Validate cartData
+  if (!cartData || !cartData.productName || !cartData.selectedPlan) {
+    setErrors({ api: "Cart data is incomplete or missing" });
+    return;
+  }
+  const { productName, selectedPlan } = cartData;
+  const requiredPlanFields = ["totalPrice", "advance", "monthlyAmount", "months"];
+  for (const field of requiredPlanFields) {
+    if (
+      selectedPlan[field] === undefined ||
+      selectedPlan[field] === null ||
+      isNaN(selectedPlan[field]) ||
+      selectedPlan[field] < 0
+    ) {
+      setErrors({ api: `Invalid plan data: ${field} is missing or invalid` });
+      return;
+    }
+  }
+
   const formData = {
     email: emailRef.current.value,
     phone: phoneRef.current.value,
@@ -170,17 +207,12 @@ export default function Checkout() {
     address: addressRef.current.value,
     orderNotes: document.querySelector("textarea").value,
     paymentMethod: "Advance cash on delivery",
-    productDetails: cartData
-      ? {
-          productName: cartData.productName,
-          plan: {
-            totalDealValue: cartData.selectedPlan.totalPrice,
-            advanceAmount: cartData.selectedPlan.advance,
-            monthlyAmount: cartData.selectedPlan.monthlyAmount,
-            months: cartData.selectedPlan.months,
-          },
-        }
-      : null,
+    productName: productName,
+    productSlug: cartData.productSlug, // Added productSlug
+    totalDealValue: selectedPlan.totalPrice,
+    advanceAmount: selectedPlan.advance,
+    monthlyAmount: selectedPlan.monthlyAmount,
+    months: selectedPlan.months,
   };
 
   const newErrors = validateForm(formData);
@@ -206,24 +238,31 @@ export default function Checkout() {
   }
 
   try {
-    const response = await fetch('http://localhost:5000/api/order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch(`${BACKEND_URL}/api/order`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
     });
 
     if (response.ok) {
       const orderData = await response.json();
-      console.log('Created Order:', orderData);
-      // router.push("/order-details");
+      sessionStorage.setItem("orderData", JSON.stringify(orderData));
+      Cookies.remove("cartData", { path: "/" });
+      router.push("/order-details");
     } else {
       const errorData = await response.json();
-      console.error('Error:', errorData);
-      setErrors({ api: errorData.error || 'Failed to create order', details: errorData.details });
+      console.error("Error:", errorData);
+      setErrors({
+        api: errorData.error || "Failed to create order",
+        details: errorData.details,
+      });
     }
   } catch (error) {
-    console.error('Network error:', error);
-    setErrors({ api: 'Failed to connect to the server', details: error.message });
+    console.error("Network error:", error);
+    setErrors({
+      api: "Failed to connect to the server",
+      details: error.message,
+    });
   }
 };
 

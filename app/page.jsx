@@ -22,13 +22,8 @@ export default function Home() {
       <Hero />
       <Features />
       <Products1 />
-      <Product2 />
       <Products3 />
-      <Collections />
       <Products4 />
-      <Banner />
-      <Products5 />
-      <Banner2 />
       <Products6 />
       <Footer1 />
     </>

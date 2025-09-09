@@ -1,17 +1,12 @@
 import Footer1 from "@/components/footers/Footer1";
 import Header1 from "@/components/headers/Header1";
 import Topbar1 from "@/components/headers/Topbar1";
-import Banner from "@/components/homes/home-1/Banner";
-import Banner2 from "@/components/common/Banner2";
-import Collections from "@/components/homes/home-1/Collections";
 import Features from "@/components/common/Features";
 import Hero from "@/components/homes/home-1/Hero";
-import Product2 from "@/components/common/Product3";
 import Products1 from "@/components/homes/home-1/Products1";
 import Products3 from "@/components/homes/home-1/Products3";
 import Products4 from "@/components/homes/home-1/Products4";
-import Products5 from "@/components/common/Products";
-import Products6 from "@/components/common/RecentProducts";
+import NewProducts from "@/components/common/NewProducts";
 
 
 export default function Home() {
@@ -22,9 +17,8 @@ export default function Home() {
       <Hero />
       <Features />
       <Products1 />
-      <Products3 />
       <Products4 />
-      <Products6 />
+      <NewProducts />
       <Footer1 />
     </>
   );

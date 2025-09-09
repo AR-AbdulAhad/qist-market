@@ -8,26 +8,9 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function Hero() {
   const [categories, setCategories] = useState([]);
+  const [banners, setBanners] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
-
-  // Hardcoded array of local banner images with links and alt text
-  const banners = [
-    {
-      imageUrl: '/images/banner/banner.jpg',
-      altText: 'Banner 1',
-      link: '/shop',
-    },
-    {
-      imageUrl: '/images/banner/banner.jpg',
-      altText: 'Banner 2',
-      link: '/shop',
-    },
-    {
-      imageUrl: '/images/banner/banner.jpg',
-      altText: 'Banner 3',
-      link: '/shop',
-    },
-  ];
+  const [loadingBanners, setLoadingBanners] = useState(true);
 
   useEffect(() => {
     // Fetch categories
@@ -54,7 +37,32 @@ export default function Hero() {
       }
     };
 
+    // Fetch active banners
+    const fetchBanners = async () => {
+      try {
+        setLoadingBanners(true);
+        const response = await fetch(`${BACKEND_URL}/api/active-banners`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch banners');
+        }
+
+        const data  = await response.json();
+        setBanners(data);
+      } catch (error) {
+        console.error('Failed to fetch banners:', error.message);
+      } finally {
+        setLoadingBanners(false);
+      }
+    };
+
     fetchCategories();
+    fetchBanners();
   }, []);
 
   return (
@@ -119,7 +127,13 @@ export default function Hero() {
             </div>
           </div>
           <div className="wrap-item-2">
-            {banners.length === 0 ? (
+            {loadingBanners ? (
+              <div className="text-center">
+                <div className="spinner-border spinner-border-sm text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            ) : banners.length === 0 ? (
               <div className="text-center">
                 <p className="body-text-3">No banners available</p>
               </div>
@@ -140,11 +154,11 @@ export default function Hero() {
                 </div>
                 <div className="carousel-inner">
                   {banners.map((banner, index) => (
-                    <div key={index} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
-                      <Link href={banner.link} className="d-block w-100">
+                    <div key={banner.id} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                      <Link href={banner.product_url} className="d-block w-100">
                         <Image
-                          src={banner.imageUrl}
-                          alt={banner.altText}
+                          src={banner.image_url}
+                          alt={`Banner ${banner.id}`}
                           className="d-block w-100 lazyload"
                           width={1200}
                           height={600}

@@ -3,133 +3,89 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import AddToCart from "../common/AddToCart";
-import AddToWishlist from "../common/AddToWishlist";
 import AddToQuickview from "../common/AddToQuickview";
-import AddToCompare from "../common/AddToCompare";
-import CountdownTimer from "../common/Countdown";
+
 export default function ProductCard1({ product, index }) {
-  const [currentImage, setCurrentImage] = useState(product.imgSrc);
+  const [currentImage, setCurrentImage] = useState(product.image_url);
+
   useEffect(() => {
-    setCurrentImage(product.imgSrc);
-  }, [product]);
+    setCurrentImage(product.image_url);
+  }, [product.image_url]);
+
+  const productData = {
+    id: product.product_id,
+    title: product.product_name,
+    category: product.category_name,
+    subCategory: product.subcategory_name,
+    slugName: product.slugName,
+    imgSrc: product.image_url,
+    advance: product.installments[0]?.advance || 0,
+    progressWidth: "0%",
+    width: 300,
+    height: 300,
+    wowDelay: index * 0.1 + "s",
+  };
+
+  console.log("Rendering ProductCard1 for product:", productData);
 
   return (
     <div
-      className={`card-product style-border ${
-        index < 4 ? "wow fadeInLeft" : ""
-      }`}
-      data-wow-delay={product.wowDelay}
+      className={`card-product style-border ${index < 4 ? "wow fadeInLeft" : ""}`}
+      data-wow-delay={productData.wowDelay}
     >
       <div className="card-product-wrapper overflow-visible">
         <div className="product-thumb-image">
-          <Link href={`/product-detail/${product.id}`} className="card-image">
+          <Link href={`/product-detail/${productData.slugName}`} className="card-image">
             <Image
               alt="Image Product"
               className="lazyload img-product"
               src={currentImage}
-              width={product.width}
-              height={product.height}
+              width={productData.width}
+              height={productData.height}
             />
           </Link>
-          <ul className="list-image-product">
-            {product.thumbImages.map((thumb, thumbIndex) => (
-              <li
-                className={`image-swap ${thumbIndex === 0 ? "active" : ""}`}
-                key={thumbIndex}
-                onMouseOver={() => setCurrentImage(thumb)}
-              >
-                <Image
-                  alt="Image Product"
-                  className="lazyload"
-                  src={thumb}
-                  width={product.width}
-                  height={product.height}
-                />
-              </li>
-            ))}
-          </ul>
         </div>
         <ul className="list-product-btn top-0 end-0">
           <li>
-            <AddToCart tooltipClass="tooltip-left" productId={product.id} />
-          </li>
-          <li className="wishlist">
-            <AddToWishlist tooltipClass="tooltip-left" productId={product.id} />
+            <AddToCart tooltipClass="tooltip-left" productSlugName={productData.slugName} />
           </li>
           <li>
-            <AddToQuickview
-              productId={product.id}
-              tooltipClass="tooltip-left"
-            />
-          </li>
-          <li className="">
-            <AddToCompare productId={product.id} tooltipClass="tooltip-left" />
+            <AddToQuickview productId={productData.id} tooltipClass="tooltip-left" />
           </li>
         </ul>
-        {product.salePercentage && (
-          <div className="box-sale-wrap top-0 start-0 z-5">
-            <p className="small-text">Sale</p>
-            <p className="title-sidebar-2">{product.salePercentage}</p>
-          </div>
-        )}
-      </div>
-      <div className="card-product-info">
-        <div className="box-title gap-xl-12">
-          <div className="d-flex flex-column">
-            <h6>
-              <Link
-                href={`/product-detail/${product.id}`}
-                className="name-product fw-semibold text-secondary link"
-              >
-                {product.title}
-              </Link>
-            </h6>
-          </div>
-          <p className="price-wrap fw-medium">
-            <span className="new-price h4 fw-normal text-primary mb-0">
-              {product.price.toFixed(3)}
-            </span>{" "}
-            {product.oldPrice && (
-              <span className="old-price price-text text-main-2">
-                {product.oldPrice.toFixed(3)}
-              </span>
-            )}
-            <span className="box-sale-tag">Save: {product.saveAmount}</span>
+        <div className="box-sale-wrap top-0 start-0 z-5">
+          <p className="title-sidebar-2">
+            <span className="icon">
+              <i className="icon-fire tf-ani-tada" />
+            </span>
           </p>
         </div>
-        <div className="box-infor-detail gap-xl-20">
-          <div className="countdown-box">
-            <div
-              className="js-countdown"
-              data-timer={product.countdownTimer}
-              data-labels="Days,Hours,Mins,Secs"
+      </div>
+      <div className="card-product-info">
+        <div className="box-title">
+          <div className="d-flex flex-column">
+            <p className="caption text-main-2 font-2">
+              {productData.category}, {productData.subCategory}
+            </p>
+            <Link
+              href={`/product-detail/${productData.slugName}`}
+              className="name-product body-md-2 fw-semibold text-secondary link"
             >
-              <CountdownTimer style={2} />
-            </div>
+              {productData.title}
+            </Link>
           </div>
-          <div className="product-progress-sale">
-            <div
-              className="progress-sold progress"
-              role="progressbar"
-              aria-valuemin={0}
-              aria-valuemax={100}
-            >
-              <div
-                className="progress-bar bg-primary"
-                style={{ width: product.progressWidth }}
-              />
-            </div>
-            <div className="box-quantity d-flex justify-content-between">
-              <p className="text-avaiable caption">
-                Sold:
-                <span className="fw-bold">{product.sold}</span>
-              </p>
-              <p className="text-avaiable caption">
-                Available:
-                <span className="fw-bold">{product.available}</span>
-              </p>
-            </div>
-          </div>
+          <p className="price-wrap fw-medium">
+            <span className="new-price fw-medium">
+              {productData.advance ? (
+                <span>
+                  Rs. {productData.advance}{" "}
+                  <span className="text-primary">Advance</span>
+                </span>
+              ) : (
+                <span>Not Available</span>
+              )}
+            </span>
+          </p>
         </div>
       </div>
     </div>

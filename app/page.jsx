@@ -4,8 +4,7 @@ import Topbar1 from "@/components/headers/Topbar1";
 import Features from "@/components/common/Features";
 import Hero from "@/components/homes/home-1/Hero";
 import Products1 from "@/components/homes/home-1/Products1";
-import Products3 from "@/components/homes/home-1/Products3";
-import Products4 from "@/components/homes/home-1/Products4";
+// import Products4 from "@/components/homes/home-1/Products4";
 import NewProducts from "@/components/common/NewProducts";
 
 
@@ -17,7 +16,7 @@ export default function Home() {
       <Hero />
       <Features />
       <Products1 />
-      <Products4 />
+      {/* <Products4 /> */}
       <NewProducts />
       <Footer1 />
     </>

@@ -17,7 +17,7 @@ export default function Hero() {
     const fetchCategories = async () => {
       try {
         setLoadingCategories(true);
-        const response = await fetch(`${BACKEND_URL}/api/categories`, {
+        const response = await fetch(`${BACKEND_URL}/api/limit/categories`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export default function Hero() {
                     </div>
                   </div>
                 ) : (
-                  <ul className="menu-category-list custom-nav-cat">
+                  <ul className="menu-category-list">
                     {categories.map((category) => (
                       <li key={category.id} className="menu-item">
                         <Link
@@ -121,6 +121,14 @@ export default function Hero() {
                         <span className="body-text-3">No categories available</span>
                       </li>
                     )}
+                    <li className="menu-item py-3 px-4 d-flex justify-content-center">
+                      <Link href="/shop" className="body-text-3 text-primary">
+                        <span className="flex items-center gap-2">
+                          <span className="w-6 h-6"></span> {/* Placeholder for consistency */}
+                          <span>View All Categories</span>
+                        </span>
+                      </Link>
+                    </li>
                   </ul>
                 )}
               </div>

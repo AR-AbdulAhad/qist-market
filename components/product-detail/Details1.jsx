@@ -59,6 +59,8 @@ export default function Details1({ singleProduct, loading }) {
 
   const productUrl = `http://localhost:3000/product/${singleProduct?.slugName}`;
 
+  console.log("Single Product:", singleProduct);
+
   return (
     <>
       <div className="tf-sp-1">
@@ -124,22 +126,32 @@ export default function Details1({ singleProduct, loading }) {
                               href={`/product-category`}
                               className="link text-secondary"
                             >
-                              {singleProduct.categories?.name}
+                              {singleProduct.category_name}
                             </Link>
                             ,{" "}
                             <Link
                               href={`/product-category`}
                               className="link text-secondary"
                             >
-                              {singleProduct.subcategories?.name}
+                              {singleProduct.subcategory_name}
                             </Link>
                           </p>
                         )}
                         {loading ? (
                           <Skeleton width={350} height={25} />
                         ) : (
-                          <h5 className="product-info-name fw-semibold">
+                          <h5 className="product-info-name fw-semibold d-flex flex-column gap-3">
                             {singleProduct.name}
+                            {singleProduct.isDeal && (
+                              <span className="wow" data-wow-delay={0}>
+                                <h5 className="fw-semibold fs-5 text-primary flat-title-has-icon">
+                                  <span className="icon">
+                                    <i className="icon-fire tf-ani-tada" />
+                                  </span>
+                                  Deal Of The Day
+                                </h5>
+                              </span>
+                            )}
                           </h5>
                         )}
                         <ul className="product-info-rate-wrap">

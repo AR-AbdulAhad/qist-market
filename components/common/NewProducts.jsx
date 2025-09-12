@@ -4,7 +4,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
 import Image from "next/image";
 import { Navigation, Pagination } from "swiper/modules";
-import WOW from "@/utlis/wow";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -27,14 +26,30 @@ export default function NewProducts({
   const wowRef = useRef(null);
 
   useEffect(() => {
-    wowRef.current = new WOW({
-      boxClass: "wow",
-      animateClass: "animated",
-      offset: 0,
-      mobile: true,
-      live: true,
-    });
-    wowRef.current.init();
+    let wowInstance = null;
+
+    const initWOW = async () => {
+      if (typeof window === "undefined") {
+        return; // Early exit if not on client
+      }
+
+      try {
+        const WOWModule = await import("@/utlis/wow");
+        wowInstance = new WOWModule.default({
+          boxClass: "wow",
+          animateClass: "animated",
+          offset: 0,
+          mobile: true,
+          live: true,
+        });
+        wowRef.current = wowInstance;
+        wowInstance.init();
+      } catch (err) {
+        console.error("Failed to initialize WOW:", err);
+      }
+    };
+
+    initWOW();
 
     const fetchProducts = async () => {
       try {
@@ -48,6 +63,7 @@ export default function NewProducts({
           title: item.name,
           slugName: item.slugName,
           category: item.category_name,
+          subCategory: item.subcategory_name,
           advance: item.ProductInstallments[0]?.advance || 0,
           imgSrc: item.image_url,
           imgWidth: 300,
@@ -61,9 +77,9 @@ export default function NewProducts({
 
         setProducts(mappedProducts);
         setLoading(false);
-        setTimeout(() => {
+        if (wowRef.current) {
           wowRef.current.sync();
-        }, 0);
+        }
       } catch (err) {
         setError(err.message);
         setLoading(false);
@@ -71,6 +87,7 @@ export default function NewProducts({
     };
 
     fetchProducts();
+
     return () => {
       if (wowRef.current) {
         wowRef.current = null;
@@ -80,7 +97,9 @@ export default function NewProducts({
 
   const handleSwiperInit = (swiper) => {
     swiperRef.current = swiper;
-    wowRef.current.sync();
+    if (wowRef.current) {
+      wowRef.current.sync();
+    }
   };
 
   const handleSlideChange = () => {
@@ -188,7 +207,7 @@ export default function NewProducts({
                   <div className="box-title">
                     <div className="d-flex flex-column">
                       <p className="caption text-main-2 font-2">
-                        {product.category}
+                        {product.category}, {product.subCategory}
                       </p>
                       <Link
                         href={`/product-detail/${product.slugName}`}

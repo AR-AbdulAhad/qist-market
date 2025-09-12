@@ -266,13 +266,13 @@ export default function Quickview() {
                           <p className="caption">
                             Categories:{" "}
                             <Link href={`/product-category`} className="link text-secondary">
-                              {productData?.categories?.name || "Consumer Electronics"}
+                              {productData.category_name || "Consumer Electronics"}
                             </Link>
-                            {productData?.subcategories?.name && (
+                            {productData.subcategory_name && (
                               <>
                                 ,{" "}
                                 <Link href={`/product-category`} className="link text-secondary">
-                                  {productData.subcategories.name}
+                                  {productData.subcategory_name}
                                 </Link>
                               </>
                             )}
@@ -281,8 +281,18 @@ export default function Quickview() {
                         {loading ? (
                           <Skeleton width={350} height={25} />
                         ) : (
-                          <h5 className="product-info-name fw-semibold">
-                            {productData?.name || quickViewItem.title || "Product Name"}
+                          <h5 className="product-info-name fw-semibold d-flex flex-column gap-3">
+                            {productData.name}
+                            {productData.isDeal && (
+                              <span className="wow fadeInUp" data-wow-delay={0}>
+                                <h5 className="fw-semibold fs-5 text-primary flat-title-has-icon">
+                                  <span className="icon">
+                                    <i className="icon-fire tf-ani-tada" />
+                                  </span>
+                                  Deal Of The Day
+                                </h5>
+                              </span>
+                            )}
                           </h5>
                         )}
                         <ul className="product-info-rate-wrap">

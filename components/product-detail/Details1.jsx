@@ -143,7 +143,7 @@ export default function Details1({ singleProduct, loading }) {
                           <h5 className="product-info-name fw-semibold d-flex flex-column gap-3">
                             {singleProduct.name}
                             {singleProduct.isDeal && (
-                              <span className="wow" data-wow-delay={0}>
+                              <span className="" data-wow-delay={0}>
                                 <h5 className="fw-semibold fs-5 text-primary flat-title-has-icon">
                                   <span className="icon">
                                     <i className="icon-fire tf-ani-tada" />

@@ -1,129 +1,191 @@
+// components/SearchForm.js
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-const categories = [
-  { rel: "", label: "All categories" },
-  { rel: "apple-products", label: "Apple products" },
-  { rel: "audio-equipments", label: "Audio Equipments" },
-  { rel: "camera-video", label: "Camera & Video" },
-  { rel: "game-room-furniture", label: "Game & Room Furniture" },
-  { rel: "gaming-accessories", label: "Gaming Accessories" },
-  { rel: "headphone", label: "Headphone" },
-  { rel: "laptop-tablet", label: "Laptop & Tablet" },
-  { rel: "server-workstation", label: "Server & Workstation" },
-  { rel: "smartphone", label: "Smartphone" },
-  { rel: "smartwatch", label: "Smartwatch" },
-  { rel: "storage-digital-devices", label: "Storage & Digital Devices" },
-  { rel: "tv-computer-screen", label: "TV & Computer Screen" },
-];
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function SearchForm({
   parentClass = "form-search-product style-2",
 }) {
   const [activeDropdown, setActiveDropdown] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All categories");
+  const [categories, setCategories] = useState([]);
+  const [selectedType, setSelectedType] = useState(null);
+  const [selectedSlug, setSelectedSlug] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // New loading state
   const navRef = useRef(null);
-  // Close when clicking outside
+  const router = useRouter();
+
+  // Fetch categories from API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/limit/categories`);
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (navRef.current && !navRef.current.contains(event.target)) {
-        setActiveDropdown(false); // Close the menu
+        setActiveDropdown(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Fetch suggestions as user types
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (searchTerm.length < 2) {
+        setSuggestions([]);
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(true); // Show loader
+      try {
+        const params = new URLSearchParams({
+          page: 1,
+          limit: 10,
+          search: searchTerm,
+        });
+        if (selectedType === "category" && selectedSlug) {
+          params.append("category", selectedSlug);
+        } else if (selectedType === "subcategory" && selectedSlug) {
+          params.append("subcategory", selectedSlug);
+        }
+        const response = await axios.get(`${BACKEND_URL}/api/product/search?${params.toString()}`);
+        setSuggestions(response.data.data || []);
+      } catch (error) {
+        console.error("Failed to fetch suggestions:", error);
+        setSuggestions([]);
+      } finally {
+        setIsLoading(false); // Hide loader
+      }
+    };
+    // Add debounce to prevent excessive API calls
+    const debounce = setTimeout(fetchSuggestions, 300);
+    return () => clearTimeout(debounce);
+  }, [searchTerm, selectedType, selectedSlug]);
+
+  const handleSelectCategory = (label, type, slug) => {
+    setActiveCategory(label);
+    setSelectedType(type);
+    setSelectedSlug(slug);
+    setActiveDropdown(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const params = new URLSearchParams({ query: searchTerm });
+    if (selectedType && selectedSlug) {
+      params.append(selectedType, selectedSlug);
+    }
+    router.push(`/search?${params.toString()}`);
+  };
+
   return (
-    <form
-      ref={navRef}
-      onSubmit={(e) => e.preventDefault()}
-      className={parentClass}
-    >
+    <form ref={navRef} onSubmit={handleSubmit} className={parentClass}>
       <div className={`select-category ${activeDropdown ? "active" : ""}`}>
-        <div
-          onClick={() => setActiveDropdown(true)}
-          className="tf-select-custom"
-        >
+        <div onClick={() => setActiveDropdown(true)} className="tf-select-custom">
           {activeCategory}
         </div>
-        <ul
-          className="select-options"
-          style={{ display: activeDropdown ? "block" : "none" }}
-        >
+        <ul className="select-options" style={{ display: activeDropdown ? "block" : "none" }}>
           <div className="header-select-option">
             <span>Select Categories</span>
-            <span
-              className="close-option"
-              onClick={() => setActiveDropdown(false)}
-            >
+            <span className="close-option" onClick={() => setActiveDropdown(false)}>
               <i className="icon-close"></i>
             </span>
           </div>
-          {categories.map((item, index) => (
-            <li
-              rel={item.rel}
-              onClick={() => {
-                setActiveCategory(item.label);
-                setActiveDropdown(false);
-              }}
-              key={index}
-            >
-              {item.label}
-            </li>
+          <li
+            onClick={() => handleSelectCategory("All categories", null, null)}
+          >
+            All categories
+          </li>
+          {categories.map((cat) => (
+            <React.Fragment key={cat.id}>
+              <li
+                onClick={() => handleSelectCategory(cat.name, "category", cat.slugName)}
+              >
+                {cat.name}
+              </li>
+              {cat.subcategories.map((sub) => (
+                <li
+                  key={sub.id}
+                  className="sub-category"
+                  onClick={() => handleSelectCategory(`${cat.name} - ${sub.name}`, "subcategory", sub.slugName)}
+                >
+                  - {sub.name}
+                </li>
+              ))}
+            </React.Fragment>
           ))}
-        </ul>
-        <ul className="select-options">
-          <li className="link" rel="">
-            <span>All categories</span>
-          </li>
-          <li className="link" rel="apple-products">
-            <span>Apple products</span>
-          </li>
-          <li className="link" rel="audio-equipments">
-            <span>Audio Equipments</span>
-          </li>
-          <li className="link" rel="camera-video">
-            <span>Camera &amp; Video</span>
-          </li>
-          <li className="link" rel="game-room-furniture">
-            <span>Game &amp; Room Furniture</span>
-          </li>
-          <li className="link" rel="gaming-accessories">
-            <span>Gaming Accessories</span>
-          </li>
-          <li className="link" rel="headphone">
-            <span>Headphone</span>
-          </li>
-          <li className="link" rel="laptop-tablet">
-            <span>Laptop &amp; Tablet</span>
-          </li>
-          <li className="link" rel="server-workstation">
-            <span>Server &amp; Workstation</span>
-          </li>
-          <li className="link" rel="smartphone">
-            <span>Smartphone</span>
-          </li>
-          <li className="link" rel="smartwatch">
-            <span>Smartwatch</span>
-          </li>
-          <li className="link" rel="storage-digital-devices">
-            <span>Storage &amp; Digital Devices</span>
-          </li>
-          <li className="link" rel="tv-computer-screen">
-            <span>TV &amp; Computer Screen</span>
-          </li>
         </ul>
       </div>
       <span className="br-line type-vertical bg-line"></span>
-      <fieldset>
-        <input type="text" placeholder="Search for products" />
+      <fieldset className="search-input-container">
+        <input
+          type="text"
+          placeholder="Search for products"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </fieldset>
+        {isLoading && (
+          <div className="loader">
+            <svg className="spinner" viewBox="0 0 50 50">
+              <circle
+                className="path"
+                cx="25"
+                cy="25"
+                r="20"
+                fill="none"
+                strokeWidth="5"
+              ></circle>
+            </svg>
+          </div>
+        )}
       <button type="submit" className="btn-submit-form">
         <i className="icon-search"></i>
       </button>
+      {suggestions.length > 0 && !isLoading && (
+        <div className="suggestions-dropdown">
+          {suggestions.map((product) => (
+            <div
+              key={product.id}
+              className="suggestion-item"
+              onClick={() => router.push(`/product-detail/${product.slugName}`)}
+            >
+              <img
+                src={product.image_url || "/placeholder-image.jpg"}
+                alt={product.name}
+                className="suggestion-image"
+              />
+              <div className="suggestion-details">
+                <span className="suggestion-name">{product.name}</span>
+                <span className="suggestion-price">
+                  Rs. {product.advance?.toLocaleString() || 0} Advance
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      {!isLoading && searchTerm.length >= 2 && suggestions.length === 0 && (
+        <div className="suggestions-dropdown">
+          <div className="no-suggestions">No products found</div>
+        </div>
+      )}
     </form>
   );
 }

@@ -284,7 +284,7 @@ export default function Quickview() {
                           <h5 className="product-info-name fw-semibold d-flex flex-column gap-3">
                             {productData.name}
                             {productData.isDeal && (
-                              <span className="wow fadeInUp" data-wow-delay={0}>
+                              <span data-wow-delay={0}>
                                 <h5 className="fw-semibold fs-5 text-primary flat-title-has-icon">
                                   <span className="icon">
                                     <i className="icon-fire tf-ani-tada" />

@@ -15,7 +15,6 @@ export default function Products1() {
       try {
         const response = await fetch(`${BACKEND_URL}/api/deals`);
         const data = await response.json();
-        console.log("Fetched Deals:", data);
         setDeals(data.filter((deal) => deal.isActive));
       } catch (error) {
         console.error("Error fetching deals:", error);

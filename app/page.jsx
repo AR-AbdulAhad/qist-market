@@ -6,6 +6,7 @@ import Hero from "@/components/homes/home-1/Hero";
 import Products1 from "@/components/homes/home-1/Products1";
 // import Products4 from "@/components/homes/home-1/Products4";
 import NewProducts from "@/components/common/NewProducts";
+import TopCategoryProducts from "@/components/homes/home-1/TopCategoryProducts";
 
 
 export default function Home() {
@@ -17,6 +18,7 @@ export default function Home() {
       <Features />
       <Products1 />
       {/* <Products4 /> */}
+      <TopCategoryProducts />
       <NewProducts />
       <Footer1 />
     </>

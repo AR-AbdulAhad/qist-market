@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -10,14 +10,34 @@ import {
   shopDetailsPages,
   shopPages,
 } from "@/data/menu";
+
 export default function MobileMenu() {
   const pathname = usePathname();
+  const [categories, setCategories] = useState([]);
+
+  // Function to check if a menu item is active
   const isMenuActive = (link) => {
     return link.href?.split("/")[1] == pathname.split("/")[1];
   };
+
+  // Function to check if a parent menu is active
   const isMenuParentActive = (menu) => {
     return menu.some((elm) => isMenuActive(elm));
   };
+
+  // Fetch categories from the API
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/limit/categories");
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <div className="offcanvas offcanvas-start canvas-mb" id="mobileMenu">
@@ -27,7 +47,7 @@ export default function MobileMenu() {
       />
       <div className="logo-site">
         <Link href={`/`}>
-          <Image alt="" src="/images/logo/logo.svg" width={185} height={41} />
+          <Image alt="" src="/images/logo/logo.png" width={185} height={41} />
         </Link>
       </div>
       <div className="mb-canvas-content">
@@ -69,7 +89,7 @@ export default function MobileMenu() {
                         className=""
                         type="text"
                         placeholder="Search for anything"
-                        name="text"
+                        name="search"
                         tabIndex={2}
                         defaultValue=""
                         aria-required="true"
@@ -84,25 +104,19 @@ export default function MobileMenu() {
                     <li
                       className={`nav-mb-item ${pathname === "/" ? "active" : ""}`}
                     >
-                      <Link
-                        href="/"
-                        className="mb-menu-link"
-                      >
+                      <Link href="/" className="mb-menu-link">
                         <span>Home</span>
                       </Link>
                     </li>
                     <li
                       className={`nav-mb-item ${pathname === "/shop" ? "active" : ""}`}
                     >
-                      <Link
-                        href="/shop"
-                        className="mb-menu-link"
-                      >
+                      <Link href="/shop" className="mb-menu-link">
                         <span>Shop</span>
                       </Link>
                     </li>
                     <li
-                      className={`nav-mb-item  ${
+                      className={`nav-mb-item ${
                         isMenuParentActive(othersPages) ? "active" : ""
                       } `}
                     >
@@ -136,20 +150,14 @@ export default function MobileMenu() {
                     <li
                       className={`nav-mb-item ${pathname === "/payment-method" ? "active" : ""}`}
                     >
-                      <Link
-                        href="/payment-method"
-                        className="mb-menu-link"
-                      >
+                      <Link href="/payment-method" className="mb-menu-link">
                         <span>Payment Method</span>
                       </Link>
                     </li>
                     <li
                       className={`nav-mb-item ${pathname === "/stores" ? "active" : ""}`}
                     >
-                      <a
-                        href="/stores"
-                        className="mb-menu-link"
-                      >
+                      <a href="/stores" className="mb-menu-link">
                         <span>Stores</span>
                       </a>
                     </li>
@@ -192,117 +200,53 @@ export default function MobileMenu() {
               <div className="tab-pane" id="category" role="tabpanel">
                 <div className="mb-content-top">
                   <ul className="nav-ul-mb">
-                    <li className="nav-mb-item">
-                      <a
-                        href="#drd-categories-appearl"
-                        className="collapsed mb-menu-link"
-                        data-bs-toggle="collapse"
-                        aria-expanded="true"
-                        aria-controls="drd-categories-appearl"
-                      >
-                        <span>Apparel</span>
-                        <span className="btn-open-sub" />
-                      </a>
-                      <div id="drd-categories-appearl" className="collapse">
-                        <ul className="sub-nav-menu">
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              New arrival
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              Steall the deals
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              Best Sellers
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              Men
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              Woman
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              Season collection
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              This Week's Highlights
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              Home wear
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              Underwear
-                            </a>
-                          </li>
-                          <li>
-                            <a href="#" className="sub-nav-link">
-                              Travel clothes
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </li>
-                    <li className="nav-mb-item">
-                      <a href="#" className="mb-menu-link">
-                        <span>Automotive Parts</span>
-                      </a>
-                    </li>
-                    <li className="nav-mb-item">
-                      <a href="#" className="mb-menu-link">
-                        <span>Beauty &amp; Personal Care</span>
-                      </a>
-                    </li>
-                    <li className="nav-mb-item">
-                      <a href="#" className="mb-menu-link">
-                        <span>Consumer Electronics</span>
-                      </a>
-                    </li>
-                    <li className="nav-mb-item">
-                      <a href="#" className="mb-menu-link">
-                        <span>Furniture</span>
-                      </a>
-                    </li>
-                    <li className="nav-mb-item">
-                      <a href="#" className="mb-menu-link">
-                        <span>Home Products</span>
-                      </a>
-                    </li>
-                    <li className="nav-mb-item">
-                      <a href="#" className="mb-menu-link">
-                        <span>Machinery</span>
-                      </a>
-                    </li>
-                    <li className="nav-mb-item">
-                      <a href="#" className="mb-menu-link">
-                        <span>Timepieces, Jewelry &amp; Eyewear</span>
-                      </a>
-                    </li>
-                    <li className="nav-mb-item">
-                      <a href="#" className="mb-menu-link">
-                        <span>Tool &amp; Hardware</span>
-                      </a>
-                    </li>
-                    <li className="nav-mb-item">
-                      <a href="#" className="mb-menu-link">
-                        <span>Bestseller</span>
-                      </a>
-                    </li>
+                    {categories.map((category) => (
+                      <li key={category.id} className="nav-mb-item">
+                        {category.subcategories.length > 0 ? (
+                          <>
+                            <div className="mb-menu-link-wrapper">
+                              <Link
+                                href={`/product-category/${category.slugName}`}
+                                className="mb-menu-link link"
+                              >
+                                <span>{category.name}</span>
+                              </Link>
+                              <span
+                                className="btn-open-sub link"
+                                data-bs-toggle="collapse"
+                                data-bs-target={`#drd-categories-${category.slugName}`}
+                                aria-expanded="false"
+                                aria-controls={`drd-categories-${category.slugName}`}
+                              />
+                            </div>
+                            <div
+                              id={`drd-categories-${category.slugName}`}
+                              className="collapse"
+                            >
+                              <ul className="sub-nav-menu">
+                                {category.subcategories.map((subcategory) => (
+                                  <li key={subcategory.id}>
+                                    <Link
+                                      href={`/product-category/${category.slugName}/${subcategory.slugName}`}
+                                      className="sub-nav-link link"
+                                    >
+                                      {subcategory.name}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </>
+                        ) : (
+                          <Link
+                            href={`/product-category/${category.slugName}`}
+                            className="mb-menu-link link"
+                          >
+                            <span>{category.name}</span>
+                          </Link>
+                        )}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>

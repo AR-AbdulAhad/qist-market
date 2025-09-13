@@ -19,8 +19,6 @@ export default function NewProducts({
   fullWidth = false,
 }) {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const router = useRouter();
   const swiperRef = useRef(null);
   const wowRef = useRef(null);
@@ -76,13 +74,11 @@ export default function NewProducts({
         }));
 
         setProducts(mappedProducts);
-        setLoading(false);
         if (wowRef.current) {
           wowRef.current.sync();
         }
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
       }
     };
 
@@ -108,24 +104,8 @@ export default function NewProducts({
     }
   };
 
-  if (loading) {
-    return (
-      <section className={parentClass}>
-        <div className={`container${fullWidth ? "-full" : ""}`}>
-          <p>Loading...</p>
-        </div>
-      </section>
-    );
-  }
-
-  if (error) {
-    return (
-      <section className={parentClass}>
-        <div className={`container${fullWidth ? "-full" : ""}`}>
-          <p>Error: {error}</p>
-        </div>
-      </section>
-    );
+    if (products.length === 0) {
+    return null;
   }
 
   const handleViewAll = () => {

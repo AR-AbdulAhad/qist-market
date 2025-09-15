@@ -21,7 +21,6 @@ import ForgotPassword from "@/components/modals/ForgotPassword";
 import VerificationCode from "@/components/modals/VerificationCode";
 import ChangePassword from "@/components/modals/ChangePassword";
 import { ToastContainer } from 'react-toastify';
-import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -136,7 +135,6 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <div id="wrapper">
-          <AuthProvider>
           <Context>
             {children}
             <Login />
@@ -155,7 +153,6 @@ export default function RootLayout({ children }) {
             <AddParallax />
             <ToastContainer />
           </Context>
-          </AuthProvider>
         </div>
       </body>
     </html>

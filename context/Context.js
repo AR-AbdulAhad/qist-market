@@ -95,25 +95,27 @@ export default function Context({ children }) {
 
   // Modal management
   const closeAllModals = () => {
-    const modalElements = document.querySelectorAll(".modal.show");
-    modalElements.forEach((modal) => {
-      const modalInstance = Modal.getInstance(modal);
-      if (modalInstance) {
-        modalInstance.hide();
-      }
-    });
+    if (typeof window !== "undefined") {
+      const modalElements = document.querySelectorAll(".modal.show");
+      modalElements.forEach((modal) => {
+        const modalInstance = Modal.getInstance(modal);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+      });
+    }
   };
 
   const openModal = (modalId, props = {}) => {
-    // Close all open modals
-    closeAllModals();
-    // Set new modal state
-    setModalProps(props);
-    setActiveModal(modalId);
+    if (typeof window !== "undefined") {
+      closeAllModals();
+      setModalProps(props);
+      setActiveModal(modalId);
+    }
   };
 
   const closeModal = () => {
-    if (activeModal) {
+    if (typeof window !== "undefined" && activeModal) {
       const modalElement = document.getElementById(activeModal);
       if (modalElement) {
         const modalInstance = Modal.getInstance(modalElement) || new Modal(modalElement);
@@ -125,21 +127,20 @@ export default function Context({ children }) {
   };
 
   useEffect(() => {
-    if (activeModal) {
+    if (typeof window !== "undefined" && activeModal) {
       const modalElement = document.getElementById(activeModal);
       if (modalElement) {
         closeAllModals();
         const modalInstance = Modal.getInstance(modalElement) || new Modal(modalElement);
         modalInstance.show();
-        const currentId = activeModal; // Capture the current modal ID
+        const currentId = activeModal;
         const listener = () => {
-          if (activeModal === currentId) { // Only clear if this is still the active modal
+          if (activeModal === currentId) {
             setActiveModal(null);
             setModalProps({});
           }
         };
         modalElement.addEventListener("hidden.bs.modal", listener);
-        // Cleanup listener on unmount or re-run
         return () => {
           modalElement.removeEventListener("hidden.bs.modal", listener);
         };

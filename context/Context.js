@@ -1,7 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { allProducts } from "@/data/products";
-import { Modal } from "bootstrap";
 
 const dataContext = createContext();
 export const useContextElement = () => useContext(dataContext);
@@ -19,6 +18,16 @@ export default function Context({ children }) {
   const [activeModal, setActiveModal] = useState(null);
   const [modalProps, setModalProps] = useState({});
 
+  // Dynamically import Bootstrap Modal on the client side
+  const [Modal, setModal] = useState(null);
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      import("bootstrap/dist/js/bootstrap.esm").then((module) => {
+        setModal(() => module.Modal);
+      });
+    }
+  }, []);
+
   // Existing cart-related logic
   useEffect(() => {
     const subtotal = cartProducts.reduce((accumulator, product) => {
@@ -35,7 +44,8 @@ export default function Context({ children }) {
     if (!isAddedToCartProducts(id)) {
       const item = { ...allProducts.find((elm) => elm.id === id), quantity: qty || 1 };
       setCartProducts((prev) => [...prev, item]);
-      if (isModal) {
+      if (isModal && Modal) {
+        // Open cart modal only if Modal is available
         // openCartModal(); // Uncomment if you have this function
       }
     }
@@ -76,26 +86,34 @@ export default function Context({ children }) {
   const isAddedtoCompareItem = (id) => compareItem.includes(id);
 
   useEffect(() => {
-    const items = JSON.parse(localStorage.getItem("cartList"));
-    if (items?.length) setCartProducts(items);
+    if (typeof window !== "undefined") {
+      const items = JSON.parse(localStorage.getItem("cartList") || "[]");
+      if (items?.length) setCartProducts(items);
+    }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("cartList", JSON.stringify(cartProducts));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cartList", JSON.stringify(cartProducts));
+    }
   }, [cartProducts]);
 
   useEffect(() => {
-    const items = JSON.parse(localStorage.getItem("wishlist"));
-    if (items?.length) setWishList(items);
+    if (typeof window !== "undefined") {
+      const items = JSON.parse(localStorage.getItem("wishlist") || "[]");
+      if (items?.length) setWishList(items);
+    }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("wishlist", JSON.stringify(wishList));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("wishlist", JSON.stringify(wishList));
+    }
   }, [wishList]);
 
   // Modal management
   const closeAllModals = () => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && Modal) {
       const modalElements = document.querySelectorAll(".modal.show");
       modalElements.forEach((modal) => {
         const modalInstance = Modal.getInstance(modal);
@@ -107,7 +125,7 @@ export default function Context({ children }) {
   };
 
   const openModal = (modalId, props = {}) => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && Modal) {
       closeAllModals();
       setModalProps(props);
       setActiveModal(modalId);
@@ -115,7 +133,7 @@ export default function Context({ children }) {
   };
 
   const closeModal = () => {
-    if (typeof window !== "undefined" && activeModal) {
+    if (typeof window !== "undefined" && activeModal && Modal) {
       const modalElement = document.getElementById(activeModal);
       if (modalElement) {
         const modalInstance = Modal.getInstance(modalElement) || new Modal(modalElement);
@@ -127,7 +145,7 @@ export default function Context({ children }) {
   };
 
   useEffect(() => {
-    if (typeof window !== "undefined" && activeModal) {
+    if (typeof window !== "undefined" && activeModal && Modal) {
       const modalElement = document.getElementById(activeModal);
       if (modalElement) {
         closeAllModals();
@@ -146,7 +164,7 @@ export default function Context({ children }) {
         };
       }
     }
-  }, [activeModal]);
+  }, [activeModal, Modal]);
 
   const contextElement = {
     cartProducts,

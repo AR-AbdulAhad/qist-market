@@ -56,6 +56,7 @@ export default function NewProducts({
           throw new Error("Failed to fetch products");
         }
         const data = await response.json();
+        console.log(data);
         const mappedProducts = data.map((item, index) => ({
           id: item.id,
           title: item.name,

@@ -13,23 +13,50 @@ export default function Login() {
     password: "",
     rememberMe: false,
   });
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters long";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+    setErrors({ ...errors, [name]: "" });
   };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   const resetForm = () => {
     setFormData({ email: "", password: "", rememberMe: false });
+    setErrors({});
     setShowPassword(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     setLoading(true);
     try {
       const response = await axios.post(`${BACKEND_URL}/api/customer/login`, formData);
@@ -38,6 +65,9 @@ export default function Login() {
       toast.success("Login successful!");
       closeModal();
       resetForm();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (err) {
       if (err.response?.data?.requiresVerification) {
         openModal("verificationCode", { email: formData.email });
@@ -79,8 +109,11 @@ export default function Login() {
                     placeholder="Enter your valid email"
                     value={formData.email}
                     onChange={handleChange}
-                    required
+                    className={errors.email ? "is-invalid" : ""}
                   />
+                  {errors.email && (
+                    <div className="invalid-feedback">{errors.email}</div>
+                  )}
                 </fieldset>
                 <fieldset className="position-relative">
                   <label className="fw-semibold body-md-2">
@@ -92,7 +125,7 @@ export default function Login() {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
-                    required
+                    className={errors.password ? "is-invalid" : ""}
                   />
                   <span
                     className="position-absolute end-0 icon-eye-top translate-middle-y pe-3 cursor-pointer"
@@ -115,6 +148,9 @@ export default function Login() {
                       </svg>
                     )}
                   </span>
+                  {errors.password && (
+                    <div className="invalid-feedback">{errors.password}</div>
+                  )}
                 </fieldset>
                 <div className="d-flex justify-content-between align-items-center">
                   <div className="form-check">
@@ -142,7 +178,7 @@ export default function Login() {
               </div>
               <button type="submit" className="tf-btn w-100 text-white" disabled={loading}>
                 {loading ? (
-                  <div >
+                  <div>
                     Processing...{" "}
                     <div className="spinner-border spinner-border-sm text-white" role="status">
                       <span className="visually-hidden">Loading...</span>

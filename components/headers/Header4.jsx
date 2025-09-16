@@ -31,7 +31,7 @@ export default function Header4({ fullWidth = false }) {
             <div className=" col-lg-2 col-6 d-flex align-items-center justify-content-end">
               <div className="header-right">
                 <ul className="nav-icon style-2">
-                  <li className="nav-account">
+                  {/* <li className="nav-account">
                     <a
                       href="#log"
                       data-bs-toggle="modal"
@@ -61,7 +61,7 @@ export default function Header4({ fullWidth = false }) {
                       </span>
                       <p className="body-small">Sign in</p>
                     </a>
-                  </li>
+                  </li> */}
                   <li className="nav-shop-cart">
                     <a
                       href="#shoppingCart"

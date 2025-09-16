@@ -1,17 +1,21 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { AuthContext } from "@/context/AuthContext";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function Checkout() {
+  const { user, token } = useContext(AuthContext);
   const [cartData, setCartData] = useState(null);
   const [errors, setErrors] = useState({});
   const [selectedCity, setSelectedCity] = useState("Select");
   const [areas, setAreas] = useState([]);
+  const [useDefaultAddress, setUseDefaultAddress] = useState(false);
+  const [defaultAddress, setDefaultAddress] = useState(null);
   const router = useRouter();
 
   const emailRef = useRef(null);
@@ -56,6 +60,43 @@ export default function Checkout() {
   }, []);
 
   useEffect(() => {
+    if (user && token) {
+      emailRef.current.value = user.email;
+      phoneRef.current.value = user.phone || "";
+      firstNameRef.current.value = user.firstName || "";
+      lastNameRef.current.value = user.lastName || "";
+      cnicRef.current.value = user.cnic || "";
+
+      const fetchDefaultAddress = async () => {
+        try {
+          const res = await fetch(`${BACKEND_URL}/api/customer/addresses`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            const addresses = await res.json();
+            const defaultAddr = addresses.find((addr) => addr.isDefault);
+            if (defaultAddr) {
+              setDefaultAddress(defaultAddr);
+              setUseDefaultAddress(true);
+              addressRef.current.value = defaultAddr.address1;
+              const city = defaultAddr.city;
+              if (cityAreaMap[city]) {
+                setSelectedCity(city);
+                setAreas(cityAreaMap[city]);
+                cityRef.current.value = city;
+                areaRef.current.value = defaultAddr.area || "Select";
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching default address:", error);
+        }
+      };
+      fetchDefaultAddress();
+    }
+  }, [user, token]);
+
+  useEffect(() => {
     const data = Cookies.get("cartData");
     if (!data) {
       router.push("/shop-cart");
@@ -68,17 +109,37 @@ export default function Checkout() {
   };
 
   const handleCityChange = (e) => {
-    const city = e.target.value;
-    setSelectedCity(city);
-    if (city === "Select" || !cityAreaMap[city]) {
-      setAreas([]);
-      areaRef.current.value = "Select";
-    } else {
-      setAreas(cityAreaMap[city]);
-      areaRef.current.value = "Select";
+    if (!useDefaultAddress) {
+      const city = e.target.value;
+      setSelectedCity(city);
+      if (city === "Select" || !cityAreaMap[city]) {
+        setAreas([]);
+        areaRef.current.value = "Select";
+      } else {
+        setAreas(cityAreaMap[city]);
+        areaRef.current.value = "Select";
+      }
+      validateField("city", city);
+      setErrors((prev) => ({ ...prev, area: null }));
     }
-    validateField("city", city);
-    setErrors((prev) => ({ ...prev, area: null }));
+  };
+
+  const handleDefaultAddressChange = (e) => {
+    const isChecked = e.target.checked;
+    setUseDefaultAddress(isChecked);
+    if (isChecked && defaultAddress) {
+      addressRef.current.value = defaultAddress.address1;
+      cityRef.current.value = defaultAddress.city;
+      areaRef.current.value = defaultAddress.area || "Select";
+      setSelectedCity(defaultAddress.city);
+      setAreas(cityAreaMap[defaultAddress.city] || []);
+    } else {
+      addressRef.current.value = "";
+      cityRef.current.value = "Select";
+      areaRef.current.value = "Select";
+      setSelectedCity("Select");
+      setAreas([]);
+    }
   };
 
   const validateField = (fieldName, value) => {
@@ -175,96 +236,95 @@ export default function Checkout() {
   };
 
   const handlePlaceOrder = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Validate cartData
-  if (!cartData || !cartData.productName || !cartData.selectedPlan) {
-    setErrors({ api: "Cart data is incomplete or missing" });
-    return;
-  }
-  const { productName, selectedPlan } = cartData;
-  const requiredPlanFields = ["totalPrice", "advance", "monthlyAmount", "months"];
-  for (const field of requiredPlanFields) {
-    if (
-      selectedPlan[field] === undefined ||
-      selectedPlan[field] === null ||
-      isNaN(selectedPlan[field]) ||
-      selectedPlan[field] < 0
-    ) {
-      setErrors({ api: `Invalid plan data: ${field} is missing or invalid` });
+    if (!cartData || !cartData.productName || !cartData.selectedPlan) {
+      setErrors({ api: "Cart data is incomplete or missing" });
       return;
     }
-  }
+    const { productName, selectedPlan } = cartData;
+    const requiredPlanFields = ["totalPrice", "advance", "monthlyAmount", "months"];
+    for (const field of requiredPlanFields) {
+      if (
+        selectedPlan[field] === undefined ||
+        selectedPlan[field] === null ||
+        isNaN(selectedPlan[field]) ||
+        selectedPlan[field] < 0
+      ) {
+        setErrors({ api: `Invalid plan data: ${field} is missing or invalid` });
+        return;
+      }
+    }
 
-  const formData = {
-    email: emailRef.current.value,
-    phone: phoneRef.current.value,
-    firstName: firstNameRef.current.value,
-    lastName: lastNameRef.current.value,
-    cnic: cnicRef.current.value,
-    city: cityRef.current.value,
-    area: areaRef.current.value,
-    address: addressRef.current.value,
-    orderNotes: document.querySelector("textarea").value,
-    paymentMethod: "Advance cash on delivery",
-    productName: productName,
-    productSlug: cartData.productSlug, // Added productSlug
-    totalDealValue: selectedPlan.totalPrice,
-    advanceAmount: selectedPlan.advance,
-    monthlyAmount: selectedPlan.monthlyAmount,
-    months: selectedPlan.months,
-  };
-
-  const newErrors = validateForm(formData);
-  setErrors(newErrors);
-
-  if (Object.keys(newErrors).length > 0) {
-    const firstErrorField = Object.keys(newErrors)[0];
-    const fieldRefs = {
-      email: emailRef,
-      phone: phoneRef,
-      firstName: firstNameRef,
-      lastName: lastNameRef,
-      cnic: cnicRef,
-      city: cityRef,
-      area: areaRef,
-      address: addressRef,
+    const formData = {
+      email: emailRef.current.value,
+      phone: phoneRef.current.value,
+      firstName: firstNameRef.current.value,
+      lastName: lastNameRef.current.value,
+      cnic: cnicRef.current.value,
+      city: cityRef.current.value,
+      area: areaRef.current.value,
+      address: addressRef.current.value,
+      orderNotes: document.querySelector("textarea").value,
+      paymentMethod: "Advance cash on delivery",
+      productName: productName,
+      totalDealValue: selectedPlan.totalPrice,
+      advanceAmount: selectedPlan.advance,
+      monthlyAmount: selectedPlan.monthlyAmount,
+      months: selectedPlan.months,
+      customerID: user ? user.customerId : null,
     };
-    fieldRefs[firstErrorField]?.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
-    return;
-  }
 
-  try {
-    const response = await fetch(`${BACKEND_URL}/api/order`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
+    const newErrors = validateForm(formData);
+    setErrors(newErrors);
 
-    if (response.ok) {
-      const orderData = await response.json();
-      sessionStorage.setItem("orderData", JSON.stringify(orderData));
-      Cookies.remove("cartData", { path: "/" });
-      router.push("/order-details");
-    } else {
-      const errorData = await response.json();
-      console.error("Error:", errorData);
+    if (Object.keys(newErrors).length > 0) {
+      const firstErrorField = Object.keys(newErrors)[0];
+      const fieldRefs = {
+        email: emailRef,
+        phone: phoneRef,
+        firstName: firstNameRef,
+        lastName: lastNameRef,
+        cnic: cnicRef,
+        city: cityRef,
+        area: areaRef,
+        address: addressRef,
+      };
+      fieldRefs[firstErrorField]?.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const orderData = await response.json();
+        sessionStorage.setItem("orderData", JSON.stringify(orderData));
+        Cookies.remove("cartData", { path: "/" });
+        router.push("/order-details");
+      } else {
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        setErrors({
+          api: errorData.error || "Failed to create order",
+          details: errorData.details,
+        });
+      }
+    } catch (error) {
+      console.error("Network error:", error);
       setErrors({
-        api: errorData.error || "Failed to create order",
-        details: errorData.details,
+        api: "Failed to connect to the server",
+        details: error.message,
       });
     }
-  } catch (error) {
-    console.error("Network error:", error);
-    setErrors({
-      api: "Failed to connect to the server",
-      details: error.message,
-    });
-  }
-};
+  };
 
   return (
     <section className="tf-sp-2">
@@ -390,44 +450,85 @@ export default function Checkout() {
                     <p className="caption text-danger">{errors.cnic}</p>
                   )}
                 </fieldset>
+                {defaultAddress && (
+                  <div className="tf-cart-checkbox mb-3">
+                    <input
+                      type="checkbox"
+                      name="use_default_address"
+                      className="tf-check"
+                      id="useDefaultAddress"
+                      checked={useDefaultAddress}
+                      onChange={handleDefaultAddressChange}
+                    />
+                    <label htmlFor="useDefaultAddress">Use default address</label>
+                  </div>
+                )}
                 <div className="cols">
                   <fieldset>
                     <label>
                       City <span className="text-primary">*</span>
                     </label>
-                    <div className="tf-select">
-                      <select ref={cityRef} onChange={handleCityChange}>
-                        <option>Select</option>
-                        <option>Alabam</option>
-                        <option>Alaska</option>
-                        <option>California</option>
-                        <option>Georgia</option>
-                        <option>Washington</option>
-                      </select>
-                      {errors.city && (
-                        <p className="caption text-danger">{errors.city}</p>
-                      )}
-                    </div>
+                    {useDefaultAddress && defaultAddress ? (
+                      <input
+                        type="text"
+                        ref={cityRef}
+                        value={defaultAddress.city}
+                        readOnly
+                        disabled
+                        className="def"
+                        onChange={(e) => validateField("city", e.target.value)}
+                      />
+                    ) : (
+                      <div className="tf-select">
+                        <select
+                          ref={cityRef}
+                          value={selectedCity}
+                          onChange={handleCityChange}
+                        >
+                          <option>Select</option>
+                          <option>Alabam</option>
+                          <option>Alaska</option>
+                          <option>California</option>
+                          <option>Georgia</option>
+                          <option>Washington</option>
+                        </select>
+                      </div>
+                    )}
+                    {errors.city && (
+                      <p className="caption text-danger">{errors.city}</p>
+                    )}
                   </fieldset>
                   <fieldset>
                     <label>
                       Area <span className="text-primary">*</span>
                     </label>
-                    <div className="tf-select">
-                      <select
+                    {useDefaultAddress && defaultAddress ? (
+                      <input
+                        type="text"
                         ref={areaRef}
-                        disabled={selectedCity === "Select" || !areas.length}
+                        value={defaultAddress.area || ""}
+                        readOnly
+                        disabled
+                        className="def"
                         onChange={(e) => validateField("area", e.target.value)}
-                      >
-                        <option>Select</option>
-                        {areas.map((area, index) => (
-                          <option key={index}>{area}</option>
-                        ))}
-                      </select>
-                      {errors.area && (
-                        <p className="caption text-danger">{errors.area}</p>
-                      )}
-                    </div>
+                      />
+                    ) : (
+                      <div className="tf-select">
+                        <select
+                          ref={areaRef}
+                          disabled={selectedCity === "Select" || !areas.length}
+                          onChange={(e) => validateField("area", e.target.value)}
+                        >
+                          <option>Select</option>
+                          {areas.map((area, index) => (
+                            <option key={index}>{area}</option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                    {errors.area && (
+                      <p className="caption text-danger">{errors.area}</p>
+                    )}
                   </fieldset>
                 </div>
                 <fieldset>
@@ -439,6 +540,7 @@ export default function Checkout() {
                     placeholder="Your detailed address"
                     ref={addressRef}
                     required
+                    readOnly={useDefaultAddress && defaultAddress}
                     onChange={(e) => validateField("address", e.target.value)}
                   />
                   {errors.address && (

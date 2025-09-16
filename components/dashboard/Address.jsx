@@ -1,61 +1,103 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { AuthContext } from "@/context/AuthContext";
+import { toast } from "react-toastify";
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function Address() {
+  const { token, user } = useContext(AuthContext);
   const [showAddAddressForm, setShowAddAddressForm] = useState(false);
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      title: "8500 Lorem Street",
-      firstName: "Themesflat",
-      lastName: "",
-      company: "Company",
-      address1: "8500 Lorem Street",
-      city: "Punchbowl",
-      region: "Chicago",
-      zipCode: "55030",
-      phone: "+8(800) 123 4567",
-      isDefault: true,
-    },
-    {
-      id: 2,
-      title: "17 Yarran st",
-      firstName: "Onsus",
-      lastName: "",
-      company: "Company",
-      address1: "17 Yarran st",
-      city: "Count",
-      region: "Australia",
-      zipCode: "9226",
-      phone: "+6(800) 1234 3435",
-      isDefault: false,
-    },
-  ]);
+  const [addresses, setAddresses] = useState([]);
   const [editingAddressId, setEditingAddressId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [addAddressLoading, setAddAddressLoading] = useState(false);
+  const [updateAddressLoading, setUpdateAddressLoading] = useState(false);
+  const [deleteAddressLoading, setDeleteAddressLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [newAddressErrors, setNewAddressErrors] = useState({});
+  const [editAddressErrors, setEditAddressErrors] = useState({});
+  const [selectedCityNew, setSelectedCityNew] = useState("Select");
+  const [areasNew, setAreasNew] = useState([]);
+  const [selectedCityEdit, setSelectedCityEdit] = useState("Select");
+  const [areasEdit, setAreasEdit] = useState([]);
+
+  const cityAreaMap = {
+    Alabam: ["Downtown Alabam", "Alabam Suburbs", "North Alabam"],
+    Alaska: ["Anchorage", "Fairbanks", "Juneau"],
+    California: ["Los Angeles", "San Francisco", "San Diego"],
+    Georgia: ["Atlanta", "Savannah", "Augusta"],
+    Washington: ["Seattle", "Spokane", "Tacoma"],
+  };
 
   const [newAddress, setNewAddress] = useState({
-    firstName: "",
-    lastName: "",
-    company: "",
     address1: "",
     city: "",
-    region: "",
-    zipCode: "",
-    phone: "",
+    area: "",
     isDefault: false,
   });
 
   const [editAddressData, setEditAddressData] = useState({
-    firstName: "",
-    lastName: "",
-    company: "",
     address1: "",
     city: "",
-    region: "",
-    zipCode: "",
-    phone: "",
+    area: "",
     isDefault: false,
   });
+
+  useEffect(() => {
+    if (user) {
+      fetchAddresses();
+    } else {
+      setLoading(false);
+      setError("Please log in to view addresses");
+    }
+  }, [token]);
+
+  const fetchAddresses = async () => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/customer/addresses`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAddresses(data);
+      } else {
+        setError("Failed to load addresses");
+      }
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const validateAddress = (formData, formType = "new") => {
+    const newErrors = {};
+
+    // Address1 validation
+    if (!formData.address1.trim()) {
+      newErrors.address1 = "Address line 1 is required";
+    } else if (formData.address1.length < 5) {
+      newErrors.address1 = "Address line 1 must be at least 5 characters long";
+    }
+
+    // City validation
+    if (!formData.city || formData.city === "Select") {
+      newErrors.city = "Please select a city";
+    }
+
+    // Area validation
+    if (!formData.area) {
+      newErrors.area = "Please select an area";
+    }
+
+    if (formType === "new") {
+      setNewAddressErrors(newErrors);
+    } else {
+      setEditAddressErrors(newErrors);
+    }
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleShowAddAddressForm = () => {
     setShowAddAddressForm(true);
@@ -64,16 +106,14 @@ export default function Address() {
   const handleHideAddAddressForm = () => {
     setShowAddAddressForm(false);
     setNewAddress({
-      firstName: "",
-      lastName: "",
-      company: "",
       address1: "",
       city: "",
-      region: "",
-      zipCode: "",
-      phone: "",
+      area: "",
       isDefault: false,
     });
+    setNewAddressErrors({});
+    setSelectedCityNew("Select");
+    setAreasNew([]);
   };
 
   const handleInputChange = (e, formType = "new") => {
@@ -82,40 +122,60 @@ export default function Address() {
 
     if (formType === "new") {
       setNewAddress((prev) => ({ ...prev, [id]: newValue }));
+      setNewAddressErrors((prev) => ({ ...prev, [id]: "" }));
     } else {
       setEditAddressData((prev) => ({ ...prev, [id]: newValue }));
+      setEditAddressErrors((prev) => ({ ...prev, [id]: "" }));
     }
   };
 
-  const handleAddAddressSubmit = (e) => {
-    e.preventDefault();
+  const handleCityChangeNew = (e) => {
+    const city = e.target.value;
+    setSelectedCityNew(city);
+    setAreasNew(cityAreaMap[city] || []);
+    setNewAddress((prev) => ({ ...prev, city, area: "" }));
+    setNewAddressErrors((prev) => ({ ...prev, city: "", area: "" }));
+  };
 
-    // Basic validation
-    if (
-      !newAddress.firstName ||
-      !newAddress.lastName ||
-      !newAddress.address1 ||
-      !newAddress.city ||
-      !newAddress.region ||
-      !newAddress.zipCode ||
-      !newAddress.phone
-    ) {
-      alert("Please fill in all required fields.");
+  const handleCityChangeEdit = (e) => {
+    const city = e.target.value;
+    setSelectedCityEdit(city);
+    setAreasEdit(cityAreaMap[city] || []);
+    setEditAddressData((prev) => ({ ...prev, city, area: "" }));
+    setEditAddressErrors((prev) => ({ ...prev, city: "", area: "" }));
+  };
+
+  const handleAddAddressSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    if (!validateAddress(newAddress, "new")) {
       return;
     }
 
-    const newId =
-      addresses.length > 0
-        ? Math.max(...addresses.map((address) => address.id)) + 1
-        : 1;
-    const newAddressWithId = {
-      ...newAddress,
-      id: newId,
-      title: newAddress.address1,
-    };
-
-    setAddresses((prev) => [...prev, newAddressWithId]);
-    handleHideAddAddressForm();
+    setAddAddressLoading(true);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/customer/addresses`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(newAddress),
+      });
+      if (res.ok) {
+        await fetchAddresses();
+        handleHideAddAddressForm();
+        toast.success("Address added successfully");
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Failed to add address");
+      }
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setAddAddressLoading(false);
+    }
   };
 
   const handleEditAddress = (id) => {
@@ -123,157 +183,142 @@ export default function Address() {
     const addressToEdit = addresses.find((address) => address.id === id);
     if (addressToEdit) {
       setEditAddressData({
-        firstName: addressToEdit.firstName,
-        lastName: addressToEdit.lastName,
-        company: addressToEdit.company,
         address1: addressToEdit.address1,
         city: addressToEdit.city,
-        region: addressToEdit.region,
-        zipCode: addressToEdit.zipCode,
-        phone: addressToEdit.phone,
+        area: addressToEdit.area,
         isDefault: addressToEdit.isDefault,
       });
+      setSelectedCityEdit(addressToEdit.city);
+      setAreasEdit(cityAreaMap[addressToEdit.city] || []);
     }
   };
 
-  const handleUpdateAddressSubmit = (e) => {
+  const handleUpdateAddressSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
 
-    // Basic validation
-    if (
-      !editAddressData.firstName ||
-      !editAddressData.lastName ||
-      !editAddressData.address1 ||
-      !editAddressData.city ||
-      !editAddressData.region ||
-      !editAddressData.zipCode ||
-      !editAddressData.phone
-    ) {
-      alert("Please fill in all required fields for the edited address.");
+    if (!validateAddress(editAddressData, "edit")) {
       return;
     }
 
-    setAddresses((prev) =>
-      prev.map((address) =>
-        address.id === editingAddressId
-          ? { ...address, ...editAddressData, title: editAddressData.address1 }
-          : address
-      )
-    );
-    setEditingAddressId(null);
+    setUpdateAddressLoading(true);
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/customer/addresses/${editingAddressId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(editAddressData),
+      });
+      if (res.ok) {
+        await fetchAddresses();
+        setEditingAddressId(null);
+        toast.success("Address updated successfully");
+      } else {
+        const data = await res.json();
+        toast.error(data.error || "Failed to update address");
+      }
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setUpdateAddressLoading(false);
+    }
   };
 
   const handleCancelEditAddress = () => {
     setEditingAddressId(null);
+    setEditAddressErrors({});
   };
 
-  const handleDeleteAddress = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this address?"
-    );
-    if (confirmDelete) {
-      setAddresses((prev) => prev.filter((address) => address.id !== id));
-    }
+  const handleDeleteAddress = async (id) => {
+    setDeleteAddressLoading(true);
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/customer/addresses/${id}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          await fetchAddresses();
+          toast.success("Address deleted successfully");
+        } else {
+          toast.error("Failed to delete address");
+        }
+      } catch (err) {
+        setError("Network error");
+      } finally {
+        setDeleteAddressLoading(false);
+      }
   };
+  if (error) return <div className="text-danger">{error}</div>;
 
   return (
     <div className="my-account-content account-address">
-      <h4 className="fw-semibold mb-20">Your addresses ({addresses.length})</h4>
-      <div className="widget-inner-address ">
-        <button
-          className="tf-btn btn-add-address"
-          onClick={handleShowAddAddressForm}
-        >
+      <h4 className="fw-semibold mb-20">Your addresses ({addresses.length || 0})</h4>
+      <div className="widget-inner-address">
+        <button className="tf-btn btn-add-address" onClick={handleShowAddAddressForm}>
           <span className="text-white">Add new address</span>
         </button>
 
         <form
-          action="#"
           className="wd-form-address show-form-address mb-20"
           style={{ display: showAddAddressForm ? "block" : "none" }}
           onSubmit={handleAddAddressSubmit}
         >
           <div className="form-content">
-            <div className="cols">
-              <fieldset>
-                <label htmlFor="firstName">First Name</label>
-                <input
-                  type="text"
-                  id="firstName"
-                  required
-                  value={newAddress.firstName}
-                  onChange={(e) => handleInputChange(e, "new")}
-                />
-              </fieldset>
-              <fieldset>
-                <label htmlFor="lastName">Last Name</label>
-                <input
-                  type="text"
-                  id="lastName"
-                  required
-                  value={newAddress.lastName}
-                  onChange={(e) => handleInputChange(e, "new")}
-                />
-              </fieldset>
-            </div>
             <fieldset>
-              <label htmlFor="company">Company</label>
-              <input
-                type="text"
-                id="company"
-                value={newAddress.company}
-                onChange={(e) => handleInputChange(e, "new")}
-              />
-            </fieldset>
-            <fieldset>
-              <label htmlFor="address1">Address 1</label>
+              <label htmlFor="address1">Address 1 <span className="text-primary">*</span></label>
               <input
                 type="text"
                 id="address1"
-                required
                 value={newAddress.address1}
                 onChange={(e) => handleInputChange(e, "new")}
+                className={newAddressErrors.address1 ? "is-invalid" : ""}
               />
+              {newAddressErrors.address1 && (
+                <div className="invalid-feedback">{newAddressErrors.address1}</div>
+              )}
             </fieldset>
             <fieldset>
-              <label htmlFor="city">City</label>
-              <input
-                type="text"
-                id="city"
-                required
-                value={newAddress.city}
-                onChange={(e) => handleInputChange(e, "new")}
-              />
+              <label htmlFor="city">City <span className="text-primary">*</span></label>
+              <div className="tf-select">
+                <select
+                  id="city"
+                  value={selectedCityNew}
+                  onChange={handleCityChangeNew}
+                  className={newAddressErrors.city ? "is-invalid" : ""}
+                >
+                  <option value="Select">Select</option>
+                  <option value="Alabam">Alabam</option>
+                  <option value="Alaska">Alaska</option>
+                  <option value="California">California</option>
+                  <option value="Georgia">Georgia</option>
+                  <option value="Washington">Washington</option>
+                </select>
+                {newAddressErrors.city && (
+                  <div className="invalid-feedback">{newAddressErrors.city}</div>
+                )}
+              </div>
             </fieldset>
             <fieldset>
-              <label htmlFor="region">Country/region</label>
-              <input
-                type="text"
-                id="region"
-                required
-                value={newAddress.region}
-                onChange={(e) => handleInputChange(e, "new")}
-              />
-            </fieldset>
-            <fieldset>
-              <label htmlFor="zipCode">Postal/ZIP code</label>
-              <input
-                type="text"
-                id="zipCode"
-                required
-                value={newAddress.zipCode}
-                onChange={(e) => handleInputChange(e, "new")}
-              />
-            </fieldset>
-            <fieldset>
-              <label htmlFor="phone">Phone</label>
-              <input
-                type="text"
-                id="phone"
-                required
-                value={newAddress.phone}
-                onChange={(e) => handleInputChange(e, "new")}
-              />
+              <label htmlFor="area">Area <span className="text-primary">*</span></label>
+              <div className="tf-select">
+                <select
+                  id="area"
+                  disabled={selectedCityNew === "Select" || areasNew.length === 0}
+                  value={newAddress.area}
+                  onChange={(e) => handleInputChange(e, "new")}
+                  className={newAddressErrors.area ? "is-invalid" : ""}
+                >
+                  <option value="">Select Area</option>
+                  {areasNew.map((area) => (
+                    <option key={area} value={area}>{area}</option>
+                  ))}
+                </select>
+                {newAddressErrors.area && (
+                  <div className="invalid-feedback">{newAddressErrors.area}</div>
+                )}
+              </div>
             </fieldset>
             <div className="tf-cart-checkbox">
               <input
@@ -288,8 +333,17 @@ export default function Address() {
             </div>
           </div>
           <div className="box-btn">
-            <button className="tf-btn btn-large" type="submit">
-              <span className="text-white">Update</span>
+            <button className="tf-btn btn-large text-white" type="submit" disabled={addAddressLoading}>
+              {addAddressLoading ? (
+                <div>
+                  Processing...{" "}
+                  <div className="spinner-border spinner-border-sm text-white" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : (
+                <span className="text-white">Add Address</span>
+              )}
             </button>
             <button
               type="button"
@@ -301,136 +355,118 @@ export default function Address() {
           </div>
         </form>
 
-        <ul className="list-account-address tf-grid-layout md-col-2">
-          {addresses.map((address) => (
-            <li
-              className={`account-address-item ${
-                editingAddressId === address.id ? "editing" : ""
-              }`}
-              key={address.id}
-            >
-              <p className="title title-sidebar fw-semibold">{address.title}</p>
-              <div className="info-detail">
-                <div className="box-infor">
-                  <p className="title-sidebar">
-                    {address.firstName} {address.lastName}
-                  </p>
-                  <p className="title-sidebar">{address.company}</p>
-                  <p className="title-sidebar">{address.address1}</p>
-                  <p className="title-sidebar">{address.city}</p>
-                  <p className="title-sidebar">{address.region}</p>
-                  <p className="title-sidebar">{address.zipCode}</p>
-                  <p className="title-sidebar">{address.phone}</p>
+        {loading ? 
+          <div className="p-4 d-flex justify-content-center align-items-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          :
+          <ul className="list-account-address tf-grid-layout md-col-2">
+            {addresses.map((address, index) => (
+              <li
+                className={`account-address-item ${editingAddressId === address.id ? "editing" : ""}`}
+                key={address.id}
+              >
+                <p className="title title-sidebar fw-semibold">
+                  Address {index + 1} {address.isDefault && "(Default)"}
+                </p>
+                <div className="info-detail">
+                  <div className="box-infor">
+                    <p className="title-sidebar"><strong>Address:</strong> {address.address1}</p>
+                    <p className="title-sidebar"><strong>City:</strong> {address.city}</p>
+                    {address.area && <p className="title-sidebar"><strong>Area:</strong> {address.area}</p>}
+                  </div>
+                  <div className="box-btn">
+                    <button
+                      className="tf-btn btn-large btn-edit-address"
+                      onClick={() => handleEditAddress(address.id)}
+                      disabled={editingAddressId !== null}
+                    >
+                      <span className="text-white">Edit</span>
+                    </button>
+                    <button
+                      className="tf-btn btn-large btn-delete-address text-white"
+                      onClick={() => handleDeleteAddress(address.id)}
+                      disabled={editingAddressId !== null}
+                    >
+                      {deleteAddressLoading ? (
+                        <div>
+                          Processing...{" "}
+                          <div className="spinner-border spinner-border-sm text-white" role="status">
+                            <span className="visually-hidden">Loading...</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <span className="text-white">Delete</span>
+                      )}
+                    </button>
+                  </div>
                 </div>
-                <div className="box-btn">
-                  <button
-                    className="tf-btn btn-large btn-edit-address"
-                    onClick={() => handleEditAddress(address.id)}
-                    disabled={editingAddressId !== null} // Disable other edit buttons when one is active
-                  >
-                    <span className="text-white">Edit</span>
-                  </button>
-                  <button
-                    className="tf-btn btn-large btn-delete-address"
-                    onClick={() => handleDeleteAddress(address.id)}
-                    disabled={editingAddressId !== null} // Disable delete when edit is active
-                  >
-                    <span className="text-white">Delete</span>
-                  </button>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-
+              </li>
+            ))}
+          </ul>
+          }   
         {editingAddressId && (
           <form
-            action="#"
             className="wd-form-address edit-form-address show"
             style={{ display: "block" }}
             onSubmit={handleUpdateAddressSubmit}
           >
             <div className="form-content">
-              <div className="cols">
-                <fieldset>
-                  <label htmlFor="firstName">First Name</label>
-                  <input
-                    type="text"
-                    id="firstName"
-                    required
-                    value={editAddressData.firstName}
-                    onChange={(e) => handleInputChange(e, "edit")}
-                  />
-                </fieldset>
-                <fieldset>
-                  <label htmlFor="lastName">Last Name</label>
-                  <input
-                    type="text"
-                    id="lastName"
-                    required
-                    value={editAddressData.lastName}
-                    onChange={(e) => handleInputChange(e, "edit")}
-                  />
-                </fieldset>
-              </div>
               <fieldset>
-                <label htmlFor="company">Company</label>
-                <input
-                  type="text"
-                  id="company"
-                  value={editAddressData.company}
-                  onChange={(e) => handleInputChange(e, "edit")}
-                />
-              </fieldset>
-              <fieldset>
-                <label htmlFor="address1">Address 1</label>
+                <label htmlFor="address1">Address 1 <span className="text-primary">*</span></label>
                 <input
                   type="text"
                   id="address1"
-                  required
                   value={editAddressData.address1}
                   onChange={(e) => handleInputChange(e, "edit")}
+                  className={editAddressErrors.address1 ? "is-invalid" : ""}
                 />
+                {editAddressErrors.address1 && (
+                  <div className="invalid-feedback">{editAddressErrors.address1}</div>
+                )}
               </fieldset>
               <fieldset>
-                <label htmlFor="city">City</label>
-                <input
-                  type="text"
-                  id="city"
-                  required
-                  value={editAddressData.city}
-                  onChange={(e) => handleInputChange(e, "edit")}
-                />
+                <label htmlFor="city">City <span className="text-primary">*</span></label>
+                <div className="tf-select">
+                  <select
+                    id="city"
+                    value={selectedCityEdit}
+                    onChange={handleCityChangeEdit}
+                    className={editAddressErrors.city ? "is-invalid" : ""}
+                  >
+                    <option value="Select">Select</option>
+                    <option value="Alabam">Alabam</option>
+                    <option value="Alaska">Alaska</option>
+                    <option value="California">California</option>
+                    <option value="Georgia">Georgia</option>
+                    <option value="Washington">Washington</option>
+                  </select>
+                  {editAddressErrors.city && (
+                    <div className="invalid-feedback">{editAddressErrors.city}</div>
+                  )}
+                </div>
               </fieldset>
               <fieldset>
-                <label htmlFor="region">Country/region</label>
-                <input
-                  type="text"
-                  id="region"
-                  required
-                  value={editAddressData.region}
-                  onChange={(e) => handleInputChange(e, "edit")}
-                />
-              </fieldset>
-              <fieldset>
-                <label htmlFor="zipCode">Postal/ZIP code</label>
-                <input
-                  type="text"
-                  id="zipCode"
-                  required
-                  value={editAddressData.zipCode}
-                  onChange={(e) => handleInputChange(e, "edit")}
-                />
-              </fieldset>
-              <fieldset>
-                <label htmlFor="phone">Phone</label>
-                <input
-                  type="text"
-                  id="phone"
-                  required
-                  value={editAddressData.phone}
-                  onChange={(e) => handleInputChange(e, "edit")}
-                />
+                <label htmlFor="area">Area <span className="text-primary">*</span></label>
+                <div className="tf-select">
+                  <select
+                    id="area"
+                    disabled={selectedCityEdit === "Select" || areasEdit.length === 0}
+                    value={editAddressData.area}
+                    onChange={(e) => handleInputChange(e, "edit")}
+                    className={editAddressErrors.area ? "is-invalid" : ""}
+                  >
+                    <option value="">Select Area</option>
+                    {areasEdit.map((area) => (
+                      <option key={area} value={area}>{area}</option>
+                    ))}
+                  </select>
+                  {editAddressErrors.area && (
+                    <div className="invalid-feedback">{editAddressErrors.area}</div>
+                  )}
+                </div>
               </fieldset>
               <div className="tf-cart-checkbox">
                 <input
@@ -445,8 +481,17 @@ export default function Address() {
               </div>
             </div>
             <div className="box-btn">
-              <button className="tf-btn btn-large" type="submit">
-                <span className="text-white">Update</span>
+              <button className="tf-btn btn-large text-white" type="submit" disabled={updateAddressLoading}>
+                {updateAddressLoading ? (
+                  <div>
+                    Processing...{" "}
+                    <div className="spinner-border spinner-border-sm text-white" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                ) : (
+                  <span className="text-white">Update</span>
+                )}
               </button>
               <button
                 type="button"

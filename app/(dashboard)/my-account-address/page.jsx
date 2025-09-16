@@ -1,9 +1,11 @@
+"use client";
 import Address from "@/components/dashboard/Address";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
 import React from "react";
 import Link from "next/link";
+import ProtectedRoute from "@/components/common/ProtectedRoute";
 
 export default function page() {
   return (
@@ -22,11 +24,12 @@ export default function page() {
               <i className="icon icon-arrow-right" />
             </li>
             <li>
-              <span className="body-small">Account</span>
+              <span className="body-small">Address</span>
             </li>
           </ul>
         </div>
       </div>
+      <ProtectedRoute>
       <section className="tf-sp-2">
         <div className="container">
           <div className="row">
@@ -43,6 +46,7 @@ export default function page() {
           </div>
         </div>
       </section>
+      </ProtectedRoute>
       <Footer1 />
     </>
   );

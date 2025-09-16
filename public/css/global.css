@@ -420,3 +420,11 @@
 .icon-eye-top {
   top: 52px;
 }
+
+.notice {
+  color: red;
+  margin-top: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  font-style: italic;
+}

@@ -91,7 +91,7 @@ export default function SearchForm({
     if (selectedType && selectedSlug) {
       params.append(selectedType, selectedSlug);
     }
-    router.push(`/search?${params.toString()}`);
+    router.push(`/product/search?${params.toString()}`);
   };
 
   return (

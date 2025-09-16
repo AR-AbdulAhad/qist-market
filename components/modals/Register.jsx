@@ -12,16 +12,74 @@ export default function Register() {
     firstName: "",
     lastName: "",
     email: "",
+    cnic: "",
     phone: "",
     password: "",
     confirmPassword: "",
   });
+  const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // First Name validation
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required";
+    }
+    
+    // Last Name validation
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required";
+    }
+    
+    // Email validation
+    if (!formData.email) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+    
+    // CNIC validation (13 digits)
+    if (!formData.cnic) {
+      newErrors.cnic = "CNIC is required";
+    } else if (!/^\d{13}$/.test(formData.cnic)) {
+      newErrors.cnic = "CNIC must be exactly 13 digits";
+    }
+    
+    // Phone validation (starts with 0, 11 digits)
+    if (!formData.phone) {
+      newErrors.phone = "Phone number is required";
+    } else if (!/^0\d{10}$/.test(formData.phone)) {
+      newErrors.phone = "Phone number must start with 0 and be 11 digits";
+    }
+    
+    // Password validation
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters long";
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(formData.password)) {
+      newErrors.password = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+    }
+    
+    // Confirm Password validation
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error for the field being edited
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
@@ -32,18 +90,19 @@ export default function Register() {
       firstName: "",
       lastName: "",
       email: "",
+      cnic: "",
       phone: "",
       password: "",
       confirmPassword: "",
     });
+    setErrors({});
     setShowPassword(false);
     setShowConfirmPassword(false);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
+    if (!validateForm()) {
       return;
     }
     setLoading(true);
@@ -89,8 +148,11 @@ export default function Register() {
                     placeholder="Enter your first name"
                     value={formData.firstName}
                     onChange={handleChange}
-                    required
+                    className={errors.firstName ? "is-invalid" : ""}
                   />
+                  {errors.firstName && (
+                    <div className="invalid-feedback">{errors.firstName}</div>
+                  )}
                 </fieldset>
               </div>
               <div className="form-content">
@@ -104,8 +166,11 @@ export default function Register() {
                     placeholder="Enter your last name"
                     value={formData.lastName}
                     onChange={handleChange}
-                    required
+                    className={errors.lastName ? "is-invalid" : ""}
                   />
+                  {errors.lastName && (
+                    <div className="invalid-feedback">{errors.lastName}</div>
+                  )}
                 </fieldset>
               </div>
               <div className="form-content">
@@ -119,8 +184,29 @@ export default function Register() {
                     placeholder="Enter your valid email"
                     value={formData.email}
                     onChange={handleChange}
-                    required
+                    className={errors.email ? "is-invalid" : ""}
                   />
+                  {errors.email && (
+                    <div className="invalid-feedback">{errors.email}</div>
+                  )}
+                </fieldset>
+              </div>
+              <div className="form-content">
+                <fieldset>
+                  <label className="fw-semibold body-md-2">
+                    CNIC Number <span className="text-primary">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    name="cnic"
+                    placeholder="Enter your cnic number"
+                    value={formData.cnic}
+                    onChange={handleChange}
+                    className={errors.cnic ? "is-invalid" : ""}
+                  />
+                  {errors.cnic && (
+                    <div className="invalid-feedback">{errors.cnic}</div>
+                  )}
                 </fieldset>
               </div>
               <div className="form-content">
@@ -134,8 +220,11 @@ export default function Register() {
                     placeholder="Enter your phone number"
                     value={formData.phone}
                     onChange={handleChange}
-                    required
+                    className={errors.phone ? "is-invalid" : ""}
                   />
+                  {errors.phone && (
+                    <div className="invalid-feedback">{errors.phone}</div>
+                  )}
                 </fieldset>
               </div>
               <div className="form-content">
@@ -149,7 +238,7 @@ export default function Register() {
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
-                    required
+                    className={errors.password ? "is-invalid" : ""}
                   />
                   <span
                     className="position-absolute end-0 icon-eye-top translate-middle-y pe-3"
@@ -172,6 +261,9 @@ export default function Register() {
                       </svg>
                     )}
                   </span>
+                  {errors.password && (
+                    <div className="invalid-feedback">{errors.password}</div>
+                  )}
                 </fieldset>
               </div>
               <div className="form-content">
@@ -185,7 +277,7 @@ export default function Register() {
                     placeholder="Enter your confirm password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    required
+                    className={errors.confirmPassword ? "is-invalid" : ""}
                   />
                   <span
                     className="position-absolute end-0 icon-eye-top translate-middle-y pe-3"
@@ -208,11 +300,14 @@ export default function Register() {
                       </svg>
                     )}
                   </span>
+                  {errors.confirmPassword && (
+                    <div className="invalid-feedback">{errors.confirmPassword}</div>
+                  )}
                 </fieldset>
               </div>
               <button type="submit" className="tf-btn w-100 text-white" disabled={loading}>
                 {loading ? (
-                  <div >
+                  <div>
                     Processing...{" "}
                     <div className="spinner-border spinner-border-sm text-white" role="status">
                       <span className="visually-hidden">Loading...</span>

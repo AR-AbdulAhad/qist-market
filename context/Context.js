@@ -45,8 +45,6 @@ export default function Context({ children }) {
       const item = { ...allProducts.find((elm) => elm.id === id), quantity: qty || 1 };
       setCartProducts((prev) => [...prev, item]);
       if (isModal && Modal) {
-        // Open cart modal only if Modal is available
-        // openCartModal(); // Uncomment if you have this function
       }
     }
   };

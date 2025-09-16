@@ -13,12 +13,37 @@ export default function ChangePassword() {
     newPassword: "",
     confirmNewPassword: "",
   });
+  const [errors, setErrors] = useState({});
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    // New Password validation
+    if (!formData.newPassword) {
+      newErrors.newPassword = "New password is required";
+    } else if (formData.newPassword.length < 8) {
+      newErrors.newPassword = "New password must be at least 8 characters long";
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(formData.newPassword)) {
+      newErrors.newPassword = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character";
+    }
+
+    // Confirm New Password validation
+    if (!formData.confirmNewPassword) {
+      newErrors.confirmNewPassword = "Please confirm your new password";
+    } else if (formData.newPassword !== formData.confirmNewPassword) {
+      newErrors.confirmNewPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: "" });
   };
 
   const toggleNewPasswordVisibility = () => setShowNewPassword(!showNewPassword);
@@ -26,6 +51,7 @@ export default function ChangePassword() {
 
   const resetForm = () => {
     setFormData({ newPassword: "", confirmNewPassword: "" });
+    setErrors({});
     setShowNewPassword(false);
     setShowConfirmPassword(false);
   };
@@ -36,8 +62,7 @@ export default function ChangePassword() {
       toast.error("Required information is missing. Please try again from the forgot password step.");
       return;
     }
-    if (formData.newPassword !== formData.confirmNewPassword) {
-      toast.error("Passwords do not match");
+    if (!validateForm()) {
       return;
     }
     setLoading(true);
@@ -88,7 +113,7 @@ export default function ChangePassword() {
                     placeholder="Enter your new password"
                     value={formData.newPassword}
                     onChange={handleChange}
-                    required
+                    className={errors.newPassword ? "is-invalid" : ""}
                   />
                   <span
                     className="position-absolute end-0 icon-eye-top translate-middle-y pe-3"
@@ -111,6 +136,9 @@ export default function ChangePassword() {
                       </svg>
                     )}
                   </span>
+                  {errors.newPassword && (
+                    <div className="invalid-feedback">{errors.newPassword}</div>
+                  )}
                 </fieldset>
               </div>
               <div className="form-content">
@@ -124,7 +152,7 @@ export default function ChangePassword() {
                     placeholder="Confirm your new password"
                     value={formData.confirmNewPassword}
                     onChange={handleChange}
-                    required
+                    className={errors.confirmNewPassword ? "is-invalid" : ""}
                   />
                   <span
                     className="position-absolute end-0 icon-eye-top translate-middle-y pe-3"
@@ -147,11 +175,14 @@ export default function ChangePassword() {
                       </svg>
                     )}
                   </span>
+                  {errors.confirmNewPassword && (
+                    <div className="invalid-feedback">{errors.confirmNewPassword}</div>
+                  )}
                 </fieldset>
               </div>
               <button type="submit" className="tf-btn w-100 text-white" disabled={loading}>
                 {loading ? (
-                  <div >
+                  <div>
                     Processing...{" "}
                     <div className="spinner-border spinner-border-sm text-white" role="status">
                       <span className="visually-hidden">Loading...</span>

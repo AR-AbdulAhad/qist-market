@@ -1,5 +1,3 @@
-import Features2 from "@/components/common/Features2";
-import RecentProducts from "@/components/common/RecentProducts";
 import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
 import OrderTraking from "@/components/shop-cart/OrderTraking";
@@ -30,9 +28,6 @@ export default function page() {
       </div>
 
       <OrderTraking />
-
-      <RecentProducts />
-      <Features2 />
       <Footer1 />
     </>
   );

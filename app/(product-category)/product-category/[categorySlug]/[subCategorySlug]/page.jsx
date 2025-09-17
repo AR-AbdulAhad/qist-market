@@ -1,8 +1,6 @@
 "use client";
 
 import React from "react";
-import RecentProducts from "@/components/common/RecentProducts";
-import Features2 from "@/components/common/Features2";
 import Footer1 from "@/components/footers/Footer1";
 import Link from "next/link";
 import Header4 from "@/components/headers/Header4";

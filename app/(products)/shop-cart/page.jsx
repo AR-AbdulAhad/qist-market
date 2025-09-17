@@ -1,11 +1,9 @@
-import Features2 from "@/components/common/Features2";
-import RecentProducts from "@/components/common/RecentProducts";
 import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
 import ShopCart from "@/components/shop-cart/ShopCart";
-import Testimonials from "@/components/shop-cart/Testimonials";
 import React from "react";
 import Link from "next/link";
+import NewProducts from "@/components/common/NewProducts";
 
 export default function page() {
   return (
@@ -29,9 +27,7 @@ export default function page() {
         </div>
       </div>
       <ShopCart />
-      <Testimonials />
-      <RecentProducts />
-      <Features2 />
+      <NewProducts />
       <Footer1 />
     </>
   );

@@ -1,15 +1,19 @@
+import BlogDetails from "@/components/blogs/BlogDetails";
 import NewProducts from "@/components/common/NewProducts";
 import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
-import Checkout from "@/components/shop-cart/Checkout";
 import Link from "next/link";
 import React from "react";
+// export const metadata = {
+//   title: "Blog Details || Onsus - Multipurpose React Nextjs eCommerce",
+//   description: "Onsus - Multipurpose React Nextjs eCommerce",
+// };
 
 export default function page() {
   return (
     <>
       <Header4 />
-      <div className="tf-sp-3 pb-0">
+      <div className="tf-sp-1">
         <div className="container">
           <ul className="breakcrumbs">
             <li>
@@ -21,14 +25,14 @@ export default function page() {
             <li className="d-flex align-items-center">
               <i className="icon icon-arrow-right" />
             </li>
+
             <li>
-              <span className="body-small"> Check Out</span>
+              <span className="body-small">Blog Details</span>
             </li>
           </ul>
         </div>
       </div>
-
-      <Checkout />
+      <BlogDetails />
       <NewProducts />
       <Footer1 />
     </>

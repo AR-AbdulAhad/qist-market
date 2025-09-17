@@ -1,44 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import axios from "axios";
 export default function Footer1({ fullWidth = false }) {
-  const [success, setSuccess] = useState(true);
-  const [showMessage, setShowMessage] = useState(false);
-  const handleShowMessage = () => {
-    setShowMessage(true);
-    setTimeout(() => {
-      setShowMessage(false);
-    }, 2000);
-  };
-  const sendEmail = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    const email = e.target.email.value;
 
-    try {
-      const response = await axios.post(
-        "https://express-brevomail.vercel.app/api/contacts",
-        {
-          email,
-        }
-      );
-
-      if ([200, 201].includes(response.status)) {
-        e.target.reset(); // Reset the form
-        setSuccess(true); // Set success state
-        handleShowMessage();
-      } else {
-        setSuccess(false); // Handle unexpected responses
-        handleShowMessage();
-      }
-    } catch (error) {
-      console.error("Error:", error.response?.data || "An error occurred");
-      setSuccess(false); // Set error state
-      handleShowMessage();
-      e.target.reset(); // Reset the form
-    }
-  };
   useEffect(() => {
     const headings = document.querySelectorAll(".footer-heading-mobile");
 
@@ -59,13 +24,12 @@ export default function Footer1({ fullWidth = false }) {
       heading.addEventListener("click", toggleOpen);
     });
 
-    // Clean up event listeners when the component unmounts
     return () => {
       headings.forEach((heading) => {
         heading.removeEventListener("click", toggleOpen);
       });
     };
-  }, []); // Empty dependency array means this will run only once on mount
+  }, []);
 
   return (
     <footer className="tf-footer mt-5">
@@ -212,7 +176,7 @@ export default function Footer1({ fullWidth = false }) {
             </div>
           </div>
         </div>
-        <div className="ft-body-center bg-gray">
+        {/* <div className="ft-body-center bg-gray">
           <div className={`container${fullWidth ? "-full" : ""}`}>
             <div className="ft-center justify-content-xxl-between d-flex flex-column">
               <div className="notice text-white justify-content-xxl-between">
@@ -268,7 +232,7 @@ export default function Footer1({ fullWidth = false }) {
               </form>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className="ft-body-bottom">
           <div className={`container${fullWidth ? "-full" : ""}`}>
             <div className="ft-bottom">

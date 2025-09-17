@@ -617,20 +617,6 @@ export default function Checkout() {
                   </div>
                 </div>
               )}
-              <div className="">
-                <p className="body-md-2 fw-semibold sub-type">Discount code</p>
-                <form action="#" className="ip-discount-code style-2">
-                  <input
-                    type="text"
-                    className="def"
-                    placeholder="Your code"
-                    required
-                  />
-                  <button type="submit" className="tf-btn btn-gray-2">
-                    <span>Apply</span>
-                  </button>
-                </form>
-              </div>
               <ul className="sec-total-price">
                 <li>
                   <span className="body-text-3">Advance Amount</span>

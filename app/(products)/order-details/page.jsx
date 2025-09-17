@@ -1,5 +1,4 @@
-import Features2 from "@/components/common/Features2";
-import RecentProducts from "@/components/common/RecentProducts";
+import NewProducts from "@/components/common/NewProducts";
 import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
 
@@ -31,9 +30,7 @@ export default function page() {
       </div>
 
       <OrderDetails />
-
-      <RecentProducts />
-      <Features2 />
+      <NewProducts />
       <Footer1 />
     </>
   );

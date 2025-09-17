@@ -1,6 +1,8 @@
 "use client";
 import React, { createContext, useState, useEffect } from "react";
 import { decodeJwt } from "jose";
+import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 export const AuthContext = createContext();
 
@@ -12,16 +14,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedToken = sessionStorage.getItem("token");
+      const storedToken = Cookies.get("token");
       if (storedToken) {
         try {
           const decoded = decodeJwt(storedToken);
-          const isExpired = decoded.exp * 1000 < Date.now();
-          if (isExpired) {
-            sessionStorage.removeItem("token");
-            setToken(null);
-            setUser(null);
-          } else {
             setToken(storedToken);
             setUser({
               customerId: decoded.customerId,
@@ -31,10 +27,9 @@ export const AuthProvider = ({ children }) => {
               phone: decoded.phone,
               cnic: decoded.cnic,
             });
-          }
         } catch (error) {
           console.error("Error decoding token:", error);
-          sessionStorage.removeItem("token");
+          Cookies.remove("token", { path: "/" });
           setToken(null);
           setUser(null);
         }
@@ -43,9 +38,13 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = () => {
-    sessionStorage.removeItem("token");
+    Cookies.remove("token", { path: "/" });
     setToken(null);
     setUser(null);
+    toast.success("Logout Successfully!")
+    setTimeout(() => {
+      window.location.reload();
+    }, 2000)
   };
 
   const refreshUser = async () => {

@@ -38,7 +38,7 @@ export default function ProductSearchCard({ product }) {
             <AddToCart productSlugName={product.slugName} tooltipClass="tooltip-left" />
           </li>
           <li>
-            <AddToQuickview productId={product.id} tooltipClass="tooltip-left" />
+            <AddToQuickview product={product} tooltipClass="tooltip-left" />
           </li>
         </ul>
       </div>

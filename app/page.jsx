@@ -4,10 +4,13 @@ import Topbar1 from "@/components/headers/Topbar1";
 import Features from "@/components/common/Features";
 import Hero from "@/components/homes/home-1/Hero";
 import Products1 from "@/components/homes/home-1/Products1";
-// import Products4 from "@/components/homes/home-1/Products4";
 import NewProducts from "@/components/common/NewProducts";
 import TopCategoryProducts from "@/components/homes/home-1/TopCategoryProducts";
 
+export const metadata = {
+  title: "Qist Market - Home",
+  robots: "noindex, nofollow",
+};
 
 export default function Home() {
   return (
@@ -17,7 +20,6 @@ export default function Home() {
       <Hero />
       <Features />
       <Products1 />
-      {/* <Products4 /> */}
       <TopCategoryProducts />
       <NewProducts />
       <Footer1 />

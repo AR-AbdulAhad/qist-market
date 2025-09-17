@@ -20,12 +20,10 @@ export default function MobileMenu() {
     return link.href?.split("/")[1] == pathname.split("/")[1];
   };
 
-  // Function to check if a parent menu is active
   const isMenuParentActive = (menu) => {
     return menu.some((elm) => isMenuActive(elm));
   };
 
-  // Fetch categories from the API
   useEffect(() => {
     const fetchCategories = async () => {
       try {

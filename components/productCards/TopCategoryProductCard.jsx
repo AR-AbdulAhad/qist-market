@@ -48,7 +48,7 @@ export default function TopCategoryProductCard({ product, index }) {
             <AddToCart tooltipClass="tooltip-left" productSlugName={productData.slugName} />
           </li>
           <li>
-            <AddToQuickview productId={productData.id} tooltipClass="tooltip-left" />
+            <AddToQuickview product={productData} tooltipClass="tooltip-left" />
           </li>
         </ul>
       </div>

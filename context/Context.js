@@ -1,113 +1,53 @@
 "use client";
+
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { allProducts } from "@/data/products";
 
 const dataContext = createContext();
 export const useContextElement = () => useContext(dataContext);
 
 export default function Context({ children }) {
-  // Existing state for cart, wishlist, and compare
+  // State for cart, wishlist, and quick view
   const [cartProducts, setCartProducts] = useState([]);
-  const [wishList, setWishList] = useState([1, 2, 3]);
-  const [compareItem, setCompareItem] = useState([1, 2, 3, 4]);
-  const [quickViewItem, setQuickViewItem] = useState(allProducts[0]);
-  const [quickAddItem, setQuickAddItem] = useState(1);
-  const [totalPrice, setTotalPrice] = useState(0);
+  const [quickViewItem, setQuickViewItem] = useState(null);
 
   // State for modal management
   const [activeModal, setActiveModal] = useState(null);
   const [modalProps, setModalProps] = useState({});
 
+  // Log quickViewItem updates
+  useEffect(() => {
+    console.log("quickViewItem updated:", quickViewItem);
+  }, [quickViewItem]);
+
   // Dynamically import Bootstrap Modal on the client side
   const [Modal, setModal] = useState(null);
   useEffect(() => {
     if (typeof window !== "undefined") {
-      import("bootstrap/dist/js/bootstrap.esm").then((module) => {
-        setModal(() => module.Modal);
-      });
+      import("bootstrap/dist/js/bootstrap.esm")
+        .then((module) => {
+          setModal(() => module.Modal);
+        })
+        .catch((error) => {
+          console.error("Failed to load Bootstrap Modal:", error);
+        });
     }
   }, []);
 
-  // Existing cart-related logic
-  useEffect(() => {
-    const subtotal = cartProducts.reduce((accumulator, product) => {
-      return accumulator + product.quantity * product.price;
-    }, 0);
-    setTotalPrice(subtotal);
-  }, [cartProducts]);
-
+  // Check if a product is in the cart
   const isAddedToCartProducts = (id) => {
     return !!cartProducts.find((elm) => elm.id === id);
   };
 
-  const addProductToCart = (id, qty, isModal = true) => {
-    if (!isAddedToCartProducts(id)) {
-      const item = { ...allProducts.find((elm) => elm.id === id), quantity: qty || 1 };
+  // Add product to cart
+  const addProductToCart = (product, qty = 1, isModal = true) => {
+    if (!isAddedToCartProducts(product.id)) {
+      const item = { ...product, quantity: qty };
       setCartProducts((prev) => [...prev, item]);
       if (isModal && Modal) {
+        openModal("cartModal");
       }
     }
   };
-
-  const updateQuantity = (id, qty) => {
-    if (isAddedToCartProducts(id) && qty >= 1) {
-      setCartProducts((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, quantity: qty } : item))
-      );
-    }
-  };
-
-  const addToWishlist = (id) => {
-    if (!wishList.includes(id)) {
-      setWishList((prev) => [...prev, id]);
-      // openWishlistModal(); // Uncomment if you have this function
-    } else {
-      setWishList((prev) => prev.filter((elm) => elm !== id));
-    }
-  };
-
-  const removeFromWishlist = (id) => {
-    setWishList((prev) => prev.filter((elm) => elm !== id));
-  };
-
-  const addToCompareItem = (id) => {
-    if (!compareItem.includes(id)) {
-      setCompareItem((prev) => [...prev, id]);
-    }
-  };
-
-  const removeFromCompareItem = (id) => {
-    setCompareItem((prev) => prev.filter((elm) => elm !== id));
-  };
-
-  const isAddedtoWishlist = (id) => wishList.includes(id);
-  const isAddedtoCompareItem = (id) => compareItem.includes(id);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const items = JSON.parse(localStorage.getItem("cartList") || "[]");
-      if (items?.length) setCartProducts(items);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("cartList", JSON.stringify(cartProducts));
-    }
-  }, [cartProducts]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const items = JSON.parse(localStorage.getItem("wishlist") || "[]");
-      if (items?.length) setWishList(items);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("wishlist", JSON.stringify(wishList));
-    }
-  }, [wishList]);
 
   // Modal management
   const closeAllModals = () => {
@@ -124,9 +64,12 @@ export default function Context({ children }) {
 
   const openModal = (modalId, props = {}) => {
     if (typeof window !== "undefined" && Modal) {
+      console.log("Opening modal:", modalId);
       closeAllModals();
       setModalProps(props);
       setActiveModal(modalId);
+    } else {
+      console.error("Modal or window is undefined. Cannot open modal:", modalId);
     }
   };
 
@@ -160,6 +103,8 @@ export default function Context({ children }) {
         return () => {
           modalElement.removeEventListener("hidden.bs.modal", listener);
         };
+      } else {
+        console.error("Modal element not found for ID:", activeModal);
       }
     }
   }, [activeModal, Modal]);
@@ -167,23 +112,10 @@ export default function Context({ children }) {
   const contextElement = {
     cartProducts,
     setCartProducts,
-    totalPrice,
     addProductToCart,
     isAddedToCartProducts,
-    removeFromWishlist,
-    addToWishlist,
-    isAddedtoWishlist,
     quickViewItem,
-    wishList,
     setQuickViewItem,
-    quickAddItem,
-    setQuickAddItem,
-    addToCompareItem,
-    isAddedtoCompareItem,
-    removeFromCompareItem,
-    compareItem,
-    setCompareItem,
-    updateQuantity,
     openModal,
     closeModal,
     modalProps,

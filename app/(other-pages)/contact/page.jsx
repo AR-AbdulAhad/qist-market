@@ -1,9 +1,9 @@
-import RecentProducts from "@/components/common/RecentProducts";
 import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
 import Contact from "@/components/otherPages/Contact";
 import React from "react";
 import Link from "next/link";
+import NewProducts from "@/components/common/NewProducts";
 
 export default function page() {
   return (
@@ -29,7 +29,7 @@ export default function page() {
         </div>
       </div>
       <Contact />
-      <RecentProducts parentClass="tf-sp-2 pt-0" />
+      <NewProducts />
       <Footer1 />
     </>
   );

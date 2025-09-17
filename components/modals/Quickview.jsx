@@ -5,19 +5,14 @@ import Link from "next/link";
 import { useContextElement } from "@/context/Context";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import {
-  FaFacebookF,
-  FaTwitter,
-  FaWhatsapp,
-  FaLinkedinIn,
-} from "react-icons/fa";
+import { FaFacebookF, FaTwitter, FaWhatsapp, FaLinkedinIn } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function Quickview() {
-  const { quickViewItem } = useContextElement();
+  const { quickViewItem, closeModal } = useContextElement();
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -26,6 +21,12 @@ export default function Quickview() {
   const router = useRouter();
 
   const fetchProduct = async () => {
+    if (!quickViewItem?.id) {
+      console.error("No product ID provided for Quickview");
+      setProductData(quickViewItem);
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const response = await fetch(`${BACKEND_URL}/api/product/${quickViewItem.id}`);
@@ -34,7 +35,7 @@ export default function Quickview() {
       }
       const data = await response.json();
       console.log("API Response:", data);
-      setProductData(data);
+      setProductData({ ...quickViewItem, ...data });
     } catch (error) {
       console.error("Error fetching product:", error);
       setProductData(quickViewItem);
@@ -43,34 +44,52 @@ export default function Quickview() {
     }
   };
 
+  // Reset states when quickViewItem changes (for new product)
+  useEffect(() => {
+    if (quickViewItem) {
+      setProductData(null); // Clear old data immediately
+      setLoading(true); // Start loading immediately
+      setSelectedPlan(null);
+      setIsPlanLoading(false);
+      setCurrentImageIndex(0);
+      fetchProduct(); // Fetch new data
+    }
+  }, [quickViewItem]);
+
+  // Attach modal event listeners
   useEffect(() => {
     const modal = document.getElementById("quickView");
     if (modal) {
       const handleModalShow = () => {
+        if (!quickViewItem) {
+          console.warn("quickViewItem is not available yet, waiting...");
+          setLoading(true); // Keep loading if no item
+        }
+      };
+
+      const handleModalHide = () => {
+        // Reset states on modal close to prevent stale data on next open
         setProductData(null);
         setLoading(true);
         setSelectedPlan(null);
         setIsPlanLoading(false);
         setCurrentImageIndex(0);
-        if (quickViewItem?.id) {
-          fetchProduct();
-        }
       };
 
       modal.addEventListener("shown.bs.modal", handleModalShow);
+      modal.addEventListener("hidden.bs.modal", handleModalHide);
+
       return () => {
         modal.removeEventListener("shown.bs.modal", handleModalShow);
+        modal.removeEventListener("hidden.bs.modal", handleModalHide);
       };
     }
-  }, [quickViewItem]);
+  }, []); // Run once on mount
 
   const handleSelectChange = (e) => {
     const planId = e.target.value;
     setIsPlanLoading(true);
-    const plan = productData?.ProductInstallments?.find(
-      (p) => p.id.toString() === planId
-    );
-
+    const plan = productData?.ProductInstallments?.find((p) => p.id.toString() === planId);
     setTimeout(() => {
       setSelectedPlan(plan || null);
       setIsPlanLoading(false);
@@ -78,31 +97,31 @@ export default function Quickview() {
   };
 
   const handleNext = () => {
-      if (productData && selectedPlan) {
-        const cartData = {
-          productId: productData.id,
-          productName: productData.name,
-          productSlug: productData.slugName,
-          imageUrl: productData.ProductImage?.[0]?.url,
-          selectedPlan: {
-            id: selectedPlan.id,
-            totalPrice: selectedPlan.totalPrice,
-            monthlyAmount: selectedPlan.monthlyAmount,
-            months: selectedPlan.months,
-            advance: selectedPlan.advance,
-          },
-        };
-  
-        Cookies.set("cartData", JSON.stringify(cartData), {
-          expires: 7,
-          secure: true,
-          sameSite: "Strict",
-          path: "/",
-        });
-  
-        router.push('/checkout');
-      }
-    };
+    if (productData && selectedPlan) {
+      const cartData = {
+        productId: productData.id,
+        productName: productData.title || productData.name,
+        productSlug: productData.slugName,
+        imageUrl: productData.imgSrc || productData.ProductImage?.[0]?.url,
+        selectedPlan: {
+          id: selectedPlan.id,
+          totalPrice: selectedPlan.totalPrice,
+          monthlyAmount: selectedPlan.monthlyAmount,
+          months: selectedPlan.months,
+          advance: selectedPlan.advance,
+        },
+      };
+
+      Cookies.set("cartData", JSON.stringify(cartData), {
+        expires: 7,
+        secure: true,
+        sameSite: "Strict",
+        path: "/",
+      });
+
+      router.push("/checkout");
+    }
+  };
 
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => {
@@ -125,8 +144,25 @@ export default function Quickview() {
     console.log("Thumbnail clicked, new index:", index);
   };
 
-  const productUrl = `http://localhost:3000/product/${productData?.slugName}`;
-  const quickviewImages = productData?.ProductImage?.map((img) => img.url) || [];
+  const productUrl = `http://localhost:3000/product/${productData?.slugName || quickViewItem?.slugName || ""}`;
+  const quickviewImages = productData?.ProductImage?.map((img) => img.url) || [productData?.imgSrc || quickViewItem?.imgSrc].filter(Boolean);
+
+  if (!quickViewItem && !loading) {
+    return (
+      <div className="modal fade modalCentered modal-def modal-quick-view" id="quickView">
+        <div className="modal-dialog modal-dialog-centered modal-lg">
+          <div className="modal-content flex-md-row">
+            <span className="icon-close icon-close-popup link" data-bs-dismiss="modal" />
+            <div className="container mb-5 mt-4 mx-2">
+              <div className="text-center">
+                <p>No product selected. Please try again.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="modal fade modalCentered modal-def modal-quick-view" id="quickView">
@@ -134,11 +170,11 @@ export default function Quickview() {
         <div className="modal-content flex-md-row">
           <span className="icon-close icon-close-popup link" data-bs-dismiss="modal" />
           <div className="container mb-5 mt-4 mx-2">
-            {/* Breadcrumbs */}
+            {/* Breadcrumbs and the rest of the JSX remain unchanged */}
             <div className="mb-3">
               <ul className="breakcrumbs">
                 <li>
-                  <Link href={`/`} className="body-small link">
+                  <Link href="/" className="body-small link">
                     Home
                   </Link>
                 </li>
@@ -146,7 +182,7 @@ export default function Quickview() {
                   <i className="icon icon-arrow-right" />
                 </li>
                 <li>
-                  <Link href={`/shop`} className="body-small link">
+                  <Link href="/shop" className="body-small link">
                     Shop
                   </Link>
                 </li>
@@ -158,7 +194,7 @@ export default function Quickview() {
                     {loading ? (
                       <Skeleton width={200} height={15} />
                     ) : (
-                      <div>{productData?.name || quickViewItem.title || "Product Name"}</div>
+                      <div>{productData?.title || productData?.name || quickViewItem?.title || "Product Name"}</div>
                     )}
                   </span>
                 </li>
@@ -176,7 +212,7 @@ export default function Quickview() {
                     ) : quickviewImages.length === 1 ? (
                       <div className="single-image tf-product-media-main">
                         <Link
-                          href={`/product-detail/${productData?.slugName || quickViewItem.id}`}
+                          href={`/product-detail/${productData?.slugName || quickViewItem?.slugName || ""}`}
                           className="d-block tf-image-view"
                         >
                           <Image
@@ -192,7 +228,6 @@ export default function Quickview() {
                       </div>
                     ) : (
                       <div className="custom-slider">
-                        {/* Main Image */}
                         <div className="main-image-container">
                           {quickviewImages.length > 1 && (
                             <>
@@ -213,7 +248,7 @@ export default function Quickview() {
                             </>
                           )}
                           <Link
-                            href={`/product-detail/${productData?.slugName || quickViewItem.id}`}
+                            href={`/product-detail/${productData?.slugName || quickViewItem?.slugName || ""}`}
                             className="d-block tf-image-view"
                           >
                             <Image
@@ -227,7 +262,6 @@ export default function Quickview() {
                             />
                           </Link>
                         </div>
-                        {/* Thumbnails */}
                         {quickviewImages.length > 1 && (
                           <div className="thumbnail-container">
                             {quickviewImages.map((elm, i) => (
@@ -254,7 +288,6 @@ export default function Quickview() {
                 </div>
               </div>
 
-              {/* Rest of the component */}
               <div className="col-md-6">
                 <div className="tf-product-info-wrap position-relative">
                   <div className="tf-product-info-list other-image-zoom">
@@ -265,25 +298,25 @@ export default function Quickview() {
                         ) : (
                           <p className="caption">
                             Categories:{" "}
-                            <Link href={`/product-category`} className="link text-secondary">
-                              {productData.category_name || "Consumer Electronics"}
+                            <Link href="/product-category" className="link text-secondary">
+                              {productData?.category || quickViewItem?.category || "Consumer Electronics"}
                             </Link>
-                            {productData.subcategory_name && (
+                            {productData?.subCategory || quickViewItem?.subCategory ? (
                               <>
                                 ,{" "}
-                                <Link href={`/product-category`} className="link text-secondary">
-                                  {productData.subcategory_name}
+                                <Link href="/product-category" className="link text-secondary">
+                                  {productData?.subCategory || quickViewItem?.subCategory}
                                 </Link>
                               </>
-                            )}
+                            ) : null}
                           </p>
                         )}
                         {loading ? (
                           <Skeleton width={350} height={25} />
                         ) : (
                           <h5 className="product-info-name fw-semibold d-flex flex-column gap-3">
-                            {productData.name}
-                            {productData.isDeal && (
+                            {productData?.title || productData?.name || quickViewItem?.title || "Product Name"}
+                            {productData?.isDeal && (
                               <span data-wow-delay={0}>
                                 <h5 className="fw-semibold fs-5 text-primary flat-title-has-icon">
                                   <span className="icon">
@@ -300,8 +333,8 @@ export default function Quickview() {
                             {loading ? (
                               <Skeleton width={200} height={15} />
                             ) : (
-                              <Link href={`/shop-default`} className="caption text-secondary link">
-                                {productData?.brand || "Brand Name"}
+                              <Link href="/shop-default" className="caption text-secondary link">
+                                {productData?.brand || quickViewItem?.brand || "Brand Name"}
                               </Link>
                             )}
                           </li>
@@ -312,87 +345,83 @@ export default function Quickview() {
                           <Skeleton height={100} />
                         ) : (
                           <p className="body-text-3">
-                            {productData?.short_description || quickViewItem.short_description || "No description available"}
+                            {productData?.short_description || quickViewItem?.short_description || "No description available"}
                           </p>
                         )}
                       </div>
 
-                      {/* Installment Dropdown */}
                       {loading ? (
                         <Skeleton height={100} />
                       ) : (
                         <>
-                        {productData?.stock === false ? (
-                          <div className="bg-primary p-1 text-center rounded my-3">
-                            <span className="body-md-2 fw-medium text-white">Out of Stock</span>
-                          </div>
-                        ) : (
-                        <div className="tf-product-info-choose-option mt-3">
-                          <h5 className="product-info-name fw-semibold text-primary mb-3">
-                            Choose Your Payment Plan
-                          </h5>
-
-                          <select
-                            className="form-select"
-                            onChange={handleSelectChange}
-                            value={selectedPlan?.id || ""}
-                            aria-label="Select a payment plan"
-                          >
-                            <option value="" disabled>
-                              -- Select a Plan --
-                            </option>
-                            {productData?.ProductInstallments?.length > 0 ? (
-                              productData.ProductInstallments.map((installment, index) => (
-                                <option key={installment.id} value={installment.id}>
-                                  Plan {index + 1} - Rs {installment.monthlyAmount.toLocaleString()} x {installment.months} months
-                                </option>
-                              ))
-                            ) : (
-                              <option value="" disabled>
-                                No plans available
-                              </option>
-                            )}
-                          </select>
-
-                          {isPlanLoading ? (
-                            <div className="card mt-2">
-                              <div className="card-body text-center">
-                                <div className="spinner-border" role="status">
-                                  <span className="visually-hidden">Loading...</span>
-                                </div>
-                              </div>
+                          {productData?.stock === false ? (
+                            <div className="bg-primary p-1 text-center rounded my-3">
+                              <span className="body-md-2 fw-medium text-white">Out of Stock</span>
                             </div>
                           ) : (
-                            selectedPlan && (
-                              <div className="card mt-2">
-                                <div className="card-body">
-                                  <h6 className="product-info-name mb-3">Selected Plan Details</h6>
-                                  <p className="mb-1">
-                                    <strong>Total Price:</strong> Rs {selectedPlan.totalPrice.toLocaleString()}
-                                  </p>
-                                  <p className="mb-1">
-                                    <strong>Monthly:</strong> Rs {selectedPlan.monthlyAmount.toLocaleString()} x {selectedPlan.months} months
-                                  </p>
-                                  <p className="mb-1">
-                                    <strong>Advance:</strong> Rs {selectedPlan.advance.toLocaleString()}
-                                  </p>
-                                  <button
-                                    onClick={handleNext}
-                                    className="tf-btn mt-2 w-100 text-white"
-                                    disabled={!selectedPlan}
-                                  >
-                                    Next
-                                  </button>
+                            <div className="tf-product-info-choose-option mt-3">
+                              <h5 className="product-info-name fw-semibold text-primary mb-3">
+                                Choose Your Payment Plan
+                              </h5>
+                              <select
+                                className="form-select"
+                                onChange={handleSelectChange}
+                                value={selectedPlan?.id || ""}
+                                aria-label="Select a payment plan"
+                              >
+                                <option value="" disabled>
+                                  -- Select a Plan --
+                                </option>
+                                {productData?.ProductInstallments?.length > 0 ? (
+                                  productData.ProductInstallments.map((installment, index) => (
+                                    <option key={installment.id} value={installment.id}>
+                                      Plan {index + 1} - Rs {installment.monthlyAmount.toLocaleString()} x {installment.months} months
+                                    </option>
+                                  ))
+                                ) : (
+                                  <option value="" disabled>
+                                    No plans available
+                                  </option>
+                                )}
+                              </select>
+                              {isPlanLoading ? (
+                                <div className="card mt-2">
+                                  <div className="card-body text-center">
+                                    <div className="spinner-border" role="status">
+                                      <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            )
+                              ) : (
+                                selectedPlan && (
+                                  <div className="card mt-2">
+                                    <div className="card-body">
+                                      <h6 className="product-info-name mb-3">Selected Plan Details</h6>
+                                      <p className="mb-1">
+                                        <strong>Total Price:</strong> Rs {selectedPlan.totalPrice.toLocaleString()}
+                                      </p>
+                                      <p className="mb-1">
+                                        <strong>Monthly:</strong> Rs {selectedPlan.monthlyAmount.toLocaleString()} x {selectedPlan.months} months
+                                      </p>
+                                      <p className="mb-1">
+                                        <strong>Advance:</strong> Rs {selectedPlan.advance.toLocaleString()}
+                                      </p>
+                                      <button
+                                        onClick={handleNext}
+                                        className="tf-btn mt-2 w-100 text-white"
+                                        disabled={!selectedPlan}
+                                      >
+                                        Next
+                                      </button>
+                                    </div>
+                                  </div>
+                                )
+                              )}
+                            </div>
                           )}
-                        </div>
-                        )}
-                      </>
+                        </>
                       )}
 
-                      {/* Brand + Share */}
                       {loading ? (
                         <Skeleton height={100} />
                       ) : (
@@ -404,7 +433,7 @@ export default function Quickview() {
                             <div className="w-100 border-end p-2">
                               <strong>Brand</strong>
                             </div>
-                            <div className="w-100 p-2">{productData?.brand || "Brand Name"}</div>
+                            <div className="w-100 p-2">{productData?.brand || quickViewItem?.brand || "Brand Name"}</div>
                           </div>
                         </div>
                       )}

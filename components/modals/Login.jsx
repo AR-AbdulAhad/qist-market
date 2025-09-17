@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useContextElement } from "@/context/Context";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -61,7 +62,12 @@ export default function Login() {
     try {
       const response = await axios.post(`${BACKEND_URL}/api/customer/login`, formData);
       const { token } = response.data;
-      sessionStorage.setItem("token", token);
+      Cookies.set("token", token, {
+      expires: 7,
+      secure: true,
+      sameSite: "Strict",
+      path: "/",
+    });
       toast.success("Login successful!");
       closeModal();
       resetForm();

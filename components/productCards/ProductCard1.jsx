@@ -26,8 +26,6 @@ export default function ProductCard1({ product, index }) {
     wowDelay: index * 0.1 + "s",
   };
 
-  console.log("Rendering ProductCard1 for product:", productData);
-
   return (
     <div
       className={`card-product style-border ${index < 4 ? "wow fadeInLeft" : ""}`}
@@ -50,7 +48,7 @@ export default function ProductCard1({ product, index }) {
             <AddToCart tooltipClass="tooltip-left" productSlugName={productData.slugName} />
           </li>
           <li>
-            <AddToQuickview productId={productData.id} tooltipClass="tooltip-left" />
+            <AddToQuickview product={productData} tooltipClass="tooltip-left" />
           </li>
         </ul>
         <div className="box-sale-wrap top-0 start-0 z-5">

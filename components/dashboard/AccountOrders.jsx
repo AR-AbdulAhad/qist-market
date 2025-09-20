@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { AuthContext } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -27,7 +28,6 @@ export default function AccountOrders() {
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
-        console.log(data);
       } else {
         setError("Failed to load orders");
       }
@@ -35,6 +35,27 @@ export default function AccountOrders() {
       setError("Network error");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleCancelRequest = async (orderId) => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/customer/cancel-request/${orderId}`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const updatedOrder = await res.json();
+        setOrders(orders.map(order => 
+          order.id === orderId ? updatedOrder : order
+        ));
+        toast.success("Approvel Send")
+      } else {
+        const errorData = await res.json();
+        toast.error(errorData.error || 'Failed to send cancel request');
+      }
+    } catch (err) {
+      setError('Network error');
     }
   };
 
@@ -74,13 +95,46 @@ export default function AccountOrders() {
                 <tr key={order.id} className="td-order-item">
                   <td className="body-text-3">{order.id}</td>
                   <td className="body-text-3">{order.productName}</td>
-                  <td className="body-text-3 text-delivered">{order.status}</td>
+                  <td
+                    style={{
+                      color:
+                        order.status === 'Pending'
+                          ? '#7B6000'
+                          : order.status === 'Confirmed'
+                          ? '#004085'
+                          : order.status === 'Shipped'
+                          ? '#4B0082'
+                          : order.status === 'Delivered'
+                          ? '#155724'
+                          : order.status === 'Cancelled'
+                          ? '#ff0018'
+                          : order.status === 'Rejected'
+                          ? '#721C24'
+                          : '#333333',
+                    }}
+                  >
+                    {order.status}
+                  </td>
                   <td className="body-text-3">Rs. {order.advanceAmount}</td>
                   <td className="body-text-3">Rs. {order.monthlyAmount} / {order.months} months </td>
                   <td>
-                    <Link href={`/order-details/${order.id}`} className="tf-btn btn-small d-inline-flex">
-                      <span className="text-white">Detail</span>
-                    </Link>
+                    {order.status === 'Cancelled' ? (
+                      <button disabled className="tf-btn btn-small d-inline-flex">
+                        <span className="text-white">Order Cancelled</span>
+                      </button>
+                    ) : order.cancelRequest === 'pending' ? (
+                      <button disabled className="tf-btn btn-small d-inline-flex">
+                        <span className="text-white">Pending</span>
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => handleCancelRequest(order.id)} 
+                        className="tf-btn btn-small d-inline-flex"
+                        disabled={order.status === 'Delivered'}
+                      >
+                        <span className="text-white">Request for cancel</span>
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

@@ -124,7 +124,7 @@ export default function Hero() {
                     <li className="menu-item py-3 px-4 d-flex justify-content-center">
                       <Link href="/shop" className="body-text-3 text-primary">
                         <span className="flex items-center gap-2">
-                          <span className="w-6 h-6"></span> {/* Placeholder for consistency */}
+                          <span className="w-6 h-6"></span>
                           <span>View All Categories</span>
                         </span>
                       </Link>
@@ -171,7 +171,7 @@ export default function Hero() {
                           width={1200}
                           height={600}
                           style={{ objectFit: 'cover', height: '100%' }}
-                          priority={index === 0} // Prioritize loading of the first image
+                          priority={index === 0}
                         />
                       </Link>
                     </div>

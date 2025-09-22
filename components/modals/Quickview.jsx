@@ -44,31 +44,26 @@ export default function Quickview() {
     }
   };
 
-  // Reset states when quickViewItem changes (for new product)
-  useEffect(() => {
-    if (quickViewItem) {
-      setProductData(null); // Clear old data immediately
-      setLoading(true); // Start loading immediately
-      setSelectedPlan(null);
-      setIsPlanLoading(false);
-      setCurrentImageIndex(0);
-      fetchProduct(); // Fetch new data
-    }
-  }, [quickViewItem]);
-
-  // Attach modal event listeners
   useEffect(() => {
     const modal = document.getElementById("quickView");
     if (modal) {
       const handleModalShow = () => {
-        if (!quickViewItem) {
+        if (quickViewItem) {
+          // Reset states and fetch on every modal show
+          setProductData(null);
+          setLoading(true);
+          setSelectedPlan(null);
+          setIsPlanLoading(false);
+          setCurrentImageIndex(0);
+          fetchProduct();
+        } else {
           console.warn("quickViewItem is not available yet, waiting...");
-          setLoading(true); // Keep loading if no item
+          setLoading(true);
         }
       };
 
       const handleModalHide = () => {
-        // Reset states on modal close to prevent stale data on next open
+        // Reset states on modal close
         setProductData(null);
         setLoading(true);
         setSelectedPlan(null);
@@ -84,7 +79,7 @@ export default function Quickview() {
         modal.removeEventListener("hidden.bs.modal", handleModalHide);
       };
     }
-  }, []); // Run once on mount
+  }, [quickViewItem]);  // Dependency on quickViewItem ensures re-attachment if item changes
 
   const handleSelectChange = (e) => {
     const planId = e.target.value;
@@ -170,7 +165,7 @@ export default function Quickview() {
         <div className="modal-content flex-md-row">
           <span className="icon-close icon-close-popup link" data-bs-dismiss="modal" />
           <div className="container mb-5 mt-4 mx-2">
-            {/* Breadcrumbs and the rest of the JSX remain unchanged */}
+            {/* Breadcrumbs */}
             <div className="mb-3">
               <ul className="breakcrumbs">
                 <li>

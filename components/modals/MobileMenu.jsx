@@ -15,7 +15,6 @@ export default function MobileMenu() {
   const pathname = usePathname();
   const [categories, setCategories] = useState([]);
 
-  // Function to check if a menu item is active
   const isMenuActive = (link) => {
     return link.href?.split("/")[1] == pathname.split("/")[1];
   };

@@ -7,13 +7,16 @@ import { useRouter } from "next/navigation";
 import { AuthContext } from "@/context/AuthContext";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const CITIES_API_URL = "https://raw.githubusercontent.com/dr5hn/countries-states-cities-database/master/countries/Pakistan/cities.json";
 
 export default function Checkout() {
   const { user, token } = useContext(AuthContext);
   const [cartData, setCartData] = useState(null);
-  const [errors, setErrors] = useState({});
-  const [selectedCity, setSelectedCity] = useState("Select");
+  const [cities, setCities] = useState([]);
   const [areas, setAreas] = useState([]);
+  const [selectedCity, setSelectedCity] = useState("Select");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const [useDefaultAddress, setUseDefaultAddress] = useState(false);
   const [defaultAddress, setDefaultAddress] = useState(null);
   const router = useRouter();
@@ -28,11 +31,12 @@ export default function Checkout() {
   const addressRef = useRef(null);
 
   const cityAreaMap = {
-    Alabam: ["Downtown Alabam", "Alabam Suburbs", "North Alabam"],
-    Alaska: ["Anchorage", "Fairbanks", "Juneau"],
-    California: ["Los Angeles", "San Francisco", "San Diego"],
-    Georgia: ["Atlanta", "Savannah", "Augusta"],
-    Washington: ["Seattle", "Spokane", "Tacoma"],
+    "Karachi": ["Clifton", "Defence Housing Authority (DHA)", "Gulshan-e-Iqbal", "North Nazimabad", "Saddar"],
+    "Lahore": ["Gulberg", "Defence Housing Authority (DHA)", "Model Town", "Johar Town", "Wapda Town"],
+    "Islamabad": ["F-6", "F-7", "G-8", "E-7", "Blue Area"],
+    "Rawalpindi": ["Saddar", "Committee Chowk", "Liaquat Bagh", "Chaklala", "Adiala Road"],
+    "Faisalabad": ["D-Ground", "People's Colony", "Madina Town", "Jinnah Colony", "Susan Road"],
+    // Add more cities as needed
   };
 
   const updateCartData = () => {
@@ -59,6 +63,31 @@ export default function Checkout() {
     return () => clearInterval(intervalId);
   }, []);
 
+  // Fetch cities from free API
+  useEffect(() => {
+    const fetchCities = async () => {
+      try {
+        const response = await fetch(CITIES_API_URL);
+        if (response.ok) {
+          const data = await response.json();
+          // Filter and map to city names only
+          const cityNames = data.map(city => city.name).sort();
+          setCities(cityNames);
+        } else {
+          console.error("Failed to fetch cities");
+          // Fallback to some default cities if API fails
+          setCities(["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad"]);
+        }
+      } catch (error) {
+        console.error("Error fetching cities:", error);
+        // Fallback
+        setCities(["Karachi", "Lahore", "Islamabad", "Rawalpindi", "Faisalabad"]);
+      }
+    };
+
+    fetchCities();
+  }, []);
+
   useEffect(() => {
     if (user && token) {
       emailRef.current.value = user.email;
@@ -80,11 +109,14 @@ export default function Checkout() {
               setUseDefaultAddress(true);
               addressRef.current.value = defaultAddr.address1;
               const city = defaultAddr.city;
+              setSelectedCity(city);
+              cityRef.current.value = city;
               if (cityAreaMap[city]) {
-                setSelectedCity(city);
                 setAreas(cityAreaMap[city]);
-                cityRef.current.value = city;
                 areaRef.current.value = defaultAddr.area || "Select";
+              } else {
+                setAreas([]);
+                areaRef.current.value = "Select";
               }
             }
           }
@@ -94,7 +126,7 @@ export default function Checkout() {
       };
       fetchDefaultAddress();
     }
-  }, [user, token]);
+  }, [user, token, cities]); // Add cities dependency
 
   useEffect(() => {
     const data = Cookies.get("cartData");
@@ -132,7 +164,11 @@ export default function Checkout() {
       cityRef.current.value = defaultAddress.city;
       areaRef.current.value = defaultAddress.area || "Select";
       setSelectedCity(defaultAddress.city);
-      setAreas(cityAreaMap[defaultAddress.city] || []);
+      if (cityAreaMap[defaultAddress.city]) {
+        setAreas(cityAreaMap[defaultAddress.city]);
+      } else {
+        setAreas([]);
+      }
     } else {
       addressRef.current.value = "";
       cityRef.current.value = "Select";
@@ -237,9 +273,11 @@ export default function Checkout() {
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     if (!cartData || !cartData.productName || !cartData.selectedPlan) {
       setErrors({ api: "Cart data is incomplete or missing" });
+      setIsLoading(false);
       return;
     }
     const { productName, selectedPlan } = cartData;
@@ -252,6 +290,7 @@ export default function Checkout() {
         selectedPlan[field] < 0
       ) {
         setErrors({ api: `Invalid plan data: ${field} is missing or invalid` });
+        setIsLoading(false);
         return;
       }
     }
@@ -294,6 +333,7 @@ export default function Checkout() {
         behavior: "smooth",
         block: "center",
       });
+      setIsLoading(false);
       return;
     }
 
@@ -323,6 +363,8 @@ export default function Checkout() {
         api: "Failed to connect to the server",
         details: error.message,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -484,13 +526,12 @@ export default function Checkout() {
                           ref={cityRef}
                           value={selectedCity}
                           onChange={handleCityChange}
+                          disabled={cities.length === 0}
                         >
                           <option>Select</option>
-                          <option>Alabam</option>
-                          <option>Alaska</option>
-                          <option>California</option>
-                          <option>Georgia</option>
-                          <option>Washington</option>
+                          {cities.map((city, index) => (
+                            <option key={index}>{city}</option>
+                          ))}
                         </select>
                       </div>
                     )}
@@ -564,8 +605,11 @@ export default function Checkout() {
                     onClick={handlePlaceOrder}
                     className="tf-btn w-100"
                     type="button"
+                    disabled={isLoading}
                   >
-                    <span className="text-white">Place order</span>
+                    <span className="text-white">
+                      {isLoading ? "Placing order..." : "Place order"}
+                    </span>
                   </button>
                 </div>
               </div>

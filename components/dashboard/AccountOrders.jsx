@@ -11,6 +11,7 @@ export default function AccountOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [loadingStates, setLoadingStates] = useState({});
 
   useEffect(() => {
     if (token) {
@@ -39,23 +40,24 @@ export default function AccountOrders() {
   };
 
   const handleCancelRequest = async (orderId) => {
+    setLoadingStates((prev) => ({ ...prev, [orderId]: true }));
     try {
       const res = await fetch(`${BACKEND_URL}/api/customer/cancel-request/${orderId}`, {
-        method: 'POST',
+        method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
         const updatedOrder = await res.json();
-        setOrders(orders.map(order => 
-          order.id === orderId ? updatedOrder : order
-        ));
-        toast.success("Approvel Send")
+        setOrders(orders.map((order) => (order.id === orderId ? updatedOrder : order)));
+        toast.success("Cancellation request successfully submitted.");
       } else {
         const errorData = await res.json();
-        toast.error(errorData.error || 'Failed to send cancel request');
+        toast.error(errorData.error || "Failed to send cancellation request.");
       }
     } catch (err) {
-      setError('Network error');
+      toast.error("Network error occurred while processing the request.");
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [orderId]: false }));
     }
   };
 
@@ -72,11 +74,11 @@ export default function AccountOrders() {
               <th className="title-sidebar fw-medium">Product Name</th>
               <th className="title-sidebar fw-medium">Status</th>
               <th className="title-sidebar fw-medium">Advance Amount</th>
-              <th className="title-sidebar fw-medium">Installment * month</th>
+              <th className="title-sidebar fw-medium">Installment * Month</th>
               <th className="title-sidebar fw-medium">Action</th>
             </tr>
           </thead>
-          {loading ? 
+          {loading ? (
             <tbody>
               <tr>
                 <td colSpan="6">
@@ -88,70 +90,77 @@ export default function AccountOrders() {
                 </td>
               </tr>
             </tbody>
-            :
-          <tbody>
-            {orders.length > 0 ? (
-              orders.map((order) => (
-                <tr key={order.id} className="td-order-item">
-                  <td className="body-text-3">{order.id}</td>
-                  <td className="body-text-3">{order.productName}</td>
-                  <td
-                    style={{
-                      color:
-                        order.status === 'Pending'
-                          ? '#7B6000'
-                          : order.status === 'Confirmed'
-                          ? '#004085'
-                          : order.status === 'Shipped'
-                          ? '#4B0082'
-                          : order.status === 'Delivered'
-                          ? '#155724'
-                          : order.status === 'Cancelled'
-                          ? '#ff0018'
-                          : order.status === 'Rejected'
-                          ? '#721C24'
-                          : '#333333',
-                    }}
-                  >
-                    {order.status}
-                  </td>
-                  <td className="body-text-3">Rs. {order.advanceAmount}</td>
-                  <td className="body-text-3">Rs. {order.monthlyAmount} / {order.months} months </td>
-                  <td>
-                    {order.status === 'Cancelled' ? (
-                      <button disabled className="tf-btn btn-small d-inline-flex">
-                        <span className="text-white">Order Cancelled</span>
-                      </button>
-                    ) : order.cancelRequest === 'pending' ? (
-                      <button disabled className="tf-btn btn-small d-inline-flex">
-                        <span className="text-white">Pending</span>
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={() => handleCancelRequest(order.id)} 
-                        className="tf-btn btn-small d-inline-flex"
-                        disabled={order.status === 'Delivered'}
-                      >
-                        <span className="text-white">Request for cancel</span>
-                      </button>
-                    )}
+          ) : (
+            <tbody>
+              {orders.length > 0 ? (
+                orders.map((order) => (
+                  <tr key={order.id} className="td-order-item">
+                    <td className="body-text-3">{order.id}</td>
+                    <td className="body-text-3">{order.productName}</td>
+                    <td
+                      style={{
+                        color:
+                          order.status === "Pending"
+                            ? "#894b00"
+                            : order.status === "Confirmed"
+                            ? "#106dd1"
+                            : order.status === "Shipped"
+                            ? "#9009f3"
+                            : order.status === "Delivered"
+                            ? "#22a940"
+                            : order.status === "Cancelled"
+                            ? "#ff0018"
+                            : order.status === "Rejected"
+                            ? "#ff0018"
+                            : "#333333",
+                      }}
+                    >
+                      {order.status}
+                    </td>
+                    <td className="body-text-3">Rs. {order.advanceAmount}</td>
+                    <td className="body-text-3">
+                      Rs. {order.monthlyAmount} / {order.months} months
+                    </td>
+                    <td>
+                      {order.status === "Cancelled" ? (
+                        <span style={{ color: "#ff0018" }}>Order Cancelled</span>
+                      ) : order.status === "Rejected" ? (
+                        <span style={{ color: "#ff0018" }}>Order Rejected</span>
+                      ) : order.cancelRequest === "pending" ? (
+                        <span style={{ color: "#106dd1" }}>Pending</span>
+                      ) : order.status === "Shipped" || order.status === "Delivered" ? null : (
+                        <button
+                          onClick={() => handleCancelRequest(order.id)}
+                          className="tf-btn btn-small d-inline-flex"
+                          disabled={loadingStates[order.id] || order.status === "Delivered"}
+                        >
+                          {loadingStates[order.id] ? (
+                            <>
+                              <span className="text-white">Requesting...</span>
+                            </>
+                          ) : (
+                            <span className="text-white">Request for Cancel</span>
+                          )}
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6">
+                    <div className="p-4 text-center">
+                      <h5 className="mb-2">No orders found</h5>
+                      <p className="mb-3">You have not placed any orders yet.</p>
+                      <Link href="/shop" className="tf-btn btn-small d-inline-flex">
+                        <span className="text-white">Shop Now</span>
+                      </Link>
+                    </div>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr><td colSpan="6">
-                <div className="p-4 text-center">
-                  <h5 className="mb-2">No orders found</h5>
-                  <p className="mb-3">You have not placed any orders yet.</p>
-                  <Link href="/shop" className="tf-btn btn-small d-inline-flex">
-                    <span className="text-white">Shop Now</span>
-                  </Link>
-                </div>  
-              </td>
-              </tr>
-            )}
-          </tbody>
-          }
+              )}
+            </tbody>
+          )}
         </table>
       </div>
     </div>

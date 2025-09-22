@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Slider1 from "./sliders/Slider1";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";

@@ -322,8 +322,29 @@ export default function OrderTracking() {
                   Date: <strong>{new Date(orderData.createdAt).toLocaleDateString()}</strong>
                 </li>
                 <li>
-                  Status: <strong>{orderData.status}</strong>
+                  Status: <strong style={{
+                      color:
+                        orderData.status === 'Pending'
+                          ? '#894b00'
+                          : orderData.status === 'Confirmed'
+                          ? '#106dd1'
+                          : orderData.status === 'Shipped'
+                          ? '#9009f3'
+                          : orderData.status === 'Delivered'
+                          ? '#22a940'
+                          : orderData.status === 'Cancelled'
+                          ? '#ff0018'
+                          : orderData.status === 'Rejected'
+                          ? '#ff0018'
+                          : '#333333',
+                    }}>{orderData.status}</strong> 
                 </li>
+                {orderData.rejectionReason && orderData.status === "Rejected" &&
+                <li>
+                  Rejection Reason: <strong style={{
+                      color: '#ff0018'}}>{orderData.rejectionReason}</strong> 
+                </li>
+                }
                 <li>
                   Advance: <strong>Rs. {orderData.advanceAmount}</strong>
                 </li>

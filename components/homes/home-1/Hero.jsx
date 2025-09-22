@@ -13,7 +13,6 @@ export default function Hero() {
   const [loadingBanners, setLoadingBanners] = useState(true);
 
   useEffect(() => {
-    // Fetch categories
     const fetchCategories = async () => {
       try {
         setLoadingCategories(true);
@@ -37,7 +36,6 @@ export default function Hero() {
       }
     };
 
-    // Fetch active banners
     const fetchBanners = async () => {
       try {
         setLoadingBanners(true);

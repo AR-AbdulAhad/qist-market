@@ -65,7 +65,7 @@ export default function Cart() {
                   >
                     <Image
                       className="lazyload"
-                      src={cartData.imageUrl}
+                      src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
                       alt="product-image"
                       width={500}
                       height={500}
@@ -80,10 +80,10 @@ export default function Cart() {
                     >
                       {cartData.productName}
                     </Link>
-                    <p className="body-md-2">Plan: Rs {cartData.selectedPlan.monthlyAmount} x {cartData.selectedPlan.months} months</p>
+                    <p className="body-md-2">Plan: Rs {cartData.selectedPlan.monthlyAmount.toLocaleString()} x {cartData.selectedPlan.months} months</p>
                     <p className="price-wrap fw-medium">
                        <span>
-                        Total Advance: <span className="text-primary">Rs. {cartData.selectedPlan.advance}</span>
+                        Total Advance: <span className="text-primary">Rs. {cartData.selectedPlan.advance.toLocaleString()}</span>
                       </span>
                     </p>
                   </div>
@@ -100,7 +100,7 @@ export default function Cart() {
           <p className="cart-total fw-semibold">
             <span>Total Advance:</span>
             <span className="price-amount product-title text-primary">
-              Rs. {cartData?.selectedPlan?.advance || 0}
+              Rs. {cartData?.selectedPlan?.advance.toLocaleString() || 0}
             </span>
           </p>
           <div className="box-btn">

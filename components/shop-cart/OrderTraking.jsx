@@ -48,7 +48,6 @@ export default function OrderTracking() {
     }
   }
 
-  // Define status order and icon mapping
   const statusOrder = ["Pending", "Confirmed", "Shipped", "Delivered"]
   const statusIcons = {
     Pending: "fa-clock",
@@ -346,7 +345,7 @@ export default function OrderTracking() {
                 </li>
                 }
                 <li>
-                  Advance: <strong>Rs. {orderData.advanceAmount}</strong>
+                  Advance: <strong>Rs. {Number(orderData.advanceAmount).toLocaleString()}</strong>
                 </li>
                 <li>
                   Payment method: <strong>{orderData.paymentMethod}</strong>
@@ -371,7 +370,7 @@ export default function OrderTracking() {
                         {orderData.productName} <span className="text-black"></span>
                       </td>
                       <td>
-                        <span className="fw-medium">Rs. {orderData.advanceAmount}</span>
+                        <span className="fw-medium">Rs. {Number(orderData.advanceAmount).toLocaleString()}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -406,16 +405,16 @@ export default function OrderTracking() {
                   <tbody>
                     <tr className="tf-order-item">
                       <td>
-                        <span className="fw-medium">Rs. {orderData.advanceAmount}</span>
+                        <span className="fw-medium">Rs. {Number(orderData.advanceAmount).toLocaleString()}</span>
                       </td>
                       <td>
-                        <span className="fw-medium">Rs. {orderData.monthlyAmount}</span>
+                        <span className="fw-medium">Rs. {Number(orderData.monthlyAmount).toLocaleString()}</span>
                       </td>
                       <td>
                         <span className="fw-medium">Months: {orderData.months}</span>
                       </td>
                       <td>
-                        <span className="fw-medium">Rs. {orderData.totalDealValue}</span>
+                        <span className="fw-medium">Rs. {Number(orderData.totalDealValue).toLocaleString()}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -463,11 +462,11 @@ export default function OrderTracking() {
                         </tr>
                         <tr className="tf-order-item">
                           <td>
-                            <span className="fw-medium">Area / City</span>
+                            <span className="fw-medium">City</span>
                           </td>
                           <td>
                             <span className="fw-medium">
-                              {orderData.area}, {orderData.city}
+                              {orderData.city}
                             </span>
                           </td>
                         </tr>

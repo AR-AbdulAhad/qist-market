@@ -1,4 +1,4 @@
-"use client";
+
 import MyAccount from "@/components/dashboard/MyAccount";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Footer1 from "@/components/footers/Footer1";
@@ -6,6 +6,11 @@ import Header4 from "@/components/headers/Header4";
 import React from "react";
 import Link from "next/link";
 import ProtectedRoute from "@/components/common/ProtectedRoute";
+
+export const metadata = {
+  title: "Qist Market - Dashboard - Account",
+  robots: "noindex, nofollow",
+};
 
 export default function page() {
   return (

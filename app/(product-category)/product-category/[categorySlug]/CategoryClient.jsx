@@ -1,27 +1,20 @@
+"use client";
+
+import React from "react";
 import Footer1 from "@/components/footers/Footer1";
 import Link from "next/link";
 import Header4 from "@/components/headers/Header4";
-import ProductsSearch from "@/components/products/ProductsSearch";
+import ProductsCategory1 from "@/components/products/ProductsCategory1";
 
-export async function generateMetadata({ searchParams }) {
-  const query = searchParams.query || "";
-  const category = searchParams.category || "";
-  const subcategory = searchParams.subcategory || "";
-
-  let title = "Search Results";
-  if (query) title = `Search Results for "${query}"`;
-  if (query && category) title = `Search Results for "${query}" in ${category}`;
-  if (query && category && subcategory)
-    title = `Search Results for "${query}" in ${subcategory} ${category}`;
-
-  return {
-    title,
-    description: `Explore ${title} on our store`,
-    robots: { index: true, follow: true },
+export default function CategoryClient({ categorySlug }) {
+  const formatSlugName = (slug) => {
+    if (!slug) return "";
+    return slug
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
-}
 
-export default function SearchPage() {
   return (
     <>
       <Header4 />
@@ -45,12 +38,15 @@ export default function SearchPage() {
               <i className="icon icon-arrow-right" />
             </li>
             <li>
-              <span className="body-small">Search Results</span>
+              <span className="body-small">
+                {formatSlugName(categorySlug)} Price in Pakistan
+              </span>
             </li>
           </ul>
         </div>
       </div>
-      <ProductsSearch />
+
+      <ProductsCategory1 categorySlug={categorySlug} />
       <Footer1 />
       <div className="overlay-filter" id="overlay-filter" />
     </>

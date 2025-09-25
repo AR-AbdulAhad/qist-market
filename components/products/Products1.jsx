@@ -282,36 +282,107 @@ export default function Products1() {
                   {productData.map((product, i) => (
                     <ProductCards3 key={i} product={product} />
                   ))}
-                  <ul className="wg-pagination wd-load">
-                    <li>
-                      <button
-                        onClick={() => allProps.setCurrentPage(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className="link check-btn"
-                      >
-                        <i className="icon-arrow-left-lg" />
-                      </button>
-                    </li>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <li key={page} className={currentPage === page ? "active" : ""}>
-                        <button
-                          onClick={() => allProps.setCurrentPage(page)}
-                          className="title-normal link check-btn"
-                        >
-                          {page}
-                        </button>
-                      </li>
-                    ))}
-                    <li>
-                      <button
-                        onClick={() => allProps.setCurrentPage(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                        className="link check-btn"
-                      >
-                        <i className="icon-arrow-right-lg" />
-                      </button>
-                    </li>
-                  </ul>
+                    <ul className="wg-pagination wd-load">
+                      {totalPages === 1 ? (
+                        <li className="active">
+                          <button className="title-normal link check-btn" disabled>
+                            1
+                          </button>
+                        </li>
+                      ) : (
+                        <>
+                          {/* Previous Button */}
+                          <li>
+                            <button
+                              onClick={() => allProps.setCurrentPage(currentPage - 1)}
+                              disabled={currentPage === 1}
+                              className="link check-btn"
+                              aria-label="Previous page"
+                            >
+                              <i className="icon-arrow-left-lg" />
+                            </button>
+                          </li>
+
+                          {/* First Page */}
+                          <li className={currentPage === 1 ? "active" : ""}>
+                            <button
+                              onClick={() => allProps.setCurrentPage(1)}
+                              className="title-normal link check-btn"
+                            >
+                              1
+                            </button>
+                          </li>
+
+                          {/* Ellipsis Before Range */}
+                          {totalPages > 5 && currentPage > 3 && (
+                            <li>
+                              <span className="title-normal">...</span>
+                            </li>
+                          )}
+
+                          {/* Dynamic Range of 5 Pages */}
+                          {(() => {
+                            let startPage = Math.max(2, currentPage - 2);
+                            let endPage = Math.min(totalPages - 1, currentPage + 2);
+
+                            // Adjust range to ensure 5 pages are shown when possible
+                            if (endPage - startPage + 1 < 5) {
+                              if (currentPage <= 3) {
+                                endPage = Math.min(5, totalPages - 1);
+                              } else if (currentPage >= totalPages - 2) {
+                                startPage = Math.max(2, totalPages - 4);
+                              }
+                            }
+
+                            const pages = [];
+                            for (let page = startPage; page <= endPage; page++) {
+                              pages.push(
+                                <li key={page} className={currentPage === page ? "active" : ""}>
+                                  <button
+                                    onClick={() => allProps.setCurrentPage(page)}
+                                    className="title-normal link check-btn"
+                                  >
+                                    {page}
+                                  </button>
+                                </li>
+                              );
+                            }
+                            return pages;
+                          })()}
+
+                          {/* Ellipsis After Range */}
+                          {totalPages > 5 && currentPage < totalPages - 2 && (
+                            <li>
+                              <span className="title-normal">...</span>
+                            </li>
+                          )}
+
+                          {/* Last Page */}
+                          {totalPages > 1 && (
+                            <li className={currentPage === totalPages ? "active" : ""}>
+                              <button
+                                onClick={() => allProps.setCurrentPage(totalPages)}
+                                className="title-normal link check-btn"
+                              >
+                                {totalPages}
+                              </button>
+                            </li>
+                          )}
+
+                          {/* Next Button */}
+                          <li>
+                            <button
+                              onClick={() => allProps.setCurrentPage(currentPage + 1)}
+                              disabled={currentPage === totalPages}
+                              className="link check-btn"
+                              aria-label="Next page"
+                            >
+                              <i className="icon-arrow-right-lg" />
+                            </button>
+                          </li>
+                        </>
+                      )}
+                    </ul>
                 </div>
               </div>
             ) : (

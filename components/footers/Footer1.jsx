@@ -164,11 +164,11 @@ export default function Footer1({ fullWidth = false }) {
                           Privacy Policy
                         </Link>
                       </li>
-                      <li>
+                      {/* <li>
                         <Link href={`/blog-grid`} className="link">
                           Press &amp; Blog
                         </Link>
-                      </li>
+                      </li> */}
                     </ul>
                   </div>
                 </li>

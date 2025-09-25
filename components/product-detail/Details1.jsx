@@ -57,9 +57,7 @@ export default function Details1({ singleProduct, loading }) {
     }
   };
 
-  const productUrl = `http://localhost:3000/product/${singleProduct?.slugName}`;
-
-  console.log("Single Product:", singleProduct);
+  const productUrl = `/product/${singleProduct?.slugName}`;
 
   return (
     <>
@@ -87,7 +85,7 @@ export default function Details1({ singleProduct, loading }) {
                 {loading ? (
                   <Skeleton width={200} height={15} />
                 ) : (
-                  <div>{singleProduct.name}</div>
+                  <div>{singleProduct.name} Price in Pakistan</div>
                 )}
               </span>
             </li>
@@ -205,7 +203,7 @@ export default function Details1({ singleProduct, loading }) {
                                   </option>
                                   {singleProduct?.ProductInstallments?.map((installment, index) => (
                                     <option key={installment.id} value={installment.id}>
-                                      Plan {index + 1} - Rs {installment.monthlyAmount} x {installment.months} months
+                                      Plan {index + 1} - Rs {installment.monthlyAmount.toLocaleString()} x {installment.months} months
                                     </option>
                                   ))}
                                 </select>

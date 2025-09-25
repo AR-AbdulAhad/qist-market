@@ -1,27 +1,20 @@
+"use client";
+
+import React from "react";
 import Footer1 from "@/components/footers/Footer1";
 import Link from "next/link";
 import Header4 from "@/components/headers/Header4";
-import ProductsSearch from "@/components/products/ProductsSearch";
+import ProductsSubCategory1 from "@/components/products/ProductsSubCategory1";
 
-export async function generateMetadata({ searchParams }) {
-  const query = searchParams.query || "";
-  const category = searchParams.category || "";
-  const subcategory = searchParams.subcategory || "";
+export default function SubCategoryClient({ categorySlug, subCategorySlug }) {
+    const formatSlugName = (slug) => {
+    if (!slug) return "";
+    return slug
+        .split("-")
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" "); 
+    };
 
-  let title = "Search Results";
-  if (query) title = `Search Results for "${query}"`;
-  if (query && category) title = `Search Results for "${query}" in ${category}`;
-  if (query && category && subcategory)
-    title = `Search Results for "${query}" in ${subcategory} ${category}`;
-
-  return {
-    title,
-    description: `Explore ${title} on our store`,
-    robots: { index: true, follow: true },
-  };
-}
-
-export default function SearchPage() {
   return (
     <>
       <Header4 />
@@ -30,7 +23,8 @@ export default function SearchPage() {
           <ul className="breakcrumbs">
             <li>
               <Link href={`/`} className="body-small link">
-                Home
+                {" "}
+                Home{" "}
               </Link>
             </li>
             <li className="d-flex align-items-center">
@@ -38,19 +32,20 @@ export default function SearchPage() {
             </li>
             <li>
               <Link href={`/shop`} className="body-small link">
-                Shop
+                {" "}
+                Shop{" "}
               </Link>
             </li>
             <li className="d-flex align-items-center">
               <i className="icon icon-arrow-right" />
             </li>
             <li>
-              <span className="body-small">Search Results</span>
+              <span className="body-small">{formatSlugName(subCategorySlug)} {formatSlugName(categorySlug)} Price in Pakistan</span>
             </li>
           </ul>
         </div>
       </div>
-      <ProductsSearch />
+      <ProductsSubCategory1 categorySlug={categorySlug} subCategorySlug={subCategorySlug}  />
       <Footer1 />
       <div className="overlay-filter" id="overlay-filter" />
     </>

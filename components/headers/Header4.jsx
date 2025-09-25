@@ -80,20 +80,30 @@ export default function Header4({ fullWidth = false }) {
                     </a>
                     <ul className="dropdown-menu" aria-labelledby="accountDropdown">
                       <li>
-                        <a className="dropdown-item" href="/my-account">
-                          Dashboard
-                        </a>
-                      </li>
-                      <li>
-                        <Link className="dropdown-item" href="/my-account-orders">
-                          Orders History
-                        </Link>
-                      </li>
-                      <li>
-                        <button onClick={logout} className="dropdown-item">
-                          Logout
-                        </button>
-                      </li>
+                          <Link className="dropdown-item" href="/my-account">
+                            Dashboard
+                          </Link>
+                        </li>
+                        <li>
+                          <Link className="dropdown-item" href="/my-account-orders">
+                            Orders History
+                          </Link>
+                        </li>
+                        <li>
+                          <Link className="dropdown-item" href="/my-account-address">
+                            Address
+                          </Link>
+                        </li>
+                        <li>
+                          <Link className="dropdown-item" href="/my-account-edit">
+                            Account Details
+                          </Link>
+                        </li>
+                        <li>
+                          <button onClick={logout} className="dropdown-item">
+                            Logout
+                          </button>
+                        </li>
                     </ul>
                   </div>
                   }

@@ -92,7 +92,7 @@ export default function ShopCart() {
                       <a href="#" className="img-box">
                         <Image
                           alt="product-image"
-                          src={cartData.imageUrl}
+                          src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
                           width={300}
                           height={300}
                         />
@@ -111,7 +111,7 @@ export default function ShopCart() {
                       className="tf-cart-item_quantity"
                     >
                       <p className="cart-price price-on-sale price-text fw-medium">
-                        Rs. {cartData.selectedPlan.advance}
+                        Rs. {cartData.selectedPlan.advance.toLocaleString()}
                       </p>
                     </td>
                     <td
@@ -119,7 +119,7 @@ export default function ShopCart() {
                       className="tf-cart-item_quantity"
                     >
                       <p className="cart-price price-on-sale price-text fw-medium">
-                        Rs. {cartData.selectedPlan.monthlyAmount}
+                        Rs. {cartData.selectedPlan.monthlyAmount.toLocaleString()}
                       </p>
                     </td>
                     <td
@@ -135,7 +135,7 @@ export default function ShopCart() {
                       className="tf-cart-item_price"
                     >
                       <p className="cart-price price-on-sale price-text fw-medium">
-                        Rs. {cartData.selectedPlan.totalPrice}
+                        Rs. {cartData.selectedPlan.totalPrice.toLocaleString()}
                       </p>
                     </td>
                     <td
@@ -173,7 +173,7 @@ export default function ShopCart() {
             <div className="cart-bottom justify-content-end px-0">
               <div className="border cart-card-cont mb-4">
                 <div className="py-3 border-bottom pt-3 d-flex justify-content-between fs-6">
-                  <div>Subtotal</div> <div>Rs. {cartData?.selectedPlan?.advance || 0}</div>
+                  <div>Subtotal</div> <div>Rs. {cartData?.selectedPlan?.advance.toLocaleString() || 0}</div>
                 </div>
                 <div className="py-3 border-bottom">
                   <a
@@ -184,7 +184,7 @@ export default function ShopCart() {
                   </a>
                 </div>
                 <div className="pt-3 d-flex justify-content-between fs-5">
-                  <strong>Total Advance</strong> <strong className="text-primary">Rs. {cartData?.selectedPlan?.advance || 0}</strong>
+                  <strong>Total Advance</strong> <strong className="text-primary">Rs. {cartData?.selectedPlan?.advance.toLocaleString() || 0}</strong>
                 </div>
               </div>
             </div>

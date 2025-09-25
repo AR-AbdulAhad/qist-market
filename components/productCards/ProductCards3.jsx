@@ -1,5 +1,4 @@
 "use client";
-import { useContextElement } from "@/context/Context";
 import Link from "next/link";
 import React from "react";
 import AddToCart from "../common/AddToCart";
@@ -20,14 +19,14 @@ export default function ProductCards3({ product }) {
         <Link href={`/product-detail/${product.slugName}`} className="product-img">
           <img
             className="img-product ls-is-cached lazyloaded"
-            src={productImageData}
+            src={productImageData || "/images/product-placeholder/product-placeholder-image.png"}
             alt="image-product"
             width={500}
             height={500}
           />
           <img
             className="img-hover ls-is-cached lazyloaded"
-            src={productImageData}
+            src={productImageData || "/images/product-placeholder/product-placeholder-image.png"}
             alt="image-product"
             width={500}
             height={500}
@@ -56,7 +55,7 @@ export default function ProductCards3({ product }) {
             <span className="new-price fw-medium">
               {product.advance ? (
                 <span>
-                  Rs. {product.advance} <span className="text-primary">Advance</span>
+                  Rs. {product.advance.toLocaleString()} <span className="text-primary">Advance</span>
                 </span>
               ) : (
                 <span>Not Available</span>

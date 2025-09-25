@@ -37,7 +37,7 @@ export default function TopCategoryProductCard({ product, index }) {
             <Image
               alt="Image Product"
               className="lazyload img-product"
-              src={currentImage}
+              src={currentImage || "/images/product-placeholder/product-placeholder-image.png"}
               width={productData.width}
               height={productData.height}
             />
@@ -69,7 +69,7 @@ export default function TopCategoryProductCard({ product, index }) {
             <span className="new-price fw-medium">
               {productData.advance ? (
                 <span>
-                  Rs. {productData.advance}{" "}
+                  Rs. {productData.advance.toLocaleString()}{" "}
                   <span className="text-primary">Advance</span>
                 </span>
               ) : (

@@ -25,9 +25,7 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // Import the script only on the client side
       import("bootstrap/dist/js/bootstrap.esm").then(() => {
-        // Module is imported, you can access any exported functionality if
       });
     }
   }, []);
@@ -50,15 +48,12 @@ export default function RootLayout({ children }) {
 
         if (st > navbarHeight) {
           if (st > lastScrollTop + delta) {
-            // Scroll down
             header.style.top = `-${navbarHeight}px`;
           } else if (st < lastScrollTop - delta) {
-            // Scroll up
             header.style.top = "0";
             header.classList.add("header-bg");
           }
         } else {
-          // At top of page
           header.style.top = "";
           header.classList.remove("header-bg");
         }

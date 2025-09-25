@@ -1,28 +1,44 @@
-import React from "react";
+'use client';
+import { useState, useEffect } from 'react';
+
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function Hero() {
+    const [about, setAbout] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAbout = async () => {
+      setIsLoading(true);
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/abouts/active`);
+        const data = await res.json(); 
+        setAbout(data);
+      } catch (error) {
+        console.error('Error fetching About:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchAbout();
+  }, []);
+
   return (
     <section className="tf-sp-2">
       <div className="container">
-        <div className="flat-title-2">
-          <div className="box-title">
-            <h3 className="fw-semibold">Welcome to Onsus</h3>
-            <p className="product-title">
-              Blend contemporary designs with timeless elegance
-            </p>
+        {isLoading ? (
+          <div className="w-100 d-flex justify-content-center align-items-center">
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
           </div>
-          <div className="box-text">
-            At Onsus, we offer meticulously curated collections that seamlessly
-            combine modern <br className="d-none d-xl-block" />
-            aesthetics with classic sophistication. With more than 15 years of
-            expertise, we serve <br className="d-none d-xl-block" />
-            fashion lovers who value quality, elegance, and adaptability.
-          </div>
+      ) : about? (
+        <div dangerouslySetInnerHTML={{ __html: about.content }} />
+      ) : (
+        <div className="flex flex-col items-center justify-center py-12">
+          <p className="text-lg text-gray-600">No About Content Available</p>
         </div>
-        <div
-          className="parallaxie parallax-style"
-          style={{ background: 'url("/images/section/parallax-3.jpg")' }}
-        />
+      )}
       </div>
     </section>
   );

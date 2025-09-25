@@ -5,6 +5,11 @@ import Checkout from "@/components/shop-cart/Checkout";
 import Link from "next/link";
 import React from "react";
 
+export const metadata = {
+  title: "Qist Market - Checkout",
+  robots: "noindex, nofollow",
+};
+
 export default function page() {
   return (
     <>

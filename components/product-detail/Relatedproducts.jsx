@@ -185,14 +185,14 @@ export default function NewProducts({
                   >
                     <Image
                       className="img-product lazyload"
-                      src={product.imgSrc}
+                      src={product.imgSrc || "/images/product-placeholder/product-placeholder-image.png"}
                       alt="image-product"
                       width={product.imgWidth}
                       height={product.imgHeight}
                     />
                     <Image
                       className="img-hover lazyload"
-                      src={product.imgHover}
+                      src={product.imgHover || "/images/product-placeholder/product-placeholder-image.png"}
                       alt="image-product"
                       width={product.hoverWidth}
                       height={product.hoverHeight}
@@ -216,7 +216,7 @@ export default function NewProducts({
                       <span className="new-price fw-medium">
                         {product.advance ? (
                           <span>
-                            Rs. {product.advance}{" "}
+                            Rs. {product.advance.toLocaleString()}{" "}
                             <span className="text-primary">Advance</span>
                           </span>
                         ) : (

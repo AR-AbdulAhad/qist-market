@@ -6,6 +6,11 @@ import OrderDetails from "@/components/shop-cart/OrderDetails";
 import Link from "next/link";
 import React from "react";
 
+export const metadata = {
+  title: "Qist Market - Order Confirmation",
+  robots: "noindex, nofollow",
+};
+
 export default function page() {
   return (
     <>

@@ -4,6 +4,11 @@ import OrderTraking from "@/components/shop-cart/OrderTraking";
 import Link from "next/link";
 import React from "react";
 
+export const metadata = {
+  title: "Qist Market - Track Order",
+  robots: "noindex, nofollow",
+};
+
 export default function page() {
   return (
     <>

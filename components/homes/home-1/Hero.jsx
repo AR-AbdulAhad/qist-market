@@ -50,7 +50,7 @@ export default function Hero() {
           throw new Error('Failed to fetch banners');
         }
 
-        const data  = await response.json();
+        const data = await response.json();
         setBanners(data);
       } catch (error) {
         console.error('Failed to fetch banners:', error.message);
@@ -67,7 +67,7 @@ export default function Hero() {
     <section className="tf-sp-5">
       <div className="container">
         <div className="s-banner-wrapper">
-          <div className="wrap-item-1 d-none d-lg-block">
+          <div className="wrap-item-1 d-none d-lg-block z-3">
             <div className="tf-nav-menu">
               <div className="main-nav">
                 <h6 className="fw-semibold title">
@@ -97,7 +97,7 @@ export default function Hero() {
                           </span>
                         </Link>
                         {category.subcategories.length > 0 && (
-                          <div className="sub-menu-container">
+                          <div className="sub-menu-container d-flex">
                             <ul className="sub-menu-list">
                               {category.subcategories.map((subcategory) => (
                                 <li key={subcategory.id} className="sub-menu-item">
@@ -160,7 +160,11 @@ export default function Hero() {
                 </div>
                 <div className="carousel-inner">
                   {banners.map((banner, index) => (
-                    <div key={banner.id} className={`carousel-item ${index === 0 ? 'active' : ''}`}>
+                    <div
+                      key={banner.id}
+                      className={`carousel-item ${index === 0 ? 'active' : ''}`}
+                      data-bs-interval="3000"
+                    >
                       <Link href={banner.product_url} className="d-block w-100">
                         <Image
                           src={banner.image_url}
@@ -198,6 +202,22 @@ export default function Hero() {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        .carousel-indicators button {
+          background-color: #ff3d3d !important; /* Default button color */
+          opacity: 0.5; /* Default opacity for inactive buttons */
+          width: 12px;
+          height: 12px;
+          border-radius: 50%; /* Circular indicators */
+          margin: 0 4px;
+        }
+
+        .carousel-indicators button.active {
+          opacity: 1; /* Full opacity for active button */
+          background-color: #cc3333 !important; /* Slightly darker shade for active button */
+        }
+      `}</style>
     </section>
   );
 }

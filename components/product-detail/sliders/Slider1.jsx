@@ -15,7 +15,19 @@ export default function Slider1({ images }) {
   const lightboxRef = useRef(null);
 
   if (!images || images.length === 0) {
-    return <div>No images available</div>;
+    return (
+    <div>
+      <Image
+            className="tf-image-zoom lazyload"
+            src='/images/product-placeholder/product-placeholder-image.png'
+            data-zoom='/images/product-placeholder/product-placeholder-image.png'
+            alt="Product Image"
+            width={652}
+            height={652}
+            priority
+          />
+      </div>
+    );
   }
 
   useEffect(() => {

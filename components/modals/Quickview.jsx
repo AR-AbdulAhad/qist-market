@@ -203,7 +203,16 @@ export default function Quickview() {
                     {loading ? (
                       <Skeleton height={652} />
                     ) : quickviewImages.length === 0 ? (
-                      <div>No images available</div>
+                      <div>
+                        <Image
+                          className="lazyload"
+                          src='/images/product-placeholder/product-placeholder-image.png'
+                          alt="Product Image"
+                          width={652}
+                          height={652}
+                          priority
+                        />
+                      </div>
                     ) : quickviewImages.length === 1 ? (
                       <div className="single-image tf-product-media-main">
                         <Link

@@ -5,6 +5,11 @@ import Hero from "@/components/otherPages/about/Hero";
 import React from "react";
 import Link from "next/link";
 
+export const metadata = {
+  title: "Qist Market - About Us",
+  robots: "noindex, nofollow",
+};
+
 export default function page() {
   return (
     <>

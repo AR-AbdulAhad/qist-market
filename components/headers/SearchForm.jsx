@@ -1,4 +1,3 @@
-// components/SearchForm.js
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
@@ -16,11 +15,10 @@ export default function SearchForm({
   const [selectedSlug, setSelectedSlug] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false); // New loading state
+  const [isLoading, setIsLoading] = useState(false);
   const navRef = useRef(null);
   const router = useRouter();
 
-  // Fetch categories from API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -33,7 +31,6 @@ export default function SearchForm({
     fetchCategories();
   }, []);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (navRef.current && !navRef.current.contains(event.target)) {
@@ -44,7 +41,6 @@ export default function SearchForm({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch suggestions as user types
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (searchTerm.length < 2) {
@@ -52,7 +48,7 @@ export default function SearchForm({
         setIsLoading(false);
         return;
       }
-      setIsLoading(true); // Show loader
+      setIsLoading(true);
       try {
         const params = new URLSearchParams({
           page: 1,
@@ -70,10 +66,9 @@ export default function SearchForm({
         console.error("Failed to fetch suggestions:", error);
         setSuggestions([]);
       } finally {
-        setIsLoading(false); // Hide loader
+        setIsLoading(false);
       }
     };
-    // Add debounce to prevent excessive API calls
     const debounce = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(debounce);
   }, [searchTerm, selectedType, selectedSlug]);
@@ -92,6 +87,16 @@ export default function SearchForm({
       params.append(selectedType, selectedSlug);
     }
     router.push(`/product/search?${params.toString()}`);
+  };
+
+  const handleCancel = () => {
+    setSearchTerm("");
+    setSuggestions([]);
+    setIsLoading(false);
+  };
+
+  const handleViewMore = () => {
+    router.push("/shop");
   };
 
   return (
@@ -113,22 +118,23 @@ export default function SearchForm({
             All categories
           </li>
           {categories.map((cat) => (
-            <React.Fragment key={cat.id}>
-              <li
+            <ul key={cat.id}>
+              <li 
+              className="w-100"
                 onClick={() => handleSelectCategory(cat.name, "category", cat.slugName)}
               >
-                {cat.name}
+                <strong>{cat.name}</strong>
               </li>
               {cat.subcategories.map((sub) => (
                 <li
                   key={sub.id}
-                  className="sub-category"
+                  className="w-100 sub-mar"
                   onClick={() => handleSelectCategory(`${cat.name} - ${sub.name}`, "subcategory", sub.slugName)}
                 >
-                  - {sub.name}
+                  {sub.name}
                 </li>
               ))}
-            </React.Fragment>
+            </ul>
           ))}
         </ul>
       </div>
@@ -140,21 +146,30 @@ export default function SearchForm({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-      </fieldset>
-        {isLoading && (
-          <div className="loader">
-            <svg className="spinner" viewBox="0 0 50 50">
-              <circle
-                className="path"
-                cx="25"
-                cy="25"
-                r="20"
-                fill="none"
-                strokeWidth="5"
-              ></circle>
-            </svg>
-          </div>
+        {searchTerm.length > 0 && (
+          <span
+            className="icon-cancel link"
+            onClick={handleCancel}
+            aria-label="Clear search"
+          >
+            <i className="icon-close" />
+          </span>
         )}
+      </fieldset>
+      {isLoading && (
+        <div className="loader">
+          <svg className="spinner" viewBox="0 0 50 50">
+            <circle
+              className="path"
+              cx="25"
+              cy="25"
+              r="20"
+              fill="none"
+              strokeWidth="5"
+            ></circle>
+          </svg>
+        </div>
+      )}
       <button type="submit" className="btn-submit-form">
         <i className="icon-search"></i>
       </button>
@@ -167,7 +182,7 @@ export default function SearchForm({
               onClick={() => router.push(`/product-detail/${product.slugName}`)}
             >
               <img
-                src={product.image_url || "/placeholder-image.jpg"}
+                src={product.image_url || "/images/product-placeholder/product-placeholder-image.png"}
                 alt={product.name}
                 className="suggestion-image"
               />
@@ -179,6 +194,13 @@ export default function SearchForm({
               </div>
             </div>
           ))}
+          <div
+            className="view-more link"
+            onClick={handleViewMore}
+            aria-label="View all products"
+          >
+            View All
+          </div>
         </div>
       )}
       {!isLoading && searchTerm.length >= 2 && suggestions.length === 0 && (

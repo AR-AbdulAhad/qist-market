@@ -6,6 +6,11 @@ import React from "react";
 import Link from "next/link";
 import ProtectedRoute from "@/components/common/ProtectedRoute";
 
+export const metadata = {
+  title: "Qist Market - Dashboard - Account Details",
+  robots: "noindex, nofollow",
+};
+
 export default function page() {
   return (
     <>

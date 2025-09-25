@@ -68,13 +68,23 @@ export default function Topbar1({ parentClass = "tf-topbar line-bt" }) {
                 </a>
                 <ul className="dropdown-menu" aria-labelledby="accountDropdown">
                   <li>
-                    <a className="dropdown-item" href="/my-account">
+                    <Link className="dropdown-item" href="/my-account">
                       Dashboard
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <Link className="dropdown-item" href="/my-account-orders">
                       Orders History
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" href="/my-account-address">
+                      Address
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" href="/my-account-edit">
+                      Account Details
                     </Link>
                   </li>
                   <li>

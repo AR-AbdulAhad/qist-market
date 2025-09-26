@@ -5408,6 +5408,12 @@ fieldset:disabled .btn {
     border-radius: var(--bs-modal-border-radius);
     outline: 0;
 }
+
+.model-release {
+    flex-direction: start;
+    display: flex;
+}
+
 .modal-backdrop {
     --bs-backdrop-zindex: 1050;
     --bs-backdrop-bg: #000;

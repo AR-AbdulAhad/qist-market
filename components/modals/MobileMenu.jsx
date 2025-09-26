@@ -270,13 +270,6 @@ export default function MobileMenu() {
                         <span>Payment Method</span>
                       </Link>
                     </li>
-                    <li
-                      className={`nav-mb-item ${pathname === "/stores" ? "active" : ""}`}
-                    >
-                      <a href="/stores" className="mb-menu-link">
-                        <span>Stores</span>
-                      </a>
-                    </li>
                   </ul>
                 </div>
                 <div className="mb-other-content">

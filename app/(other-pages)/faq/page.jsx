@@ -4,6 +4,11 @@ import Faqs from "@/components/otherPages/Faqs";
 import React from "react";
 import Link from "next/link";
 
+export const metadata = {
+  title: "Qist Market - FAQs",
+  robots: "noindex, nofollow",
+};
+
 export default function page() {
   return (
     <>

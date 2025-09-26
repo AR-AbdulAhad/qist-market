@@ -33,10 +33,17 @@ export default function TopCategoryProductCard({ product, index }) {
     >
       <div className="card-product-wrapper overflow-visible">
         <div className="product-thumb-image">
-          <Link href={`/product-detail/${productData.slugName}`} className="card-image">
+          <Link href={`/product-detail/${productData.slugName}`} className="product-img">
             <Image
               alt="Image Product"
               className="lazyload img-product"
+              src={currentImage || "/images/product-placeholder/product-placeholder-image.png"}
+              width={productData.width}
+              height={productData.height}
+            />
+            <Image
+              alt="Image Product"
+              className="lazyload img-hover"
               src={currentImage || "/images/product-placeholder/product-placeholder-image.png"}
               width={productData.width}
               height={productData.height}

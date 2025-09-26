@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useContextElement } from "@/context/Context";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { FaFacebookF, FaTwitter, FaWhatsapp, FaLinkedinIn } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
@@ -16,8 +18,6 @@ export default function Quickview() {
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [isPlanLoading, setIsPlanLoading] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const router = useRouter();
 
   const fetchProduct = async () => {
@@ -49,11 +49,9 @@ export default function Quickview() {
     if (modal) {
       const handleModalShow = () => {
         if (quickViewItem) {
-          // Reset states and fetch on every modal show
           setProductData(null);
           setLoading(true);
           setSelectedPlan(null);
-          setIsPlanLoading(false);
           setCurrentImageIndex(0);
           fetchProduct();
         } else {
@@ -63,11 +61,9 @@ export default function Quickview() {
       };
 
       const handleModalHide = () => {
-        // Reset states on modal close
         setProductData(null);
         setLoading(true);
         setSelectedPlan(null);
-        setIsPlanLoading(false);
         setCurrentImageIndex(0);
       };
 
@@ -79,19 +75,21 @@ export default function Quickview() {
         modal.removeEventListener("hidden.bs.modal", handleModalHide);
       };
     }
-  }, [quickViewItem]);  // Dependency on quickViewItem ensures re-attachment if item changes
+  }, [quickViewItem]);
 
-  const handleSelectChange = (e) => {
-    const planId = e.target.value;
-    setIsPlanLoading(true);
-    const plan = productData?.ProductInstallments?.find((p) => p.id.toString() === planId);
-    setTimeout(() => {
-      setSelectedPlan(plan || null);
-      setIsPlanLoading(false);
-    }, 500);
+  const handlePlanSelection = (plan) => {
+    setSelectedPlan(plan);
   };
 
   const handleNext = () => {
+    if (!selectedPlan) {
+      toast.error("Please select a plan before proceeding.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
+    }
+
     if (productData && selectedPlan) {
       const cartData = {
         productId: productData.id,
@@ -139,7 +137,8 @@ export default function Quickview() {
     console.log("Thumbnail clicked, new index:", index);
   };
 
-  const productUrl = `http://localhost:3000/product/${productData?.slugName || quickViewItem?.slugName || ""}`;
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const productUrl = `https://qistmarket.pk/product/${productData?.slugName || quickViewItem?.slugName || ""}`;
   const quickviewImages = productData?.ProductImage?.map((img) => img.url) || [productData?.imgSrc || quickViewItem?.imgSrc].filter(Boolean);
 
   if (!quickViewItem && !loading) {
@@ -162,10 +161,9 @@ export default function Quickview() {
   return (
     <div className="modal fade modalCentered modal-def modal-quick-view" id="quickView">
       <div className="modal-dialog modal-dialog-centered modal-lg">
-        <div className="modal-content flex-md-row">
+        <div className="modal-content flex-md-row model-release">
           <span className="icon-close icon-close-popup link" data-bs-dismiss="modal" />
           <div className="container mb-5 mt-4 mx-2">
-            {/* Breadcrumbs */}
             <div className="mb-3">
               <ul className="breakcrumbs">
                 <li>
@@ -206,7 +204,7 @@ export default function Quickview() {
                       <div>
                         <Image
                           className="lazyload"
-                          src='/images/product-placeholder/product-placeholder-image.png'
+                          src="/images/product-placeholder/product-placeholder-image.png"
                           alt="Product Image"
                           width={652}
                           height={652}
@@ -258,7 +256,7 @@ export default function Quickview() {
                             <Image
                               src={quickviewImages[currentImageIndex]}
                               alt="product-image"
-                              className="lazyload main-image"
+                              className="lazyload"
                               width={652}
                               height={652}
                               priority
@@ -303,13 +301,13 @@ export default function Quickview() {
                           <p className="caption">
                             Categories:{" "}
                             <Link href="/product-category" className="link text-secondary">
-                              {productData?.category || quickViewItem?.category || "Consumer Electronics"}
+                              {productData?.category || quickViewItem?.category || productData?.category_name || quickViewItem?.category_name ||  "Consumer Electronics"}
                             </Link>
-                            {productData?.subCategory || quickViewItem?.subCategory ? (
+                            {productData?.subCategory || quickViewItem?.subCategory || productData?.subcategory_name || quickViewItem?.subcategory_name ? (
                               <>
                                 ,{" "}
                                 <Link href="/product-category" className="link text-secondary">
-                                  {productData?.subCategory || quickViewItem?.subCategory}
+                                  {productData?.subCategory || quickViewItem?.subCategory || productData?.subcategory_name || quickViewItem?.subcategory_name}
                                 </Link>
                               </>
                             ) : null}
@@ -337,8 +335,8 @@ export default function Quickview() {
                             {loading ? (
                               <Skeleton width={200} height={15} />
                             ) : (
-                              <Link href="/shop-default" className="caption text-secondary link">
-                                {productData?.brand || quickViewItem?.brand || "Brand Name"}
+                              <Link href="/shop" className="caption text-secondary link">
+                                Supplied and Shipped by {productData?.brand || quickViewItem?.brand || "Qist Market"}
                               </Link>
                             )}
                           </li>
@@ -349,7 +347,7 @@ export default function Quickview() {
                           <Skeleton height={100} />
                         ) : (
                           <p className="body-text-3">
-                            {productData?.short_description || quickViewItem?.short_description || "No description available"}
+                            {productData?.short_description || quickViewItem?.short_description || "No Data Found!"}
                           </p>
                         )}
                       </div>
@@ -365,81 +363,42 @@ export default function Quickview() {
                           ) : (
                             <div className="tf-product-info-choose-option mt-3">
                               <h5 className="product-info-name fw-semibold text-primary mb-3">
-                                Choose Your Payment Plan
+                                Select Your Installment Plan
                               </h5>
-                              <select
-                                className="form-select"
-                                onChange={handleSelectChange}
-                                value={selectedPlan?.id || ""}
-                                aria-label="Select a payment plan"
-                              >
-                                <option value="" disabled>
-                                  -- Select a Plan --
-                                </option>
-                                {productData?.ProductInstallments?.length > 0 ? (
-                                  productData.ProductInstallments.map((installment, index) => (
-                                    <option key={installment.id} value={installment.id}>
-                                      Plan {index + 1} - Rs {installment.monthlyAmount.toLocaleString()} x {installment.months} months
-                                    </option>
-                                  ))
-                                ) : (
-                                  <option value="" disabled>
-                                    No plans available
-                                  </option>
-                                )}
-                              </select>
-                              {isPlanLoading ? (
-                                <div className="card mt-2">
-                                  <div className="card-body text-center">
-                                    <div className="spinner-border" role="status">
-                                      <span className="visually-hidden">Loading...</span>
+                              {productData?.ProductInstallments?.map((installment, index) => (
+                                <div key={installment.id} className="card mb-2">
+                                  <div className="card-body">
+                                    <div className="form-check">
+                                      <input
+                                        type="radio"
+                                        className="form-check-input"
+                                        id={`plan-${installment.id}`}
+                                        name="installmentPlan"
+                                        value={installment.id}
+                                        checked={selectedPlan?.id === installment.id}
+                                        onChange={() => handlePlanSelection(installment)}
+                                      />
+                                      <label
+                                        className="form-check-label"
+                                        htmlFor={`plan-${installment.id}`}
+                                      >
+                                        Plan {index + 1} - Rs {installment.monthlyAmount.toLocaleString()} x {installment.months} months
+                                        <span style={{ color: "red" }}> Rs {installment.advance.toLocaleString()} Advance</span>
+                                      </label>
                                     </div>
                                   </div>
                                 </div>
-                              ) : (
-                                selectedPlan && (
-                                  <div className="card mt-2">
-                                    <div className="card-body">
-                                      <h6 className="product-info-name mb-3">Selected Plan Details</h6>
-                                      <p className="mb-1">
-                                        <strong>Total Price:</strong> Rs {selectedPlan.totalPrice.toLocaleString()}
-                                      </p>
-                                      <p className="mb-1">
-                                        <strong>Monthly:</strong> Rs {selectedPlan.monthlyAmount.toLocaleString()} x {selectedPlan.months} months
-                                      </p>
-                                      <p className="mb-1">
-                                        <strong>Advance:</strong> Rs {selectedPlan.advance.toLocaleString()}
-                                      </p>
-                                      <button
-                                        onClick={handleNext}
-                                        className="tf-btn mt-2 w-100 text-white"
-                                        disabled={!selectedPlan}
-                                      >
-                                        Next
-                                      </button>
-                                    </div>
-                                  </div>
-                                )
-                              )}
+                              ))}
+                              <button
+                                onClick={handleNext}
+                                className="tf-btn mt-2 w-100 text-white"
+                                disabled={!selectedPlan}
+                              >
+                                Next
+                              </button>
                             </div>
                           )}
                         </>
-                      )}
-
-                      {loading ? (
-                        <Skeleton height={100} />
-                      ) : (
-                        <div className="border rounded mt-3">
-                          <div className="border-bottom p-3">
-                            <strong>More Information</strong>
-                          </div>
-                          <div className="border mt-3 mx-3 d-flex justify-content-between">
-                            <div className="w-100 border-end p-2">
-                              <strong>Brand</strong>
-                            </div>
-                            <div className="w-100 p-2">{productData?.brand || quickViewItem?.brand || "Brand Name"}</div>
-                          </div>
-                        </div>
                       )}
                       <div className="mt-3">
                         {loading ? (
@@ -495,6 +454,7 @@ export default function Quickview() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }

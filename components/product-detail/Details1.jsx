@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import Slider1 from "./sliders/Slider1";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   FaFacebookF,
   FaTwitter,
@@ -14,23 +16,18 @@ import { useRouter } from "next/navigation";
 
 export default function Details1({ singleProduct, loading }) {
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [isPlanLoading, setIsPlanLoading] = useState(false);
   const router = useRouter();
 
-  const handleSelectChange = (e) => {
-    const planId = e.target.value;
-    setIsPlanLoading(true);
-    const plan = singleProduct?.ProductInstallments?.find(
-      (p) => p.id.toString() === planId
-    );
-
-    setTimeout(() => {
-      setSelectedPlan(plan || null);
-      setIsPlanLoading(false);
-    }, 500);
+  const handlePlanSelection = (plan) => {
+    setSelectedPlan(plan);
   };
 
   const handleNext = () => {
+    if (!selectedPlan) {
+      toast.error("Please select a plan before proceeding.");
+      return;
+    }
+
     if (singleProduct && selectedPlan) {
       const cartData = {
         productId: singleProduct.id,
@@ -57,7 +54,7 @@ export default function Details1({ singleProduct, loading }) {
     }
   };
 
-  const productUrl = `/product/${singleProduct?.slugName}`;
+  const productUrl = `https://qistmarket.pk/product/${singleProduct?.slugName}`;
 
   return (
     <>
@@ -158,10 +155,10 @@ export default function Details1({ singleProduct, loading }) {
                               <Skeleton width={200} height={15} />
                             ) : (
                               <Link
-                                href={`/shop-default`}
+                                href={`/shop`}
                                 className="caption text-secondary link"
                               >
-                                {singleProduct.brand}
+                                Supplied and Shipped by {singleProduct.brand || "Qist Market"}
                               </Link>
                             )}
                           </li>
@@ -172,98 +169,58 @@ export default function Details1({ singleProduct, loading }) {
                           <Skeleton height={100} />
                         ) : (
                           <p className="body-text-3">
-                            {singleProduct.short_description}
+                            {singleProduct.short_description || "Data Not Found!"}
                           </p>
                         )}
                       </div>
 
-                      {/* Installment Dropdown */}
-                        {loading ? (
-                          <Skeleton height={100} />
-                        ) : (
-                          <>
-                            {singleProduct?.stock === false ? (
-                              <div className="bg-primary p-1 text-center rounded my-3">
-                                <span className="body-md-2 fw-medium text-white">Out of Stock</span>
-                              </div>
-                            ) : (
-                              <div className="tf-product-info-choose-option mt-3">
-                                <h5 className="product-info-name fw-semibold text-primary mb-3">
-                                  Choose Your Payment Plan
-                                </h5>
-
-                                <select
-                                  className="form-select"
-                                  onChange={handleSelectChange}
-                                  value={selectedPlan?.id || ""}
-                                  aria-label="Select a payment plan"
-                                >
-                                  <option value="" disabled>
-                                    -- Select a Plan --
-                                  </option>
-                                  {singleProduct?.ProductInstallments?.map((installment, index) => (
-                                    <option key={installment.id} value={installment.id}>
-                                      Plan {index + 1} - Rs {installment.monthlyAmount.toLocaleString()} x {installment.months} months
-                                    </option>
-                                  ))}
-                                </select>
-
-                                {isPlanLoading ? (
-                                  <div className="card mt-2">
-                                    <div className="card-body text-center">
-                                      <div className="spinner-border" role="status">
-                                        <span className="visually-hidden">Loading...</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  selectedPlan && (
-                                    <div className="card mt-2">
-                                      <div className="card-body">
-                                        <h6 className="product-info-name mb-3">Selected Plan Details</h6>
-                                        <p className="mb-1">
-                                          <strong>Total Price:</strong> Rs {selectedPlan.totalPrice.toLocaleString()}
-                                        </p>
-                                        <p className="mb-1">
-                                          <strong>Monthly:</strong> Rs {selectedPlan.monthlyAmount.toLocaleString()} x{" "}
-                                          {selectedPlan.months} months
-                                        </p>
-                                        <p className="mb-1">
-                                          <strong>Advance:</strong> Rs {selectedPlan.advance.toLocaleString()}
-                                        </p>
-                                        <button
-                                          onClick={handleNext}
-                                          className="tf-btn mt-2 w-100 text-white"
-                                          disabled={!selectedPlan}
-                                        >
-                                          Next
-                                        </button>
-                                      </div>
-                                    </div>
-                                  )
-                                )}
-                              </div>
-                            )}
-                          </>
-                        )}
-
-                      {/* Brand + Share */}
+                      {/* Installment Radio Buttons */}
                       {loading ? (
                         <Skeleton height={100} />
                       ) : (
-                        <div className="border rounded mt-3">
-                          <div className="border-bottom p-3">
-                            <strong>More Information</strong>
-                          </div>
-                          <div className="border mt-3 mx-3 d-flex justify-content-between">
-                            <div className="w-100 border-end p-2">
-                              <strong>Brand</strong>
+                        <>
+                          {singleProduct?.stock === false ? (
+                            <div className="bg-primary p-1 text-center rounded my-3">
+                              <span className="body-md-2 fw-medium text-white">Out of Stock</span>
                             </div>
-                            <div className="w-100 p-2">
-                              {singleProduct.brand}
+                          ) : (
+                            <div className="tf-product-info-choose-option mt-3">
+                              <h5 className="product-info-name fw-semibold text-primary mb-3">
+                                Select Your Installment Plan
+                              </h5>
+                              {singleProduct?.ProductInstallments?.map((installment, index) => (
+                                <div key={installment.id} className="card mb-2">
+                                  <div className="card-body">
+                                    <div className="form-check">
+                                      <input
+                                        type="radio"
+                                        className="form-check-input"
+                                        id={`plan-${installment.id}`}
+                                        name="installmentPlan"
+                                        value={installment.id}
+                                        checked={selectedPlan?.id === installment.id}
+                                        onChange={() => handlePlanSelection(installment)}
+                                      />
+                                      <label
+                                        className="form-check-label"
+                                        htmlFor={`plan-${installment.id}`}
+                                      >
+                                        Plan {index + 1} - Rs {installment.monthlyAmount.toLocaleString()} x {installment.months} months
+                                        <span style={{ color: "red" }}> Rs {installment.advance.toLocaleString()} Advance</span>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                              <button
+                                onClick={handleNext}
+                                className="tf-btn mt-2 w-100 text-white"
+                              >
+                                Next
+                              </button>
                             </div>
-                          </div>
-                        </div>
+                          )}
+                        </>
                       )}
                       <div className="mt-3">
                         {loading ? (

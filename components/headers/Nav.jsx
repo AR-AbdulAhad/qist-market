@@ -62,13 +62,6 @@ export default function Nav() {
           <span>Payment Method</span>
         </Link>
       </li>
-      <li
-        className={`nav-item ${pathname === "/stores" ? "active" : ""}`}
-      >
-        <Link href="/stores" className="item-link link body-md-2 fw-semibold">
-          <span>Stores</span>
-        </Link>
-      </li>
     </>
   );
 }

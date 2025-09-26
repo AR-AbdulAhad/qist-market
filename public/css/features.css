@@ -1,0 +1,71 @@
+.features-grid {
+  display: grid;
+  gap: 10px; /* Further reduced gap for compact layout */
+  grid-template-columns: repeat(2, 1fr); /* Two columns for all mobile screens */
+}
+
+@media (min-width: 768px) {
+  .features-grid {
+    grid-template-columns: repeat(3, 1fr); /* Three columns for tablets */
+  }
+}
+
+@media (min-width: 1200px) {
+  .features-grid {
+    grid-template-columns: repeat(4, 1fr); /* Four columns for desktops */
+  }
+}
+
+/* Compact styling for all screens, especially mobile */
+.tf-icon-boxs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 10px; /* Further reduced padding */
+  box-sizing: border-box;
+}
+
+.icon-boxs {
+  margin-bottom: 6px; /* Further reduced margin */
+}
+
+.icon-boxs svg {
+  width: 18px; /* Match SVG size reduction in JSX */
+  height: 18px;
+}
+
+.contents {
+  display: flex;
+  flex-direction: column;
+  gap: 3px; /* Further reduced gap for content */
+}
+
+.body-text-3 {
+  margin: 0;
+  font-size: 13px; /* Smaller font size for title */
+  line-height: 1.2;
+}
+
+.body-text-33 {
+  margin: 0;
+  font-size: 11px; /* Smaller font size for description */
+  color: #666;
+  line-height: 1.2;
+}
+
+/* Ensure compact layout on very small screens */
+@media (max-width: 400px) {
+  .tf-icon-boxs {
+    padding: 8px; /* Even smaller padding for tiny screens */
+  }
+  .body-text-3 {
+    font-size: 12px; /* Slightly smaller title */
+  }
+  .body-text-33 {
+    font-size: 10px; /* Slightly smaller description */
+  }
+  .features-grid {
+    gap: 8px; /* Smaller gap for tiny screens */
+  }
+}

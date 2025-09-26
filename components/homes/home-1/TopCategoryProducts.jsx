@@ -32,58 +32,81 @@ export default function TopCategoryProducts() {
   return (
     <section className="tf-sp-2 pt-0">
       <div className="container">
-        {categories.map((category, index) => (
-          <div key={index} className="category-section mt-4">
-            {/* Banner Image for the Category */}
-            <div className="mb-4">
-              <img
-                src={category.image_url}
-                alt={`Banner for ${category.category_name}`}
-                className="product-banner mt-5"
-              />
-            {/* Category Name */}
-            <div className="d-flex justify-content-between align-items-center mb-5 border px-4">
-              <h2 className="fs-3">{category.category_name}</h2>
-              <Link href={`/product-category/${category.slugName}`} className="check-btn link">View All</Link>
-            </div>
-            </div>
-            {/* Products */}
-            <div className="box-btn-slide-2 sw-nav-effect">
-              <Swiper
-                className="swiper tf-sw-products slider-thumb-deal"
-                spaceBetween={15}
-                breakpoints={{
-                  0: { slidesPerView: 1 },
-                  575: { slidesPerView: 2 },
-                  768: { slidesPerView: 3, spaceBetween: 20 },
-                  992: { slidesPerView: 4, spaceBetween: 30 },
-                }}
-                modules={[Navigation, Pagination]}
-                pagination={{
-                  clickable: true,
-                  el: `.spd14`,
-                }}
-                navigation={{
-                  prevEl: `.snbp14`,
-                  nextEl: `.snbn14`,
-                }}
-              >
-                {category.products.map((product, prodIndex) => (
-                  <SwiperSlide className="swiper-slide" key={prodIndex}>
-                    <TopCategoryProductCard index={prodIndex} product={product} />
-                  </SwiperSlide>
-                ))}
-                <div className="sw-dot-default sw-pagination-products justify-content-center spd14" />
-              </Swiper>
-              <div className="d-none d-xl-flex swiper-button-prev nav-swiper nav-prev-products-2 snbp14">
-                <i className="icon-arrow-left-lg" />
+        {categories.map((category, index) => {
+          const getSlidesPerView = () => {
+            if (window.innerWidth >= 992) return 4;
+            if (window.innerWidth >= 768) return 3;
+            if (window.innerWidth >= 575) return 2;
+            return 1;
+          };
+
+          const shouldUseSlider = category.products.length > getSlidesPerView();
+
+          return (
+            <div key={index} className="category-section mt-4">
+              <div className="mb-4">
+                <img
+                  src={category.image_url}
+                  alt={`Banner for ${category.category_name}`}
+                  className="product-banner mt-5"
+                />
+                <div className="d-flex justify-content-between align-items-center mb-5 border px-4">
+                  <h2 className="fs-3">{category.category_name}</h2>
+                  <Link href={`/product-category/${category.slugName}`} className="check-btn link">
+                    View All
+                  </Link>
+                </div>
               </div>
-              <div className="d-none d-xl-flex swiper-button-next nav-swiper nav-next-products-2 snbn14">
-                <i className="icon-arrow-right-lg" />
+              <div className="box-btn-slide-2 sw-nav-effect">
+                {shouldUseSlider ? (
+                  <Swiper
+                    className="swiper tf-sw-products slider-thumb-deal"
+                    spaceBetween={15}
+                    breakpoints={{
+                      0: { slidesPerView: 2 },
+                      575: { slidesPerView: 3 },
+                      768: { slidesPerView: 4, spaceBetween: 20 },
+                      992: { slidesPerView: 5, spaceBetween: 30 },
+                    }}
+                    modules={[Navigation, Pagination]}
+                    pagination={{
+                      clickable: true,
+                      el: `.spd${index}`,
+                    }}
+                    navigation={{
+                      prevEl: `.snbp${index}`,
+                      nextEl: `.snbn${index}`,
+                    }}
+                    watchOverflow={true}
+                  >
+                    {category.products.map((product, prodIndex) => (
+                      <SwiperSlide className="swiper-slide" key={prodIndex}>
+                        <TopCategoryProductCard index={prodIndex} product={product} />
+                      </SwiperSlide>
+                    ))}
+                    <div className={`sw-dot-default sw-pagination-products justify-content-center spd${index}`} />
+                  </Swiper>
+                ) : (
+                  <div className="non-slider-products">
+                    {category.products.map((product, prodIndex) => (
+                      <div key={prodIndex} className="non-slider-product-item">
+                        <TopCategoryProductCard index={prodIndex} product={product} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {shouldUseSlider && (
+                  <>
+                    <div className={`d-none d-xl-flex swiper-button-prev nav-swiper nav-prev-products-2 snbp${index}`}>
+                    </div>
+                    <div className={`d-none d-xl-flex swiper-button-next nav-swiper nav-next-products-2 snbn${index}`}>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

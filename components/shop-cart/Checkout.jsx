@@ -5,6 +5,7 @@ import Image from "next/image";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "@/context/AuthContext";
+import { toast } from "react-toastify";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -280,14 +281,14 @@ export default function Checkout() {
         router.push("/order-details");
       } else {
         const errorData = await response.json();
-        console.error("Error:", errorData);
+        toast.error("Error:", errorData.error || "Failed to create order");
         setErrors({
           api: errorData.error || "Failed to create order",
           details: errorData.details,
         });
       }
     } catch (error) {
-      console.error("Network error:", error);
+      toast.error("Network error:", error);
       setErrors({
         api: "Failed to connect to the server",
         details: error.message,
@@ -336,9 +337,12 @@ export default function Checkout() {
                 <span className="fw-semibold">Contact</span>
               </h5>
               <form className="form-checkout-contact">
-                <label className="body-md-2 fw-semibold">
-                  Email Address <span className="text-primary">*</span>
-                </label>
+                <div className="field-flex">
+                    <label className="body-md-2 fw-semibold">
+                    Email Address <span className="text-primary">*</span>
+                  </label>
+                  <label className="body-md-2 fw-semibold">ای میل ایڈریس</label>
+                </div>
                 <input
                   className="def"
                   type="email"
@@ -355,9 +359,12 @@ export default function Checkout() {
                 </p>
               </form>
               <form className="form-checkout-contact mt-3">
-                <label className="body-md-2 fw-semibold">
-                  Phone Number <span className="text-primary">*</span>
-                </label>
+                <div className="field-flex">
+                  <label className="body-md-2 fw-semibold">
+                    Phone Number <span className="text-primary">*</span>
+                  </label>
+                  <label className="body-md-2 fw-semibold">فون نمبر</label>
+                </div>
                 <input
                   className="def"
                   type="number"
@@ -372,13 +379,16 @@ export default function Checkout() {
               </form>
             </div>
             <div className="wrap">
-              <h5 className="title fw-semibold">Delivery</h5>
+              <h5 className="title fw-semibold">Order Details</h5>
               <form action="#" className="def">
                 <div className="cols">
                   <fieldset>
-                    <label>
-                      First Name <span className="text-primary">*</span>
-                    </label>
+                    <div className="field-flex">
+                      <label>
+                        First Name <span className="text-primary">*</span>
+                      </label>
+                      <label className="body-md-2 fw-semibold">پہلا نام</label>
+                    </div>
                     <input
                       type="text"
                       placeholder="Enter first name"
@@ -391,9 +401,12 @@ export default function Checkout() {
                     )}
                   </fieldset>
                   <fieldset>
-                    <label>
-                      Last Name <span className="text-primary">*</span>
-                    </label>
+                    <div className="field-flex">
+                      <label>
+                        Last Name <span className="text-primary">*</span>
+                      </label>
+                      <label className="body-md-2 fw-semibold">آخری نام</label>
+                    </div>
                     <input
                       type="text"
                       placeholder="Enter last name"
@@ -407,9 +420,12 @@ export default function Checkout() {
                   </fieldset>
                 </div>
                 <fieldset>
-                  <label>
-                    CNIC Number <span className="text-primary">*</span>
-                  </label>
+                  <div className="field-flex">
+                    <label>
+                      CNIC Number <span className="text-primary">*</span>
+                    </label>
+                    <label className="body-md-2 fw-semibold">شناختی کارڈ نمبر</label>
+                  </div>
                   <input
                     type="number"
                     placeholder="42xxxxxxxxxxx"
@@ -436,9 +452,12 @@ export default function Checkout() {
                 )}
                 <div className="cols">
                   <fieldset>
-                    <label>
-                      City <span className="text-primary">*</span>
-                    </label>
+                    <div className="field-flex">
+                      <label>
+                        Select City <span className="text-primary">*</span>
+                      </label>
+                      <label className="body-md-2 fw-semibold">شہر منتخب کریں</label>
+                    </div>
                     {useDefaultAddress && defaultAddress ? (
                       <input
                         type="text"
@@ -720,9 +739,12 @@ export default function Checkout() {
                   </fieldset>
                 </div>
                 <fieldset>
-                  <label>
-                    Address <span className="text-primary">*</span>
-                  </label>
+                  <div className="field-flex">
+                    <label>
+                      Address <span className="text-primary">*</span>
+                    </label>
+                    <label className="body-md-2 fw-semibold">پتہ</label>
+                  </div>
                   <input
                     type="text"
                     placeholder="Your detailed address"
@@ -736,38 +758,29 @@ export default function Checkout() {
                   )}
                 </fieldset>
                 <fieldset>
-                  <label>Order Notes (optional)</label>
+                  <div className="field-flex">
+                    <label>Order Notes (optional)</label>
+                    <label className="body-md-2 fw-semibold">آرڈر کے مطلق خاص ہدایات (انتخابی)</label>
+                  </div>
                   <textarea placeholder="Note on your order" defaultValue={""} />
                 </fieldset>
               </form>
             </div>
-            <div className="wrap">
-              <h5 className="title fw-semibold">Payment</h5>
-              <div className="form-payment">
-                <div className="payment-box">
-                  <p className="body-md-2 fw-semibold">Advance cash on delivery</p>
-                </div>
-                <div className="box-btn">
-                  <button
-                    onClick={handlePlaceOrder}
-                    className="tf-btn w-100"
-                    type="button"
-                    disabled={isLoading}
-                  >
-                    <span className="text-white">
-                      {isLoading ? "Placing order..." : "Place order"}
-                    </span>
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
-          <div className="flat-sidebar-checkout">
+          <div className="d-flex flex-column sidebar-checkout-custom">
+          <h5 className="title has-account">
+              <span className="fw-semibold">Your Order</span>
+              <span className="fw-semibold">آپ کا آرڈر</span>
+          </h5>
+          <div className="flat-sidebar-checkout position-relative top-0 w-100">
             <div className="sidebar-checkout-content">
-              <h5 className="fw-semibold">Order Summary</h5>
+              <div className="has-account field-flex">
+                <span className="fw-semibold">Order Details</span>
+                <span className="fw-semibold">آرڈر کی تفصیلات</span>
+              </div>
               {cartData ? (
                 <ul className="list-product">
-                  <li className="item-product">
+                  <li className="item-product d-flex align-items-center">
                     <a href="#" className="img-product">
                       <Image
                         alt=""
@@ -783,13 +796,6 @@ export default function Checkout() {
                       >
                         {cartData.productName}
                       </a>
-                      <p className="body-md-2 text-main-2 fw-semibold">
-                        Total Deal Value Rs. {cartData.selectedPlan.totalPrice.toLocaleString()}
-                      </p>
-                      <p className="body-md-2 text-main-2">
-                        Plan: Rs {cartData.selectedPlan.monthlyAmount.toLocaleString()} x{" "}
-                        {cartData.selectedPlan.months} months
-                      </p>
                       <div className="body-md-2 text-main-2">
                         <button
                           className="text-primary link check-btn"
@@ -810,33 +816,89 @@ export default function Checkout() {
               )}
               <ul className="sec-total-price">
                 <li>
-                  <span className="body-text-3">Advance Amount</span>
-                  <span className="body-text-3">
+                  <span className="body-text-3">Advance Amount: {" "}
+                    <span className="body-text-3 text-primary">
                     Rs. {cartData?.selectedPlan?.advance.toLocaleString() || "0"}
                   </span>
-                </li>
-                <li>
-                  <span className="body-text-3">Monthly Amount</span>
+                  </span>
                   <span className="body-text-3">
-                    Rs. {cartData?.selectedPlan?.monthlyAmount.toLocaleString() || "0"} / for{" "}
-                    {cartData?.selectedPlan?.months} Months
+                    ایڈوانس رقم
                   </span>
                 </li>
                 <li>
-                  <span className="body-md-2 fw-semibold">Total</span>
+                  <span className="body-text-3">Monthly Amount: {" "}
+                    <span className="body-text-3">
+                      <span className="text-primary">Rs. {cartData?.selectedPlan?.monthlyAmount.toLocaleString() || "0"}</span> / for{" "}
+                      {cartData?.selectedPlan?.months} Months
+                    </span>
+                  </span>
+                  <span className="body-text-3">
+                    ماہانہ رقم
+                  </span>
+                </li>
+                <li>
+                  <span className="body-text-3">Total Deal Value: {" "}
+                    <span className="body-text-3 text-primary">
+                      Rs. {cartData?.selectedPlan?.totalPrice.toLocaleString() || "0"}
+                    </span>
+                  </span>
+                  <span className="body-text-3">
+                    کل مالیاتی قیمت
+                  </span>
+                </li>
+                <li>
+                  <span className="body-md-2 fw-semibold text-uppercase d-flex flex-column gap-1">
+                    <span>
+                      Total Advance
+                    </span>
+                    <span>
+                      کل ایڈوانس
+                    </span>
+                  </span>
                   <span className="body-md-2 fw-semibold text-primary">
                     Rs. {cartData?.selectedPlan?.advance.toLocaleString() || "0"}
                   </span>
                 </li>
-                <li>
-                  <span className="body-text-3">Shipping</span>
-                  <span className="body-text-3">Free shipping</span>
-                </li>
+                <li></li>
+                   <div className="body-md-2 fw-semibold mb-2">
+                    <p><span className="text-success">✓</span> Free Delivery / مفت ڈیلیوری</p>
+                    <p><span className="text-success">✓</span> Advance Cash on Delivery / آدائیگی آئٹم سپردگی کے وقت</p>
+                   </div>
+                   <div className="body-md-2 fw-semibold">
+                    <p className="mb-1">Free delivery on all orders / No verification charges / Shop without bank account/card / No charges for documentation</p>
+                    <p>تمام آرڈرز پر مفت ڈیلیوری / کوئی تصدیق کے چارجز نہیں / بینک اکاؤنٹ/کارڈ کے بغیر شاپنگ / دستاویزات کے لیے کوئی چارجز نہیں</p>
+                   </div>
               </ul>
+            </div>
+          </div>
+          <div className="mt-4">
+            <p>By clicking on Place Order, I have read and accepted the <a href="/terms-conditions" className="text-primary">terms and conditions</a> and <a href="/privacy" className="text-primary">privacy policy</a> of Qist Market.<span className="text-primary">*</span></p>
+            <p className="text-end">میں شرائط و ضوابط سے اتفاق کرتا ہوں</p>
+          </div>
+          <div className="wrap mt-4">
+            <div className="box-btn">
+              <button
+                onClick={handlePlaceOrder}
+                className="tf-btn w-100 justify-content-start"
+                type="button"
+                disabled={isLoading}
+              >
+                  {isLoading ? 
+                    <div className="w-100 text-white">
+                      Placing order...
+                    </div>
+                   : 
+                    <div className="w-100 d-flex justify-content-between text-white">
+                      <p>Place order</p>
+                      <p>آرڈر کریں</p>
+                    </div>
+                  }
+              </button>
             </div>
           </div>
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }

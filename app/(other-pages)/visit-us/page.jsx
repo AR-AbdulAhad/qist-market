@@ -1,19 +1,20 @@
-import BlogDetails from "@/components/blogs/BlogDetails";
-import NewProducts from "@/components/common/NewProducts";
+import Features from "@/components/common/Features";
 import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
-import Link from "next/link";
 import React from "react";
-// export const metadata = {
-//   title: "Blog Details || Onsus - Multipurpose React Nextjs eCommerce",
-//   description: "Onsus - Multipurpose React Nextjs eCommerce",
-// };
+import Link from "next/link";
+import VisitUs from "@/components/otherPages/visit-us/VisitUs";
+
+export const metadata = {
+  title: "Qist Market - Visit Us",
+  robots: "noindex, nofollow",
+};
 
 export default function page() {
   return (
     <>
       <Header4 />
-      <div className="tf-sp-1">
+      <div className="tf-sp-3 pb-0">
         <div className="container">
           <ul className="breakcrumbs">
             <li>
@@ -22,18 +23,18 @@ export default function page() {
                 Home{" "}
               </Link>
             </li>
+
             <li className="d-flex align-items-center">
               <i className="icon icon-arrow-right" />
             </li>
-
             <li>
-              <span className="body-small">Blog Details</span>
+              <span className="body-small">Visit Us</span>
             </li>
           </ul>
         </div>
       </div>
-      <BlogDetails />
-      <NewProducts />
+      <VisitUs />
+      <Features />
       <Footer1 />
     </>
   );

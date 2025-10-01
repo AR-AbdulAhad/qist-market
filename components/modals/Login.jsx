@@ -63,9 +63,7 @@ export default function Login() {
       const response = await axios.post(`${BACKEND_URL}/api/customer/login`, formData);
       const { token } = response.data;
       Cookies.set("token", token, {
-      expires: 7,
-      secure: true,
-      sameSite: "Strict",
+      expires: formData.rememberMe ? 30 : 7,
       path: "/",
     });
       toast.success("Login successful!");

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import "@/public/css/quill-out.css"
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -64,7 +65,7 @@ export default function Description({ singleProduct, loading }) {
                   </div>
                 ) : (
                   <div
-                    className="body-text-3"
+                    className="body-text-3 body-text-33"
                     dangerouslySetInnerHTML={{
                       __html:
                         singleProduct?.long_description || "Data Not Found!",

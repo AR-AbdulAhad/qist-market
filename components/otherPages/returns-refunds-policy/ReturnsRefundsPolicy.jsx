@@ -26,17 +26,18 @@ export default function ReturnsRefundsPolicy() {
   return (
     <section className="tf-sp-2">
       <div className="container">
+        <h1 className="display-4 text-center mb-5 fw-medium"><strong>Refund and Returns Policy</strong></h1>
         {isLoading ? (
           <div className="w-100 d-flex justify-content-center align-items-center">
             <div className="spinner-border" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
-        ) : returnsRefundsPolicy ? (
+        ) : returnsRefundsPolicy? (
           <div dangerouslySetInnerHTML={{ __html: returnsRefundsPolicy.content }} />
         ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-lg text-gray-600">No Returns and Refunds Policy Content Available</p>
+          <div className="d-flex flex-col align-items-center justify-content-center py-12">
+            <p>No Returns and Refunds Policy Content Available</p>
           </div>
         )}
       </div>

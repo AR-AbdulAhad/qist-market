@@ -20,6 +20,7 @@ import VerificationCode from "@/components/modals/VerificationCode";
 import ChangePassword from "@/components/modals/ChangePassword";
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from "@/context/AuthContext";
+import { SettingsProvider } from "@/context/SettingsContext";
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -63,25 +64,21 @@ export default function RootLayout({ children }) {
       }
     };
 
-    // Initial measurement
     if (header) {
       navbarHeight = header.offsetHeight;
     }
 
-    // Set up event listeners
     window.addEventListener("scroll", handleScroll);
     const scrollInterval = setInterval(checkScroll, 250);
 
-    // Cleanup function
     return () => {
       window.removeEventListener("scroll", handleScroll);
       clearInterval(scrollInterval);
     };
-  }, [pathname]); // Empty dependency array means this runs once on mount
+  }, [pathname]);
 
   useEffect(() => {
-    // Close any open modal
-    const bootstrap = require("bootstrap"); // dynamically import bootstrap
+    const bootstrap = require("bootstrap");
     const modalElements = document.querySelectorAll(".modal.show");
     modalElements.forEach((modal) => {
       const modalInstance = bootstrap.Modal.getInstance(modal);
@@ -90,7 +87,6 @@ export default function RootLayout({ children }) {
       }
     });
 
-    // Close any open offcanvas
     const offcanvasElements = document.querySelectorAll(".offcanvas.show");
     offcanvasElements.forEach((offcanvas) => {
       const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
@@ -98,7 +94,7 @@ export default function RootLayout({ children }) {
         offcanvasInstance.hide();
       }
     });
-  }, [pathname]); // Runs every time the route changes
+  }, [pathname]);
   useEffect(() => {
     const WOW = require("@/utlis/wow");
     const wow = new WOW.default({
@@ -109,7 +105,6 @@ export default function RootLayout({ children }) {
   }, [pathname]);
   return (
     <html lang="en">
-      {/* Google Fonts - Inter & Poppins */}
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -121,7 +116,6 @@ export default function RootLayout({ children }) {
           href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
           rel="stylesheet"
         />
-        {/* Helvetica Neue */}
         <link
           href="https://fonts.cdnfonts.com/css/helvetica-neue-55"
           rel="stylesheet"
@@ -129,6 +123,7 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         <div id="wrapper">
+          <SettingsProvider>
           <AuthProvider>
           <Context>
             {children}
@@ -147,6 +142,7 @@ export default function RootLayout({ children }) {
             <ToastContainer />
           </Context>
           </AuthProvider>
+          </SettingsProvider>
         </div>
       </body>
     </html>

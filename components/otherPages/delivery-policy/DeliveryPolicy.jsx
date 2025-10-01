@@ -26,17 +26,18 @@ export default function DeliveryPolicy() {
   return (
     <section className="tf-sp-2">
       <div className="container">
+        <h1 className="display-4 text-center mb-5 fw-medium"><strong>Delivery Policy</strong></h1>
         {isLoading ? (
           <div className="w-100 d-flex justify-content-center align-items-center">
             <div className="spinner-border" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
-        ) : deliveryPolicy ? (
+        ) : deliveryPolicy? (
           <div dangerouslySetInnerHTML={{ __html: deliveryPolicy.content }} />
         ) : (
-          <div className="flex flex-col items-center justify-center py-12">
-            <p className="text-lg text-gray-600">No Delivery Policy Content Available</p>
+          <div className="d-flex flex-col align-items-center justify-content-center py-12">
+            <p>No Delivery Policy Content Available</p>
           </div>
         )}
       </div>

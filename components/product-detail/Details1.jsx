@@ -45,8 +45,6 @@ export default function Details1({ singleProduct, loading }) {
 
       Cookies.set("cartData", JSON.stringify(cartData), {
         expires: 7,
-        secure: true,
-        sameSite: "Strict",
         path: "/",
       });
 
@@ -54,7 +52,7 @@ export default function Details1({ singleProduct, loading }) {
     }
   };
 
-  const productUrl = `https://qistmarket.pk/product/${singleProduct?.slugName}`;
+  const productUrl = `https://qistmarket.pk/product-detail/${singleProduct?.slugName}`;
 
   return (
     <>

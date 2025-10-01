@@ -1,8 +1,16 @@
 "use client";
+
 import React, { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSettings } from "@/context/SettingsContext";
+
 export default function Footer1({ fullWidth = false }) {
+  const { settings, isLoading, error } = useSettings();
+
+  const getCurrentYear = () => {
+    return new Date().getFullYear();
+  };
 
   useEffect(() => {
     const headings = document.querySelectorAll(".footer-heading-mobile");
@@ -37,46 +45,81 @@ export default function Footer1({ fullWidth = false }) {
         <div className="ft-body-inner">
           <div className={`container${fullWidth ? "-full" : ""}`}>
             <div className="ft-inner flex-wrap flex-xl-nowrap">
-              <div className="ft-logo">
-                <Link href={`/`} className="logo-site">
-                  <Image
-                    alt="Logo"
-                    src="/images/logo/logo.png"
-                    width={185}
-                    height={41}
-                  />
+              <div className="d-felx flex-column">
+                <Link href="/" className="logo-site">
+                  {isLoading ? (
+                    <Image
+                      alt="Default Logo"
+                      src="/images/logo/logo.png"
+                      width={185}
+                      height={41}
+                    />
+                  ) : error ? (
+                    <span>Error loading logo</span>
+                  ) : settings?.logo_url ? (
+                    <Image
+                      alt={settings.name || "Logo"}
+                      src={settings.logo_url}
+                      width={185}
+                      height={41}
+                    />
+                  ) : (
+                    <Image
+                      alt="Default Logo"
+                      src="/images/logo/logo.png"
+                      width={185}
+                      height={41}
+                    />
+                  )}
                 </Link>
                 <div className="tf-collapse-content">
-                 <ul className="ft-menu-list ft-contact-list d-flex flex-column gap-3 ">
-                      <li className="d-flex gap-2">
-                        <span className="icon mt-1">
-                          <i className="icon-location" />
-                        </span>
-                        <a href="#" className="link">
-                          Shop-4, Plot # 43-C, <br/>DHA Phase 5 Badar  Commercial Area <br/> Defence V Defence Housing Authority, <br/> Karachi, 75500
-                        </a>
-                      </li>
-                      <li className="d-flex gap-2">
-                        <span className="icon">
-                          <i className="icon-phone" />
-                        </span>
-                        <a href="#" className="product-title">
-                          <span className="product-title text-primary">
-                            0328 1125500
+                  {isLoading ? (
+                    ""
+                  ) : error ? (
+                    <p className="body-small text-danger">Error loading contact info</p>
+                  ) : (
+                    <ul className="ft-menu-list ft-contact-list d-flex flex-column gap-3 mt-2">
+                      {settings?.address && (
+                        <li className="d-flex gap-2">
+                          <span className="icon mt-1">
+                            <i className="icon-location" />
                           </span>
-                        </a>
-                      </li>
-                      <li className="d-flex gap-2">
-                        <span className="icon">
-                          <i className="icon-direction" />
-                        </span>
-                        <a href="#" className="">
-                          <span className="text-primary">
-                            support@qistmarket.com
+                          <a
+                            href={`https://www.google.com/maps?q=${encodeURIComponent(settings.address)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="link address-link"
+                          >
+                            {settings.address}
+                          </a>
+                        </li>
+                      )}
+                      {settings?.phone && (
+                        <li className="d-flex gap-2">
+                          <span className="icon">
+                            <i className="icon-phone" />
                           </span>
-                        </a>
-                      </li>
+                          <a href={`tel:${settings.phone}`} className="product-title">
+                            <span className="product-title text-primary">
+                              {settings.phone}
+                            </span>
+                          </a>
+                        </li>
+                      )}
+                      {settings?.email && (
+                        <li className="d-flex gap-2">
+                          <span className="icon">
+                            <i className="icon-direction" />
+                          </span>
+                          <a href={`mailto:${settings.email}`} className="">
+                            <span className="text-primary">
+                              {settings.email}
+                            </span>
+                          </a>
+                        </li>
+                      )}
                     </ul>
+                  )}
                 </div>
               </div>
               <ul className="ft-link-wrap w-100 tf-grid-layout md-col-2 lg-col-3">
@@ -87,22 +130,22 @@ export default function Footer1({ fullWidth = false }) {
                   <div className="tf-collapse-content">
                     <ul className="ft-menu-list">
                       <li>
-                        <Link href={`/about`} className="link">
+                        <Link href="/about" className="link">
                           About Us
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/faq`} className="link">
+                        <Link href="/faq" className="link">
                           FAQs
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/contact`} className="link">
+                        <Link href="/contact" className="link">
                           Contact
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/visit-us`} className="link">
+                        <Link href="/visit-us" className="link">
                           Visit Us
                         </Link>
                       </li>
@@ -116,22 +159,22 @@ export default function Footer1({ fullWidth = false }) {
                   <div className="tf-collapse-content">
                     <ul className="ft-menu-list">
                       <li>
-                        <Link href={`/my-account`} className="link">
+                        <Link href="/my-account" className="link">
                           Account
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/verification-process`} className="link">
+                        <Link href="/verification-process" className="link">
                           Verification Process
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/delivery-policy`} className="link">
+                        <Link href="/delivery-policy" className="link">
                           Delivery Policy
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/agreement`} className="link">
+                        <Link href="/agreement" className="link">
                           Agreement
                         </Link>
                       </li>
@@ -145,30 +188,25 @@ export default function Footer1({ fullWidth = false }) {
                   <div className="tf-collapse-content">
                     <ul className="ft-menu-list">
                       <li>
-                        <Link href={`/terms-conditions`} className="link">
-                          Terms &amp; Conditions
+                        <Link href="/terms-conditions" className="link">
+                          Terms & Conditions
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/returns-refunds-policy`} className="link">
-                          Returns &amp; Refunds Policy
+                        <Link href="/returns-refunds-policy" className="link">
+                          Returns & Refunds Policy
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/track-your-order`} className="link">
+                        <Link href="/track-your-order" className="link">
                           Track your Order
                         </Link>
                       </li>
                       <li>
-                        <Link href={`/privacy`} className="link">
+                        <Link href="/privacy" className="link">
                           Privacy Policy
                         </Link>
                       </li>
-                      {/* <li>
-                        <Link href={`/blog-grid`} className="link">
-                          Press &amp; Blog
-                        </Link>
-                      </li> */}
                     </ul>
                   </div>
                 </li>
@@ -176,96 +214,34 @@ export default function Footer1({ fullWidth = false }) {
             </div>
           </div>
         </div>
-        {/* <div className="ft-body-center bg-gray">
-          <div className={`container${fullWidth ? "-full" : ""}`}>
-            <div className="ft-center justify-content-xxl-between d-flex flex-column">
-              <div className="notice text-white justify-content-xxl-between">
-                <div className="main-title fw-semibold mb-4">
-                  Subscribe to Our Newsletter
-                </div>
-                
-              </div>
-
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  sendEmail(e);
-                }}
-                className="form-newsletter"
-              >
-                <div
-                  className={`tfSubscribeMsg  footer-sub-element ${
-                    showMessage ? "active" : ""
-                  }`}
-                >
-                  {success ? (
-                    <p style={{ color: "rgb(52, 168, 83)" }}>
-                      You have successfully subscribed.
-                    </p>
-                  ) : (
-                    <p style={{ color: "red" }}>Something went wrong</p>
-                  )}
-                </div>
-                <div className="subscribe-content">
-                  <fieldset className="email">
-                    <input
-                      type="email"
-                      name="email"
-                      className="subscribe-email type-fs-2"
-                      placeholder="Enter your email address"
-                      tabIndex={0}
-                      aria-required="true"
-                      required=""
-                    />
-                  </fieldset>
-                  <div className="button-submit">
-                    <button
-                      className="subscribe-button tf-btn btn-large hover-shine"
-                      type="submit"
-                    >
-                      <span className="body-md-2 fw-semibold text-white">
-                        Subscribe
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div> */}
         <div className="ft-body-bottom">
           <div className={`container${fullWidth ? "-full" : ""}`}>
             <div className="ft-bottom">
-              <ul className="social-list">
-                <li>
-                  <a href="https://facebook.com/Qistmarket">
-                    <i className="icon-facebook" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://www.instagram.com/qistmarket/">
-                    <i className="icon-instagram" />
-                  </a>
-                </li>
-                {/* <li>
-                  <a href="https://www.youtube.com/channel/UCiIHGTHqO8vhmfZiKSS6pdQ">
-                    <i className="icon-youtube" />
-                  </a>
-                </li> */}
-                <li>
-                  <a href="https://www.linkedin.com/Qistmarket">
-                    <i className="icon-linkin" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://web.whatsapp.com/">
-                    <i className="icon-whatapp" />
-                  </a>
-                </li>
-              </ul>
-              <p className="nocopy caption text-center">
-                <span className="fw-medium">Qist Market.</span>© 2025. All right
-                reserved - Developed by Elipse Studio
+              {isLoading ? (
+                ""
+              ) : error ? (
+                <p className="body-small text-danger">Error loading social links</p>
+              ) : (
+                <ul className="social-list">
+                  {settings?.socialLinks && settings.socialLinks.length > 0 ? (
+                    settings.socialLinks.map((link) => (
+                      <li key={link.id}>
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="social-link"
+                          dangerouslySetInnerHTML={{ __html: link.svg }}
+                        />
+                      </li>
+                    ))
+                  ) : (
+                    ""
+                  )}
+                </ul>
+              )}
+              <p className="nocopy caption text-center mb-5">
+                <span className="fw-medium">{settings?.name || "Qist Market"}</span>© {getCurrentYear()}. All rights reserved - Developed by <a href="https://elipsestudio.com" target="_blank" className="link">Elipse Studio</a>
               </p>
             </div>
           </div>

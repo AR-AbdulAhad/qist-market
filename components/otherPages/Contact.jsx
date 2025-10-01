@@ -1,18 +1,93 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { useSettings } from "@/context/SettingsContext";
 
 export default function Contact() {
+  const { settings, isLoading, error } = useSettings();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    subject: "",
+    message: "",
+  });
+  const [errors, setErrors] = useState({
+    name: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { name: "", subject: "", message: "" };
+
+    if (!formData.name || formData.name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+      isValid = false;
+    }
+    if (!formData.subject || formData.subject.length < 2) {
+      newErrors.subject = "Subject must be at least 2 characters";
+      isValid = false;
+    }
+    if (!formData.message || formData.message.length < 10) {
+      newErrors.message = "Message must be at least 10 characters";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/contact`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send message");
+      }
+      toast.success("Message sent successfully");
+      setFormData({ name: "", subject: "", message: "" });
+    } catch (error) {
+      toast.error(error.message || "Failed to send message");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section className="tf-sp-2">
       <div className="container">
         <div className="wg-map">
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11678.740279919208!2d-75.53672684990242!3d39.167930537914174!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c77b533177974f%3A0xd017ee22f8759803!2sWesley%20College%20%2F%20DSU!5e0!3m2!1sen!2s!4v1741056536407!5m2!1sen!2s"
-            height={585}
-            style={{ borderRadius: 8, width: "100%" }}
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          ></iframe>
+          {isLoading ? (
+            <span>Loading...</span>
+          ) : error ? (
+            <div className="text-center py-12">Error loading map</div>
+          ) : settings && settings.map_iframe ? (
+            <div
+              style={{ borderRadius: 8, width: "100%" }}
+              dangerouslySetInnerHTML={{ __html: settings.map_iframe }}
+            />
+          ) : (
+            <div className="text-center py-12">No map available</div>
+          )}
           <div className="bottom">
             <div className="contact-wrap">
               <div className="box-title">
@@ -22,66 +97,131 @@ export default function Contact() {
                   hours.
                 </p>
               </div>
-              <form action="#" className="form-contact def">
+              <form onSubmit={handleSubmit} className="form-contact def">
                 <fieldset>
                   <label>Name</label>
-                  <input type="text" required="" />
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isSubmitting}
+                  />
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                  )}
                 </fieldset>
                 <fieldset>
                   <label>Subject</label>
-                  <input type="text" required="" />
+                  <input
+                    type="text"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isSubmitting}
+                  />
+                  {errors.subject && (
+                    <p className="text-red-500 text-sm mt-1">{errors.subject}</p>
+                  )}
                 </fieldset>
                 <fieldset className="d-flex flex-column">
                   <label>Your message</label>
                   <textarea
+                    name="message"
                     style={{ height: 170 }}
-                    required=""
-                    defaultValue={""}
+                    value={formData.message}
+                    onChange={handleInputChange}
+                    required
+                    disabled={isSubmitting}
                   />
+                  {errors.message && (
+                    <p className="text-red-500 text-sm mt-1">{errors.message}</p>
+                  )}
                 </fieldset>
                 <div className="box-btn-submit">
-                  <button type="submit" className="tf-btn text-white w-100">
-                    Send message
+                  <button
+                    type="submit"
+                    className="tf-btn text-white w-100"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Sending..." : "Send message"}
                   </button>
                 </div>
               </form>
             </div>
             <div className="contact-info">
-              <h5 className="fw-semibold">Contact Infomation</h5>
-              <ul className="info-list">
-                <li>
-                  <span className="icon">
-                    <i className="icon-location" />
-                  </span>
-                  <a
-                    href="https://www.google.com/maps?q=8500%20Lorem%20StreetChicago"
-                    className="link"
-                    target="_blank"
-                  >
-                    8500 Lorem Street Chicago, <br />
-                    IL 55030 Dolor sit amet
-                  </a>
-                </li>
-                <li>
-                  <span className="icon">
-                    <i className="icon-phone" />
-                  </span>
-                  <a
-                    href="tel:1234567"
-                    className="product-title fw-semibold link"
-                  >
-                    <span>+8(800) 123 4567</span>
-                  </a>
-                </li>
-                <li>
-                  <span className="icon">
-                    <i className="icon-direction" />
-                  </span>
-                  <a href="mailto:onsus@support.com" className="link">
-                    <span>onsus@support.com</span>
-                  </a>
-                </li>
-              </ul>
+              <h5 className="fw-semibold">Contact Information</h5>
+              {isLoading ? (
+                  <span>Loading...</span>
+              ) : error ? (
+                <p className="body-text-3">Error loading contact information</p>
+              ) : settings ? (
+                <ul className="info-list">
+                  {settings.address && (
+                    <li>
+                      <span className="icon">
+                        <i className="icon-location" />
+                      </span>
+                      <a
+                        href={`https://www.google.com/maps?q=${encodeURIComponent(
+                          settings.address
+                        )}`}
+                        className="link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {settings.address}
+                      </a>
+                    </li>
+                  )}
+                  {settings.phone && (
+                    <li>
+                      <span className="icon">
+                        <i className="icon-phone" />
+                      </span>
+                      <a
+                        href={`tel:${settings.phone}`}
+                        className="product-title fw-semibold link"
+                      >
+                        <span>{settings.phone}</span>
+                      </a>
+                    </li>
+                  )}
+                  {settings.email && (
+                    <li>
+                      <span className="icon">
+                        <i className="icon-direction" />
+                      </span>
+                      <a href={`mailto:${settings.email}`} className="link">
+                        <span>{settings.email}</span>
+                      </a>
+                    </li>
+                  )}
+                  {settings.socialLinks && settings.socialLinks.length > 0 && (
+                    <li>
+                      <span className="icon">
+                        <i className="icon-social" />
+                      </span>
+                      <div className="social-links">
+                        {settings.socialLinks.map((link) => (
+                          <a
+                            key={link.id}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="social-link"
+                            dangerouslySetInnerHTML={{ __html: link.svg }}
+                          />
+                        ))}
+                      </div>
+                    </li>
+                  )}
+                </ul>
+              ) : (
+                <p className="body-text-3">No contact information available</p>
+              )}
             </div>
           </div>
         </div>

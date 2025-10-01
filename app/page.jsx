@@ -6,6 +6,7 @@ import Hero from "@/components/homes/home-1/Hero";
 import Products1 from "@/components/homes/home-1/Products1";
 import NewProducts from "@/components/common/NewProducts";
 import TopCategoryProducts from "@/components/homes/home-1/TopCategoryProducts";
+import TopCategories from "@/components/common/TopCategories";
 
 export const metadata = {
   title: "Qist Market - Home",
@@ -19,6 +20,7 @@ export default function Home() {
       <Header1 />
       <Hero />
       <Features />
+      <TopCategories />
       <Products1 />
       <TopCategoryProducts />
       <NewProducts />

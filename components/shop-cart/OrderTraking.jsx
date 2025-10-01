@@ -67,19 +67,19 @@ export default function OrderTracking() {
   }
 
   return (
-    <section className="s-track-order">
+    <section className="tf-sp-2">
       <div className="container">
         <div className="d-flex flex-column justify-content-center align-items-center">
           {!orderData && (
             <>
               <div className="box-title d-flex flex-column justify-content-center align-items-center">
-                <h5 className="fw-semibold">Track Your Order</h5>
-                <p className="body-text-3">
+                <h1 className="display-4 text-center fw-medium mb-3"><strong>Track Your Order</strong></h1>
+                <p className="body-text-3 mb-2 text-center">
                   To track your order, please enter your Order Number or Tracking Number and phone Number below, then press the
                   "Track" button.
                 </p>
               </div>
-              <form onSubmit={handleSubmit} className="form-trackorder def border p-4 w-50 rounded mt-4">
+              <form onSubmit={handleSubmit} className="form-trackorder def border p-4 rounded mt-4">
                 <fieldset>
                   <label className="fw-medium">Order No or Tracking No</label>
                   <input

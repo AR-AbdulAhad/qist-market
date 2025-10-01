@@ -107,8 +107,6 @@ export default function Quickview() {
 
       Cookies.set("cartData", JSON.stringify(cartData), {
         expires: 7,
-        secure: true,
-        sameSite: "Strict",
         path: "/",
       });
 
@@ -138,7 +136,7 @@ export default function Quickview() {
   };
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const productUrl = `https://qistmarket.pk/product/${productData?.slugName || quickViewItem?.slugName || ""}`;
+  const productUrl = `https://qistmarket.pk/product-detail/${productData?.slugName || quickViewItem?.slugName || ""}`;
   const quickviewImages = productData?.ProductImage?.map((img) => img.url) || [productData?.imgSrc || quickViewItem?.imgSrc].filter(Boolean);
 
   if (!quickViewItem && !loading) {

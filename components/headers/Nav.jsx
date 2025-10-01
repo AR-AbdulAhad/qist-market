@@ -55,13 +55,13 @@ export default function Nav() {
           </ul>
         </div>
       </li>
-      <li
+      {/* <li
         className={`nav-item ${pathname === "/payment-method" ? "active" : ""}`}
       >
         <Link href="/payment-method" className="item-link link body-md-2 fw-semibold">
           <span>Payment Method</span>
         </Link>
-      </li>
+      </li> */}
     </>
   );
 }

@@ -1,12 +1,12 @@
 {
-  "name": "onsus-nextjs",
+  "name": "qist-market",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint"
   },
   "dependencies": {
     "@next/env": "^15.5.2",

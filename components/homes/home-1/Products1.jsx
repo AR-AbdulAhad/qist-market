@@ -66,10 +66,10 @@ export default function Products1() {
               className="swiper tf-sw-products slider-thumb-deal"
               spaceBetween={15}
               breakpoints={{
-                0: { slidesPerView: 1 },
-                575: { slidesPerView: 2 },
-                768: { slidesPerView: 3, spaceBetween: 20 },
-                992: { slidesPerView: 4, spaceBetween: 30 },
+                0: { slidesPerView: 2 },
+                575: { slidesPerView: 3 },
+                768: { slidesPerView: 4, spaceBetween: 20 },
+                992: { slidesPerView: 5, spaceBetween: 30 },
               }}
               modules={[Navigation, Pagination]}
               pagination={{

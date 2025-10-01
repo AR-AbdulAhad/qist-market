@@ -1,19 +1,22 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 import { othersPages } from "@/data/menu";
+import { useSettings } from "@/context/SettingsContext";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function MobileMenu() {
   const pathname = usePathname();
   const router = useRouter();
+  const { settings, isLoading, error } = useSettings();
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
 
   const isMenuActive = (link) => {
@@ -41,10 +44,10 @@ export default function MobileMenu() {
     const fetchSuggestions = async () => {
       if (searchTerm.length < 2) {
         setSuggestions([]);
-        setIsLoading(false);
+        setIsSearchLoading(false);
         return;
       }
-      setIsLoading(true);
+      setIsSearchLoading(true);
       try {
         const params = new URLSearchParams({
           page: 1,
@@ -57,7 +60,7 @@ export default function MobileMenu() {
         console.error("Failed to fetch suggestions:", error);
         setSuggestions([]);
       } finally {
-        setIsLoading(false);
+        setIsSearchLoading(false);
       }
     };
 
@@ -69,7 +72,7 @@ export default function MobileMenu() {
     e.preventDefault();
     if (!searchTerm.trim()) return;
 
-    setIsLoading(true);
+    setIsSearchLoading(true);
     try {
       const params = new URLSearchParams({ query: searchTerm });
       await axios.get(`${BACKEND_URL}/api/product/search?${params.toString()}`);
@@ -77,7 +80,7 @@ export default function MobileMenu() {
     } catch (error) {
       console.error("Error performing search:", error);
     } finally {
-      setIsLoading(false);
+      setIsSearchLoading(false);
     }
   };
 
@@ -90,7 +93,7 @@ export default function MobileMenu() {
   const handleCancel = () => {
     setSearchTerm("");
     setSuggestions([]);
-    setIsLoading(false);
+    setIsSearchLoading(false);
   };
 
   const handleViewMore = () => {
@@ -104,8 +107,31 @@ export default function MobileMenu() {
         data-bs-dismiss="offcanvas"
       />
       <div className="logo-site">
-        <Link href={`/`}>
-          <Image alt="" src="/images/logo/logo.png" width={185} height={41} />
+        <Link href="/">
+          {isLoading ? (
+            <Image
+              alt="Default Logo"
+              src="/images/logo/logo.png"
+              width={185}
+              height={41}
+            />
+          ) : error ? (
+            <span>Error loading logo</span>
+          ) : settings?.logo_url ? (
+            <Image
+              alt={settings.name || "Logo"}
+              src={settings.logo_url}
+              width={185}
+              height={41}
+            />
+          ) : (
+            <Image
+              alt="Default Logo"
+              src="/images/logo/logo.png"
+              width={185}
+              height={41}
+            />
+          )}
         </Link>
       </div>
       <div className="mb-canvas-content">
@@ -163,7 +189,7 @@ export default function MobileMenu() {
                         </span>
                       )}
                     </fieldset>
-                    {isLoading && (
+                    {isSearchLoading && (
                       <svg className="spinner" viewBox="0 0 50 50">
                         <circle
                           className="path"
@@ -175,10 +201,10 @@ export default function MobileMenu() {
                         />
                       </svg>
                     )}
-                    <button type="submit" className="button-submit" disabled={isLoading}>
+                    <button type="submit" className="button-submit" disabled={isSearchLoading}>
                       <i className="icon-search" />
                     </button>
-                    {suggestions.length > 0 && !isLoading && (
+                    {suggestions.length > 0 && !isSearchLoading && (
                       <div className="suggestions-dropdown">
                         {suggestions.map((product) => (
                           <div
@@ -210,7 +236,7 @@ export default function MobileMenu() {
                         </div>
                       </div>
                     )}
-                    {!isLoading && searchTerm.length >= 2 && suggestions.length === 0 && (
+                    {!isSearchLoading && searchTerm.length >= 2 && suggestions.length === 0 && (
                       <div className="suggestions-dropdown">
                         <div className="no-suggestions">No products found</div>
                       </div>
@@ -263,47 +289,51 @@ export default function MobileMenu() {
                         </ul>
                       </div>
                     </li>
-                    <li
-                      className={`nav-mb-item ${pathname === "/payment-method" ? "active" : ""}`}
-                    >
-                      <Link href="/payment-method" className="mb-menu-link">
-                        <span>Payment Method</span>
-                      </Link>
-                    </li>
                   </ul>
                 </div>
                 <div className="mb-other-content">
-                  <ul className="mb-info">
-                    <li>
-                      <p>
-                        Address:
-                        <a
-                          target="_blank"
-                          href="https://www.google.com/maps?q=8500LoremStreetChicago,IL55030Dolorsitamet"
-                        >
-                          <span className="fw-medium">
-                            8500 Lorem Street Chicago, IL 55030 Dolor
-                          </span>
-                        </a>
-                      </p>
-                    </li>
-                    <li>
-                      <p>
-                        Phone:
-                        <a href="tel:+88001234567">
-                          <span className="fw-medium">+8(800) 123 4567</span>
-                        </a>
-                      </p>
-                    </li>
-                    <li>
-                      <p>
-                        Email:
-                        <a href="mailto:onsus@support.com">
-                          <span className="fw-medium">onsus@support.com</span>
-                        </a>
-                      </p>
-                    </li>
-                  </ul>
+                  {isLoading ? (
+                    ""
+                  ) : error ? (
+                    <p className="body-small text-danger">Error loading contact info</p>
+                  ) : (
+                    <ul className="mb-info">
+                      {settings?.address && (
+                        <li>
+                          <p>
+                            Address:
+                            <a
+                              target="_blank"
+                              href={`https://www.google.com/maps?q=${encodeURIComponent(settings.address)}`}
+                              rel="noopener noreferrer"
+                            >
+                              <span className="fw-medium link">{settings.address}</span>
+                            </a>
+                          </p>
+                        </li>
+                      )}
+                      {settings?.phone && (
+                        <li>
+                          <p>
+                            Phone:
+                            <a href={`tel:${settings.phone}`}>
+                              <span className="fw-medium link">{settings.phone}</span>
+                            </a>
+                          </p>
+                        </li>
+                      )}
+                      {settings?.email && (
+                        <li>
+                          <p>
+                            Email:
+                            <a href={`mailto:${settings.email}`}>
+                              <span className="fw-medium link">{settings.email}</span>
+                            </a>
+                          </p>
+                        </li>
+                      )}
+                    </ul>
+                  )}
                 </div>
               </div>
               <div className="tab-pane" id="category" role="tabpanel">

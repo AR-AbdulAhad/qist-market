@@ -5,6 +5,11 @@ import React from "react";
 import Link from "next/link";
 import NewProducts from "@/components/common/NewProducts";
 
+export const metadata = {
+  title: "Qist Market - Contact Us",
+  robots: "noindex, nofollow",
+};
+
 export default function page() {
   return (
     <>

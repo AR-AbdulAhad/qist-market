@@ -721,12 +721,16 @@
   }
 }
 
-/* Optional: Style adjustments for Swiper container */
-.tf-sw-products {
-  overflow: hidden; /* Prevent overflow issues */
+@media (max-width: 900px) {
+  .body-hide-res {
+    display: none;
+  }
 }
 
-/* Ensure product cards are sized consistently */
+.tf-sw-products {
+  overflow: hidden;
+}
+
 .card-product {
   width: 100%;
   box-sizing: border-box;
@@ -734,4 +738,49 @@
 
 .fre-text {
   font-size: 20px;
+}
+
+.social-list .social-link svg {
+  width: 16px;
+  height: 16px;
+  fill: #333;
+  transition: fill 0.3s;
+}
+
+.social-list .social-link:hover svg {
+  fill: #fff;
+}
+
+.social-list .icon-facebook,
+.social-list .icon-instagram,
+.social-list .icon-linkin,
+.social-list .icon-whatapp {
+  font-size: 16px;
+  transition: color 0.3s;
+}
+
+.social-list .icon-facebook:hover,
+.social-list .icon-instagram:hover,
+.social-list .icon-linkin:hover,
+.social-list .icon-whatapp:hover {
+  color: #fff;
+}
+
+.social-list {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.field-flex {
+  display: flex; 
+  justify-content: space-between;
+}
+
+.sidebar-checkout-custom {
+    width: 100%;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 90px;
 }

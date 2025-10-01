@@ -27,7 +27,7 @@ export default function Faqs() {
     <section>
       <div className="container">
         <div className="flat-title-tab text-center mb-5">
-          <h2 className="fw-semibold">Frequently Asked Questions</h2>
+          <h1 className="display-4 text-center mb-5 fw-medium"><strong>Frequently Asked Questions</strong></h1>
         </div>
         <div className="mb-5 fre-text">
           <strong>Below are frequently asked questions, you may find the answer for yourself.</strong>

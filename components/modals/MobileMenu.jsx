@@ -289,6 +289,9 @@ export default function MobileMenu() {
                         </ul>
                       </div>
                     </li>
+                    <li>
+                      <Link href="/track-your-order" className="text-primary pt-3">Track your Order</Link>
+                    </li>
                   </ul>
                 </div>
                 <div className="mb-other-content">

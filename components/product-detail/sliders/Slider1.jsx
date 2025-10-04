@@ -22,8 +22,8 @@ export default function Slider1({ images }) {
             src='/images/product-placeholder/product-placeholder-image.png'
             data-zoom='/images/product-placeholder/product-placeholder-image.png'
             alt="Product Image"
-            width={652}
-            height={652}
+            width={600}
+            height={600}
             priority
           />
       </div>
@@ -130,15 +130,15 @@ export default function Slider1({ images }) {
           href={images[0].url}
           className="item"
           data-pswp-width="600px"
-          data-pswp-height="800px"
+          data-pswp-height="600px"
         >
           <Image
             className="tf-image-zoom lazyload"
             src={images[0].url}
             data-zoom={images[0].url}
             alt="Product Image"
-            width={652}
-            height={652}
+            width={600}
+            height={600}
             priority
           />
         </a>
@@ -162,15 +162,15 @@ export default function Slider1({ images }) {
                 target="_blank"
                 className="item"
                 data-pswp-width="600px"
-                data-pswp-height="800px"
+                data-pswp-height="600px"
               >
                 <Image
                   className="tf-image-zoom lazyload"
                   src={item.url}
                   data-zoom={item.url}
                   alt="Product Image"
-                  width={652}
-                  height={652}
+                  width={600}
+                  height={600}
                   priority={i === 0}
                 />
               </a>
@@ -210,8 +210,8 @@ export default function Slider1({ images }) {
                     className="lazyload"
                     src={item.url}
                     alt="Product Thumbnail"
-                    width={652}
-                    height={652}
+                    width={600}
+                    height={600}
                   />
                 </div>
               </SwiperSlide>

@@ -5410,8 +5410,8 @@ fieldset:disabled .btn {
 }
 
 .model-release {
-    flex-direction: start;
-    display: flex;
+    flex-direction: row !important;
+    display: flex !important;
 }
 
 .modal-backdrop {

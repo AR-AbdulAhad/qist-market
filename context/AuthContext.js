@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
               firstName: decoded.firstName,
               lastName: decoded.lastName,
               phone: decoded.phone,
+              alternativePhone: decoded.alternativePhone,
               cnic: decoded.cnic,
             });
         } catch (error) {

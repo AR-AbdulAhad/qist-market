@@ -132,7 +132,7 @@ export default function ProductsSearch() {
                     <i className="icon-arrow-down fs-10" />
                   </div>
                   <div className="dropdown-menu">
-                    {["Default", "Title Ascending", "Title Descending"].map((elm, i) => (
+                    {["Latest Product", "Title Ascending", "Title Descending"].map((elm, i) => (
                       <div
                         key={i}
                         className={`select-item ${sortingOption === elm ? "active" : ""}`}

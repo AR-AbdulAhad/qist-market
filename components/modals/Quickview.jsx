@@ -197,15 +197,15 @@ export default function Quickview() {
                 <div className="tf-product-media-wrap thumbs-default sticky-top">
                   <div className="thumbs-slider">
                     {loading ? (
-                      <Skeleton height={652} />
+                      <Skeleton height={600} />
                     ) : quickviewImages.length === 0 ? (
                       <div>
                         <Image
                           className="lazyload"
                           src="/images/product-placeholder/product-placeholder-image.png"
                           alt="Product Image"
-                          width={652}
-                          height={652}
+                          width={600}
+                          height={600}
                           priority
                         />
                       </div>
@@ -219,8 +219,8 @@ export default function Quickview() {
                             src={quickviewImages[0]}
                             alt="product-image"
                             className="lazyload"
-                            width={652}
-                            height={652}
+                            width={600}
+                            height={600}
                             priority
                             onError={() => console.error("Image failed to load:", quickviewImages[0])}
                           />
@@ -255,8 +255,8 @@ export default function Quickview() {
                               src={quickviewImages[currentImageIndex]}
                               alt="product-image"
                               className="lazyload"
-                              width={652}
-                              height={652}
+                              width={600}
+                              height={600}
                               priority
                               onError={() => console.error("Image failed to load:", quickviewImages[currentImageIndex])}
                             />

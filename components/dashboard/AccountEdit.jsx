@@ -9,7 +9,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export default function AccountEdit() {
   const { token, user, refreshUser, logout } = useContext(AuthContext);
   const router = useRouter();
-  const [profile, setProfile] = useState({ firstName: "", lastName: "", phone: "", email: "", cnic: "" });
+  const [profile, setProfile] = useState({ firstName: "", lastName: "", phone: "", alternativePhone: "", email: "", cnic: "" });
   const [passwordData, setPasswordData] = useState({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
   const [profileErrors, setProfileErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({});
@@ -27,6 +27,7 @@ export default function AccountEdit() {
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         phone: user.phone || "",
+        alternativePhone: user.alternativePhone || "",
         email: user.email || "",
         cnic: user.cnic || "",
       });
@@ -53,6 +54,10 @@ export default function AccountEdit() {
       } else if (!/^\d{13}$/.test(profile.cnic)) {
         newErrors.cnic = "CNIC must be exactly 13 digits";
       }
+    }
+
+    if (!user.email && profile.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(profile.email)) {
+      newErrors.email = "Please enter a valid email address";
     }
 
     setProfileErrors(newErrors);
@@ -109,9 +114,13 @@ export default function AccountEdit() {
     const payload = {
       firstName: profile.firstName,
       lastName: profile.lastName,
+      alternativePhone: profile.alternativePhone,
     };
     if (!user.cnic) {
       payload.cnic = profile.cnic;
+    }
+    if (!user.email && profile.email) {
+      payload.email = profile.email;
     }
 
     try {
@@ -184,7 +193,7 @@ export default function AccountEdit() {
                 id="firstName"
                 value={profile.firstName}
                 onChange={handleProfileChange}
-                placeholder="First Name"
+                placeholder="First Name (e.g., Abdul)"
                 className={profileErrors.firstName ? "is-invalid" : ""}
               />
               {profileErrors.firstName && (
@@ -200,7 +209,7 @@ export default function AccountEdit() {
                 id="lastName"
                 value={profile.lastName}
                 onChange={handleProfileChange}
-                placeholder="Last Name"
+                placeholder="Last Name (e.g., Ahad)"
                 className={profileErrors.lastName ? "is-invalid" : ""}
               />
               {profileErrors.lastName && (
@@ -211,14 +220,15 @@ export default function AccountEdit() {
           <div className="cols mb-3">
             <fieldset>
               <label htmlFor="email" className="fw-semibold body-md-2">
-                Email Address <span className="text-primary">*</span>
+                Email Address (optional)
               </label>
               <input
                 type="email"
                 id="email"
                 value={profile.email}
-                disabled
-                placeholder="Email"
+                onChange={user.email ? null : handleProfileChange}
+                disabled={!!user.email}
+                placeholder={user.email ? "Email (cannot be changed)" : "Email (e.g., ahad@example.com)"}
                 className={profileErrors.email ? "is-invalid" : ""}
               />
               {profileErrors.email && (
@@ -227,14 +237,14 @@ export default function AccountEdit() {
             </fieldset>
             <fieldset>
               <label htmlFor="phone" className="fw-semibold body-md-2">
-                Phone Number <span className="text-primary">*</span>
+                WhatsApp Number <span className="text-primary">*</span>
               </label>
               <input
                 type="tel"
                 id="phone"
                 value={profile.phone}
                 disabled
-                placeholder="Phone"
+                placeholder="WhatsApp Number (e.g., 03001234567)"
                 className={profileErrors.phone ? "is-invalid" : ""}
               />
               {profileErrors.phone && (
@@ -242,23 +252,41 @@ export default function AccountEdit() {
               )}
             </fieldset>
           </div>
-          <fieldset className="mb-3">
-            <label htmlFor="cnic" className="fw-semibold body-md-2">
-              CNIC Number <span className="text-primary">*</span>
-            </label>
-            <input
-              type="text"
-              id="cnic"
-              value={profile.cnic}
-              onChange={!profile.cnic ? handleProfileChange : null}
-              disabled={!!profile.cnic}
-              placeholder="Enter CNIC if not set"
-              className={profileErrors.cnic ? "is-invalid" : ""}
-            />
-            {profileErrors.cnic && (
-              <div className="invalid-feedback">{profileErrors.cnic}</div>
-            )}
-          </fieldset>
+          <div className="cols mb-3">
+             <fieldset>
+              <label htmlFor="lastName" className="fw-semibold body-md-2">
+                Alternative Number (optional)
+              </label>
+              <input
+                type="text"
+                id="alternativePhone"
+                value={profile.alternativePhone}
+                onChange={handleProfileChange}
+                placeholder="Alternative Number (e.g., 03009876543)"
+                className={profileErrors.alternativePhone ? "is-invalid" : ""}
+              />
+              {profileErrors.lastName && (
+                <div className="invalid-feedback">{profileErrors.lastName}</div>
+              )}
+            </fieldset>
+            <fieldset>
+              <label htmlFor="cnic" className="fw-semibold body-md-2">
+                CNIC Number <span className="text-primary">*</span>
+              </label>
+              <input
+                type="text"
+                id="cnic"
+                value={profile.cnic}
+                onChange={!profile.cnic ? handleProfileChange : null}
+                disabled={!!profile.cnic}
+                placeholder="Enter CNIC if not set"
+                className={profileErrors.cnic ? "is-invalid" : ""}
+              />
+              {profileErrors.cnic && (
+                <div className="invalid-feedback">{profileErrors.cnic}</div>
+              )}
+            </fieldset>
+          </div>
           <button type="submit" className="tf-btn btn-large text-white" disabled={profileLoading}>
             {profileLoading ? (
               <div>

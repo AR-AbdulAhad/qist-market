@@ -102,15 +102,16 @@ export default function Products1() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const query = new URLSearchParams({
+        const queryParams = {
           page: currentPage,
           limit: itemPerPage,
           ...(subcategories.length && { subcategory_id: subcategories.join(",") }),
           ...(price[0] !== 0 && { minPrice: price[0] }),
           ...(price[1] !== 100 && { maxPrice: price[1] }),
-          sort: "name",
-          order: sortingOption === "Title Descending" ? "desc" : "asc",
-        }).toString();
+          sort: sortingOption === "Title Ascending" || sortingOption === "Title Descending" ? "name" : "id",
+          order: sortingOption === "Title Ascending" ? "asc" : "desc",
+        };
+        const query = new URLSearchParams(queryParams).toString();
 
         const response = await fetch(`${BACKEND_URL}/api/product/pagination?${query}`, {
           method: "GET",
@@ -154,7 +155,7 @@ export default function Products1() {
     const closeButtons = document.querySelectorAll(".close-filter, .overlay-filter");
 
     openButtons.forEach((button) => button.addEventListener("click", handleOpenFilter));
-    closeButtons.forEach((button) => button.addEventListener("click", handleCloseFilter));
+    closeButtons.forEach((button) => button.removeEventListener("click", handleCloseFilter));
 
     return () => {
       openButtons.forEach((button) => button.removeEventListener("click", handleOpenFilter));
@@ -198,7 +199,7 @@ export default function Products1() {
                       fill="#121212"
                       viewBox="0 0 256 256"
                     >
-                      <path d="M176,80a8,8,0,0,1,8-8h32a8,8,0,0,1,0,16H184A8,8,0,0,1,176,80ZM40,88H144v16a8,8,0,0,0,16,0V56a8,8,0,0,0-16,0V72H40a8,8,0,0,0,0,16Zm176,80H120a8,8,0,0,0,0,16h96a8,8,0,0,0,0-16ZM88,144a8,8,0,0,0-8,8v16H40a8,8,0,0,0,0,16H80v16a8,8,0,0,0,16,0V152A8,8,0,0,0,88,144Z" />
+                      <path d="M176,80a8,8,0,0,1,8-8h32a8,8,0,0,1,0,16H184A8,8,0,0,1,176,80ZM40,88H144v16a8,8,0,0,0,16,0V56a8,8,0,0,0,16,0V72H40a8,8,0,0,0,0,16Zm176,80H120a8,8,0,0,0,0,16h96a8,8,0,0,0,0-16ZM88,144a8,8,0,0,0-8,8v16H40a8,8,0,0,0,0,16H80v16a8,8,0,0,0,16,0V152A8,8,0,0,0,88,144Z" />
                     </svg>
                   </span>
                   <span className="body-md-2 fw-medium">Filter</span>
@@ -219,7 +220,7 @@ export default function Products1() {
                     <i className="icon-arrow-down fs-10" />
                   </div>
                   <div className="dropdown-menu">
-                    {["Default", "Title Ascending", "Title Descending"].map((elm, i) => (
+                    {["Latest Product", "Title Ascending", "Title Descending"].map((elm, i) => (
                       <div
                         key={i}
                         className={`select-item ${sortingOption === elm ? "active" : ""}`}

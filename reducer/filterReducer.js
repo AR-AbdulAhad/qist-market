@@ -2,7 +2,7 @@ export const initialState = {
   price: [0, 100],
   subcategories: [],
   filtered: [],
-  sortingOption: "Default",
+  sortingOption: "Latest Product",
   sorted: [],
   currentPage: 1,
   itemPerPage: 10,
@@ -29,7 +29,7 @@ export const reducer = (state, action) => {
         ...state,
         price: [0, 100],
         subcategories: [],
-        sortingOption: "Default",
+        sortingOption: "Latest Product",
         currentPage: 1,
       };
     default:

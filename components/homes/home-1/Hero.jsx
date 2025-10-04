@@ -63,6 +63,21 @@ export default function Hero() {
     fetchBanners();
   }, []);
 
+  useEffect(() => {
+    if (!loadingBanners && banners.length > 0 && typeof window !== 'undefined') {
+      import('bootstrap').then((bootstrap) => {
+        const carouselElement = document.getElementById('bannerCarousel');
+        if (carouselElement) {
+          const carousel = new bootstrap.Carousel(carouselElement, {
+            interval: 4000,
+            ride: 'carousel',
+          });
+          carousel.cycle();
+        }
+      });
+    }
+  }, [loadingBanners, banners]);
+
   return (
     <section className="tf-sp-5">
       <div className="container">
@@ -163,7 +178,7 @@ export default function Hero() {
                     <div
                       key={banner.id}
                       className={`carousel-item ${index === 0 ? 'active' : ''}`}
-                      data-bs-interval="3000"
+                      data-bs-interval="4000"
                     >
                       <Link href={banner.product_url} className="d-block w-100">
                         <Image
@@ -205,17 +220,17 @@ export default function Hero() {
 
       <style jsx>{`
         .carousel-indicators button {
-          background-color: #ff3d3d !important; /* Default button color */
-          opacity: 0.5; /* Default opacity for inactive buttons */
+          background-color: #ff3d3d !important;
+          opacity: 0.5;
           width: 12px;
           height: 12px;
-          border-radius: 50%; /* Circular indicators */
+          border-radius: 50%;
           margin: 0 4px;
         }
 
         .carousel-indicators button.active {
-          opacity: 1; /* Full opacity for active button */
-          background-color: #cc3333 !important; /* Slightly darker shade for active button */
+          opacity: 1;
+          background-color: #cc3333 !important;
         }
       `}</style>
     </section>

@@ -96,7 +96,7 @@ export default function Details1({ singleProduct, loading }) {
                 <div className="tf-product-media-wrap thumbs-default sticky-top">
                   <div className="thumbs-slider">
                     {loading ? (
-                      <Skeleton height={652} />
+                      <Skeleton height={600} />
                     ) : (
                       <Slider1 images={singleProduct.ProductImage} />
                     )}

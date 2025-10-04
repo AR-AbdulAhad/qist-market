@@ -438,12 +438,23 @@ export default function OrderTracking() {
                         </tr>
                         <tr className="tf-order-item">
                           <td>
-                            <span className="fw-medium">Phone:</span>
+                            <span className="fw-medium">WhatsApp Number:</span>
                           </td>
                           <td>
                             <span className="fw-medium">{orderData.phone}</span>
                           </td>
                         </tr>
+                        {orderData.alternativePhone && (
+                        <tr className="tf-order-item">
+                          <td>
+                            <span className="fw-medium">Alternative Number:</span>
+                          </td>
+                          <td>
+                            <span className="fw-medium">{orderData.alternativePhone}</span>
+                          </td>
+                        </tr>
+                        )}
+                        {orderData.email && (
                         <tr className="tf-order-item">
                           <td>
                             <span className="fw-medium">Email:</span>
@@ -452,6 +463,7 @@ export default function OrderTracking() {
                             <span className="fw-medium">{orderData.email}</span>
                           </td>
                         </tr>
+                        )}
                         <tr className="tf-order-item">
                           <td>
                             <span className="fw-medium">Address:</span>
@@ -462,11 +474,15 @@ export default function OrderTracking() {
                         </tr>
                         <tr className="tf-order-item">
                           <td>
-                            <span className="fw-medium">City</span>
+                            <span className="fw-medium">City, Area</span>
                           </td>
                           <td>
                             <span className="fw-medium">
                               {orderData.city}
+                            </span>,
+                            {" "}
+                            <span className="fw-medium">
+                              {orderData.area}
                             </span>
                           </td>
                         </tr>

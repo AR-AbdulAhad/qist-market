@@ -8,20 +8,34 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function ForgotPassword() {
   const { openModal } = useContextElement();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const validateForm = () => {
+    if (!identifier) {
+      setError("Email or whatsapp number is required");
+      return false;
+    }
+    setError("");
+    return true;
+  };
+
   const resetForm = () => {
-    setEmail("");
+    setIdentifier("");
+    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     setLoading(true);
     try {
-      await axios.post(`${BACKEND_URL}/api/customer/forgot`, { email });
-      toast.success("Reset code sent successfully");
-      openModal("verificationCode", { email, isForReset: true });
+      await axios.post(`${BACKEND_URL}/api/customer/forgot`, { identifier });
+      toast.success("Reset code sent successfully to WhatsApp");
+      openModal("verificationCode", { identifier, isForReset: true });
       resetForm();
     } catch (err) {
       toast.error(err.response?.data?.error || "Failed to send reset code");
@@ -52,15 +66,16 @@ export default function ForgotPassword() {
               <div className="form-content">
                 <fieldset>
                   <label className="fw-semibold body-md-2">
-                    Email Address <span className="text-primary">*</span>
+                    Email or WhatsApp Number <span className="text-primary">*</span>
                   </label>
                   <input
-                    type="email"
-                    placeholder="Enter your valid email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
+                    type="text"
+                    placeholder="Enter your email or whatsapp number"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    className={error ? "is-invalid" : ""}
                   />
+                  {error && <div className="invalid-feedback">{error}</div>}
                 </fieldset>
                 <a
                   href="#log"
@@ -73,8 +88,8 @@ export default function ForgotPassword() {
               </div>
               <button type="submit" className="tf-btn w-100 text-white" disabled={loading}>
                 {loading ? (
-                  <div >
-                    Processing...{" "}
+                  <div>
+                    Processing...
                     <div className="spinner-border spinner-border-sm text-white" role="status">
                       <span className="visually-hidden">Loading...</span>
                     </div>

@@ -191,7 +191,7 @@ export default function Header4({ fullWidth = false }) {
               <div className="header-bt-right">
                 <ul className="nav-icon style-2">
                   <li className="nav-shop-cart">
-                    <a href="/track-your-order" className="d-flex link">
+                    <a href="/track-your-order" className="d-flex text-primary">
                       Track Your Order
                     </a>
                   </li>

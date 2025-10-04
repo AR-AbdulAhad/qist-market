@@ -16,9 +16,7 @@ export default function ProductsSubCategory1({ categorySlug, subCategorySlug }) 
   });
   const {
     price,
-    filtered,
     sortingOption,
-    sorted,
     currentPage,
     itemPerPage,
   } = state;
@@ -48,14 +46,15 @@ export default function ProductsSubCategory1({ categorySlug, subCategorySlug }) 
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const query = new URLSearchParams({
+        const queryParams = {
           page: currentPage,
           limit: itemPerPage,
           ...(price[0] !== 0 && { minPrice: price[0] }),
           ...(price[1] !== 100 && { maxPrice: price[1] }),
-          sort: "name",
-          order: sortingOption === "Title Descending" ? "desc" : "asc",
-        }).toString();
+          sort: sortingOption === "Title Ascending" || sortingOption === "Title Descending" ? "name" : "id",
+          order: sortingOption === "Title Ascending" ? "asc" : "desc",
+        };
+        const query = new URLSearchParams(queryParams).toString();
 
         const response = await fetch(`${BACKEND_URL}/api/product/category/${categorySlug}/${subCategorySlug}?${query}`, {
           method: "GET",
@@ -175,7 +174,7 @@ export default function ProductsSubCategory1({ categorySlug, subCategorySlug }) 
                     <i className="icon-arrow-down fs-10" />
                   </div>
                   <div className="dropdown-menu">
-                    {["Default", "Title Ascending", "Title Descending"].map((elm, i) => (
+                    {["Latest Product", "Title Ascending", "Title Descending"].map((elm, i) => (
                       <div
                         key={i}
                         className={`select-item ${sortingOption === elm ? "active" : ""}`}

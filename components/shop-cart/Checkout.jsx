@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
+import Area from "@/components/common/Area";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -13,6 +14,7 @@ export default function Checkout() {
   const { user, token } = useContext(AuthContext);
   const [cartData, setCartData] = useState(null);
   const [selectedCity, setSelectedCity] = useState("");
+  const [selectedArea, setSelectedArea] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [useDefaultAddress, setUseDefaultAddress] = useState(false);
@@ -21,6 +23,7 @@ export default function Checkout() {
 
   const emailRef = useRef(null);
   const phoneRef = useRef(null);
+  const alternativePhoneRef = useRef(null);
   const firstNameRef = useRef(null);
   const lastNameRef = useRef(null);
   const cnicRef = useRef(null);
@@ -53,8 +56,9 @@ export default function Checkout() {
 
   useEffect(() => {
     if (user && token) {
-      emailRef.current.value = user.email;
+      emailRef.current.value = user.email || "";
       phoneRef.current.value = user.phone || "";
+      alternativePhoneRef.current.value = user.alternativePhone || "";
       firstNameRef.current.value = user.firstName || "";
       lastNameRef.current.value = user.lastName || "";
       cnicRef.current.value = user.cnic || "";
@@ -71,6 +75,7 @@ export default function Checkout() {
               setDefaultAddress(defaultAddr);
               setUseDefaultAddress(true);
               addressRef.current.value = defaultAddr.address1;
+              setSelectedArea(defaultAddr.area || "");
               const city = defaultAddr.city;
               setSelectedCity(city);
               cityRef.current.value = city;
@@ -100,8 +105,15 @@ export default function Checkout() {
     if (!useDefaultAddress) {
       const city = e.target.value;
       setSelectedCity(city);
+      setSelectedArea("");
       validateField("city", city);
     }
+  };
+
+  const handleAreaChange = (e) => {
+    const area = e.target.value;
+    setSelectedArea(area);
+    validateField("area", area);
   };
 
   const handleDefaultAddressChange = (e) => {
@@ -109,10 +121,12 @@ export default function Checkout() {
     setUseDefaultAddress(isChecked);
     if (isChecked && defaultAddress) {
       addressRef.current.value = defaultAddress.address1;
+      setSelectedArea(defaultAddress.area || "");
       cityRef.current.value = defaultAddress.city;
       setSelectedCity(defaultAddress.city);
     } else {
       addressRef.current.value = "";
+      setSelectedArea("");
       cityRef.current.value = "";
       setSelectedCity("");
     }
@@ -122,13 +136,18 @@ export default function Checkout() {
     let error = null;
     switch (fieldName) {
       case "email":
-        if (!value || !/\S+@\S+\.\S+/.test(value)) {
-          error = "A valid email is required";
+        if (value && !/\S+@\S+\.\S+/.test(value)) {
+          error = "Invalid email format";
         }
         break;
       case "phone":
         if (!value || !/^\d{11,}$/.test(value)) {
-          error = "A valid phone number (minimum 11 digits) is required";
+          error = "A valid whatsapp number (minimum 11 digits) is required";
+        }
+        break;
+      case "alternativePhone":
+        if (value && !/^\d{11,}$/.test(value)) {
+          error = "Alternative phone number must be at least 11 digits if provided";
         }
         break;
       case "firstName":
@@ -151,6 +170,11 @@ export default function Checkout() {
           error = "City selection is required";
         }
         break;
+      case "area":
+        if (!value) {
+          error = "Area selection is required";
+        }
+        break;
       case "address":
         if (!value) {
           error = "Address is required";
@@ -164,11 +188,14 @@ export default function Checkout() {
 
   const validateForm = (formData) => {
     const newErrors = {};
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "A valid email is required";
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
     }
     if (!formData.phone || !/^\d{11,}$/.test(formData.phone)) {
-      newErrors.phone = "A valid phone number (minimum 11 digits) is required";
+      newErrors.phone = "A valid whatsapp number (minimum 11 digits) is required";
+    }
+    if (formData.alternativePhone && !/^\d{11,}$/.test(formData.alternativePhone)) {
+      newErrors.alternativePhone = "Alternative phone number must be at least 11 digits if provided";
     }
     if (!formData.firstName) {
       newErrors.firstName = "First name is required";
@@ -181,6 +208,9 @@ export default function Checkout() {
     }
     if (!formData.city) {
       newErrors.city = "City selection is required";
+    }
+    if (!formData.area) {
+      newErrors.area = "Area selection is required";
     }
     if (!formData.address) {
       newErrors.address = "Address is required";
@@ -228,12 +258,14 @@ export default function Checkout() {
     }
 
     const formData = {
-      email: emailRef.current.value,
+      email: emailRef.current.value || null,
       phone: phoneRef.current.value,
+      alternativePhone: alternativePhoneRef.current.value || null,
       firstName: firstNameRef.current.value,
       lastName: lastNameRef.current.value,
       cnic: cnicRef.current.value,
       city: cityRef.current.value,
+      area: selectedArea,
       address: addressRef.current.value,
       orderNotes: document.querySelector("textarea").value,
       paymentMethod: "Advance cash on delivery",
@@ -253,6 +285,7 @@ export default function Checkout() {
       const fieldRefs = {
         email: emailRef,
         phone: phoneRef,
+        alternativePhone: alternativePhoneRef,
         firstName: firstNameRef,
         lastName: lastNameRef,
         cnic: cnicRef,
@@ -338,43 +371,60 @@ export default function Checkout() {
               </h5>
               <form className="form-checkout-contact">
                 <div className="field-flex">
-                    <label className="body-md-2 fw-semibold">
-                    Email Address <span className="text-primary">*</span>
+                  <label className="body-md-2 fw-semibold">
+                    Email Address (optional)
                   </label>
-                  <label className="body-md-2 fw-semibold">ای میل ایڈریس</label>
+                  <label className="body-md-2 fw-semibold">ای میل ایڈریس (اختیاری)</label>
                 </div>
                 <input
                   className="def"
                   type="email"
-                  placeholder="Your valid email"
+                  placeholder="Email (e.g., ahad@example.com)"
                   ref={emailRef}
-                  required
                   onChange={(e) => validateField("email", e.target.value)}
                 />
                 {errors.email && (
                   <p className="caption text-danger">{errors.email}</p>
                 )}
                 <p className="caption text-main-2 font-2">
-                  Order information will be sent to your email
+                  Order information will be sent to your email if provided
                 </p>
               </form>
               <form className="form-checkout-contact mt-3">
                 <div className="field-flex">
                   <label className="body-md-2 fw-semibold">
-                    Phone Number <span className="text-primary">*</span>
+                    WhatsApp Number <span className="text-primary">*</span>
                   </label>
                   <label className="body-md-2 fw-semibold">فون نمبر</label>
                 </div>
                 <input
                   className="def"
                   type="number"
-                  placeholder="Your valid contact"
+                  placeholder="WhatsApp Number (e.g., 03001234567)"
                   ref={phoneRef}
                   required
                   onChange={(e) => validateField("phone", e.target.value)}
                 />
                 {errors.phone && (
                   <p className="caption text-danger">{errors.phone}</p>
+                )}
+              </form>
+              <form className="form-checkout-contact mt-3">
+                <div className="field-flex">
+                  <label className="body-md-2 fw-semibold">
+                    Alternative Number (optional)
+                  </label>
+                  <label className="body-md-2 fw-semibold">متبادل فون نمبر (اختیاری)</label>
+                </div>
+                <input
+                  className="def"
+                  type="number"
+                  placeholder="Alternative Number (e.g., 03009876543)"
+                  ref={alternativePhoneRef}
+                  onChange={(e) => validateField("alternativePhone", e.target.value)}
+                />
+                {errors.alternativePhone && (
+                  <p className="caption text-danger">{errors.alternativePhone}</p>
                 )}
               </form>
             </div>
@@ -391,7 +441,7 @@ export default function Checkout() {
                     </div>
                     <input
                       type="text"
-                      placeholder="Enter first name"
+                      placeholder="First Name (e.g., Abdul)"
                       ref={firstNameRef}
                       required
                       onChange={(e) => validateField("firstName", e.target.value)}
@@ -409,7 +459,7 @@ export default function Checkout() {
                     </div>
                     <input
                       type="text"
-                      placeholder="Enter last name"
+                      placeholder="Last Name (e.g., Ahad)"
                       ref={lastNameRef}
                       required
                       onChange={(e) => validateField("lastName", e.target.value)}
@@ -481,260 +531,29 @@ export default function Checkout() {
                           <option value="" disabled>
                             Select The City
                           </option>
-                          <option value="Islamabad">Islamabad</option>
-                          <option value="" disabled>
-                            Punjab Cities
-                          </option>
-                          <option value="Ahmed Nager Chatha">Ahmed Nager Chatha</option>
-                          <option value="Ahmadpur East">Ahmadpur East</option>
-                          <option value="Ali Khan Abad">Ali Khan Abad</option>
-                          <option value="Alipur">Alipur</option>
-                          <option value="Arifwala">Arifwala</option>
-                          <option value="Attock">Attock</option>
-                          <option value="Bhera">Bhera</option>
-                          <option value="Bhalwal">Bhalwal</option>
-                          <option value="Bahawalnagar">Bahawalnagar</option>
-                          <option value="Bahawalpur">Bahawalpur</option>
-                          <option value="Bhakkar">Bhakkar</option>
-                          <option value="Burewala">Burewala</option>
-                          <option value="Chillianwala">Chillianwala</option>
-                          <option value="Chakwal">Chakwal</option>
-                          <option value="Chichawatni">Chichawatni</option>
-                          <option value="Chiniot">Chiniot</option>
-                          <option value="Chishtian">Chishtian</option>
-                          <option value="Daska">Daska</option>
-                          <option value="Darya Khan">Darya Khan</option>
-                          <option value="Dera Ghazi Khan">Dera Ghazi Khan</option>
-                          <option value="Dhaular">Dhaular</option>
-                          <option value="Dina">Dina</option>
-                          <option value="Dinga">Dinga</option>
-                          <option value="Dipalpur">Dipalpur</option>
-                          <option value="Faisalabad">Faisalabad</option>
-                          <option value="Ferozewala">Ferozewala</option>
-                          <option value="Fateh Jhang">Fateh Jang</option>
-                          <option value="Ghakhar Mandi">Ghakhar Mandi</option>
-                          <option value="Gojra">Gojra</option>
-                          <option value="Gujranwala">Gujranwala</option>
-                          <option value="Gujrat">Gujrat</option>
-                          <option value="Gujar Khan">Gujar Khan</option>
-                          <option value="Hafizabad">Hafizabad</option>
-                          <option value="Haroonabad">Haroonabad</option>
-                          <option value="Hasilpur">Hasilpur</option>
-                          <option value="Haveli Lakha">Haveli Lakha</option>
-                          <option value="Jatoi">Jatoi</option>
-                          <option value="Jalalpur">Jalalpur</option>
-                          <option value="Jattan">Jattan</option>
-                          <option value="Jampur">Jampur</option>
-                          <option value="Jaranwala">Jaranwala</option>
-                          <option value="Jhang">Jhang</option>
-                          <option value="Jhelum">Jhelum</option>
-                          <option value="Kalabagh">Kalabagh</option>
-                          <option value="Karor Lal Esan">Karor Lal Esan</option>
-                          <option value="Kasur">Kasur</option>
-                          <option value="Kamalia">Kamalia</option>
-                          <option value="Kamoke">Kamoke</option>
-                          <option value="Khanewal">Khanewal</option>
-                          <option value="Khanpur">Khanpur</option>
-                          <option value="Kharian">Kharian</option>
-                          <option value="Khushab">Khushab</option>
-                          <option value="Kot Addu">Kot Addu</option>
-                          <option value="Jauharabad">Jauharabad</option>
-                          <option value="Lahore">Lahore</option>
-                          <option value="Lalamusa">Lalamusa</option>
-                          <option value="Layyah">Layyah</option>
-                          <option value="Liaquat Pur">Liaquat Pur</option>
-                          <option value="Lodhran">Lodhran</option>
-                          <option value="Malakwal">Malakwal</option>
-                          <option value="Mamoori">Mamoori</option>
-                          <option value="Mailsi">Mailsi</option>
-                          <option value="Mandi Bahauddin">Mandi Bahauddin</option>
-                          <option value="Mian Channu">Mian Channu</option>
-                          <option value="Mianwali">Mianwali</option>
-                          <option value="Multan">Multan</option>
-                          <option value="Murree">Murree</option>
-                          <option value="Muridke">Muridke</option>
-                          <option value="Mianwali Bangla">Mianwali Bangla</option>
-                          <option value="Muzaffargarh">Muzaffargarh</option>
-                          <option value="Narowal">Narowal</option>
-                          <option value="Nankana Sahib">Nankana Sahib</option>
-                          <option value="Okara">Okara</option>
-                          <option value="Renala Khurd">Renala Khurd</option>
-                          <option value="Pakpattan">Pakpattan</option>
-                          <option value="Pattoki">Pattoki</option>
-                          <option value="Pir Mahal">Pir Mahal</option>
-                          <option value="Qaimpur">Qaimpur</option>
-                          <option value="Qila Didar Singh">Qila Didar Singh</option>
-                          <option value="Rabwah">Rabwah</option>
-                          <option value="Raiwind">Raiwind</option>
-                          <option value="Rajanpur">Rajanpur</option>
-                          <option value="Rahim Yar Khan">Rahim Yar Khan</option>
-                          <option value="Rawalpindi">Rawalpindi</option>
-                          <option value="Sadiqabad">Sadiqabad</option>
-                          <option value="Safdarabad">Safdarabad</option>
-                          <option value="Sahiwal">Sahiwal</option>
-                          <option value="Sangla Hill">Sangla Hill</option>
-                          <option value="Sarai Alamgir">Sarai Alamgir</option>
-                          <option value="Sargodha">Sargodha</option>
-                          <option value="Shakargarh">Shakargarh</option>
-                          <option value="Sheikhupura">Sheikhupura</option>
-                          <option value="Sialkot">Sialkot</option>
-                          <option value="Sohawa">Sohawa</option>
-                          <option value="Soianwala">Soianwala</option>
-                          <option value="Siranwali">Siranwali</option>
-                          <option value="Talagang">Talagang</option>
-                          <option value="Taxila">Taxila</option>
-                          <option value="Toba Tek Singh">Toba Tek Singh</option>
-                          <option value="Vehari">Vehari</option>
-                          <option value="Wah Cantonment">Wah Cantonment</option>
-                          <option value="Wazirabad">Wazirabad</option>
-                          <option value="" disabled>
-                            Sindh Cities
-                          </option>
-                          <option value="Badin">Badin</option>
-                          <option value="Bhirkan">Bhirkan</option>
-                          <option value="Rajo Khanani">Rajo Khanani</option>
-                          <option value="Chak">Chak</option>
-                          <option value="Dadu">Dadu</option>
-                          <option value="Digri">Digri</option>
-                          <option value="Diplo">Diplo</option>
-                          <option value="Dokri">Dokri</option>
-                          <option value="Ghotki">Ghotki</option>
-                          <option value="Haala">Haala</option>
-                          <option value="Hyderabad">Hyderabad</option>
-                          <option value="Islamkot">Islamkot</option>
-                          <option value="Jacobabad">Jacobabad</option>
-                          <option value="Jamshoro">Jamshoro</option>
-                          <option value="Jungshahi">Jungshahi</option>
-                          <option value="Kandhkot">Kandhkot</option>
-                          <option value="Kandiaro">Kandiaro</option>
                           <option value="Karachi">Karachi</option>
-                          <option value="Kashmore">Kashmore</option>
-                          <option value="Keti Bandar">Keti Bandar</option>
-                          <option value="Khairpur">Khairpur</option>
-                          <option value="Kotri">Kotri</option>
-                          <option value="Larkana">Larkana</option>
-                          <option value="Matiari">Matiari</option>
-                          <option value="Mehar">Mehar</option>
-                          <option value="Mirpur Khas">Mirpur Khas</option>
-                          <option value="Mithani">Mithani</option>
-                          <option value="Mithi">Mithi</option>
-                          <option value="Mehrabpur">Mehrabpur</option>
-                          <option value="Moro">Moro</option>
-                          <option value="Nagarparkar">Nagarparkar</option>
-                          <option value="Naudero">Naudero</option>
-                          <option value="Naushahro Feroze">Naushahro Feroze</option>
-                          <option value="Naushara">Naushara</option>
-                          <option value="Nawabshah">Nawabshah</option>
-                          <option value="Nazimabad">Nazimabad</option>
-                          <option value="Qambar">Qambar</option>
-                          <option value="Qasimabad">Qasimabad</option>
-                          <option value="Ranipur">Ranipur</option>
-                          <option value="Ratodero">Ratodero</option>
-                          <option value="Rohri">Rohri</option>
-                          <option value="Sakrand">Sakrand</option>
-                          <option value="Sanghar">Sanghar</option>
-                          <option value="Shahbandar">Shahbandar</option>
-                          <option value="Shahdadkot">Shahdadkot</option>
-                          <option value="Shahdadpur">Shahdadpur</option>
-                          <option value="Shahpur Chakar">Shahpur Chakar</option>
-                          <option value="Shikarpaur">Shikarpaur</option>
-                          <option value="Sukkur">Sukkur</option>
-                          <option value="Tangwani">Tangwani</option>
-                          <option value="Tando Adam Khan">Tando Adam Khan</option>
-                          <option value="Tando Allahyar">Tando Allahyar</option>
-                          <option value="Tando Muhammad Khan">Tando Muhammad Khan</option>
-                          <option value="Thatta">Thatta</option>
-                          <option value="Umerkot">Umerkot</option>
-                          <option value="Warah">Warah</option>
-                          <option value="" disabled>
-                            Khyber Cities
-                          </option>
-                          <option value="Abbottabad">Abbottabad</option>
-                          <option value="Adezai">Adezai</option>
-                          <option value="Alpuri">Alpuri</option>
-                          <option value="Akora Khattak">Akora Khattak</option>
-                          <option value="Ayubia">Ayubia</option>
-                          <option value="Banda Daud Shah">Banda Daud Shah</option>
-                          <option value="Bannu">Bannu</option>
-                          <option value="Batkhela">Batkhela</option>
-                          <option value="Battagram">Battagram</option>
-                          <option value="Birote">Birote</option>
-                          <option value="Chakdara">Chakdara</option>
-                          <option value="Charsadda">Charsadda</option>
-                          <option value="Chitral">Chitral</option>
-                          <option value="Daggar">Daggar</option>
-                          <option value="Dargai">Dargai</option>
-                          <option value="Darya Khan">Darya Khan</option>
-                          <option value="Dera Ismail Khan">Dera Ismail Khan</option>
-                          <option value="Doaba">Doaba</option>
-                          <option value="Dir">Dir</option>
-                          <option value="Drosh">Drosh</option>
-                          <option value="Hangu">Hangu</option>
-                          <option value="Haripur">Haripur</option>
-                          <option value="Karak">Karak</option>
-                          <option value="Kohat">Kohat</option>
-                          <option value="Kulachi">Kulachi</option>
-                          <option value="Lakki Marwat">Lakki Marwat</option>
-                          <option value="Latamber">Latamber</option>
-                          <option value="Madyan">Madyan</option>
-                          <option value="Mansehra">Mansehra</option>
-                          <option value="Mardan">Mardan</option>
-                          <option value="Mastuj">Mastuj</option>
-                          <option value="Mingora">Mingora</option>
-                          <option value="Nowshera">Nowshera</option>
-                          <option value="Paharpur">Paharpur</option>
-                          <option value="Pabbi">Pabbi</option>
-                          <option value="Peshawar">Peshawar</option>
-                          <option value="Saidu Sharif">Saidu Sharif</option>
-                          <option value="Shorkot">Shorkot</option>
-                          <option value="Shewa Adda">Shewa Adda</option>
-                          <option value="Swabi">Swabi</option>
-                          <option value="Swat">Swat</option>
-                          <option value="Tangi">Tangi</option>
-                          <option value="Tank">Tank</option>
-                          <option value="Thall">Thall</option>
-                          <option value="Timergara">Timergara</option>
-                          <option value="Tordher">Tordher</option>
-                          <option value="" disabled>
-                            Balochistan Cities
-                          </option>
-                          <option value="Awaran">Awaran</option>
-                          <option value="Barkhan">Barkhan</option>
-                          <option value="Chagai">Chagai</option>
-                          <option value="Dera Bugti">Dera Bugti</option>
-                          <option value="Gwadar">Gwadar</option>
-                          <option value="Harnai">Harnai</option>
-                          <option value="Jafarabad">Jafarabad</option>
-                          <option value="Jhal Magsi">Jhal Magsi</option>
-                          <option value="Kacchi">Kacchi</option>
-                          <option value="Kalat">Kalat</option>
-                          <option value="Kech">Kech</option>
-                          <option value="Kharan">Kharan</option>
-                          <option value="Khuzdar">Khuzdar</option>
-                          <option value="Killa Abdullah">Killa Abdullah</option>
-                          <option value="Killa Saifullah">Killa Saifullah</option>
-                          <option value="Kohlu">Kohlu</option>
-                          <option value="Lasbela">Lasbela</option>
-                          <option value="Lehri">Lehri</option>
-                          <option value="Loralai">Loralai</option>
-                          <option value="Mastung">Mastung</option>
-                          <option value="Musakhel">Musakhel</option>
-                          <option value="Nasirabad">Nasirabad</option>
-                          <option value="Nushki">Nushki</option>
-                          <option value="Panjgur">Panjgur</option>
-                          <option value="Pishin Valley">Pishin Valley</option>
-                          <option value="Quetta">Quetta</option>
-                          <option value="Sherani">Sherani</option>
-                          <option value="Sibi">Sibi</option>
-                          <option value="Sohbatpur">Sohbatpur</option>
-                          <option value="Washuk">Washuk</option>
-                          <option value="Zhob">Zhob</option>
-                          <option value="Ziarat">Ziarat</option>
                         </select>
                         {errors.city && (
                           <p className="caption text-danger">{errors.city}</p>
                         )}
                       </div>
+                    )}
+                  </fieldset>
+                  <fieldset>
+                    <div className="field-flex">
+                      <label>
+                        Select Area <span className="text-primary">*</span>
+                      </label>
+                      <label className="body-md-2 fw-semibold">علاقہ منتخب کریں</label>
+                    </div>
+                    <Area
+                      cityName={selectedCity}
+                      value={selectedArea}
+                      onChange={handleAreaChange}
+                      disabled={useDefaultAddress && defaultAddress}
+                    />
+                    {errors.area && (
+                      <p className="caption text-danger">{errors.area}</p>
                     )}
                   </fieldset>
                 </div>
@@ -747,7 +566,7 @@ export default function Checkout() {
                   </div>
                   <input
                     type="text"
-                    placeholder="Your detailed address"
+                    placeholder="Address"
                     ref={addressRef}
                     required
                     readOnly={useDefaultAddress && defaultAddress}
@@ -762,143 +581,156 @@ export default function Checkout() {
                     <label>Order Notes (optional)</label>
                     <label className="body-md-2 fw-semibold">آرڈر کے مطلق خاص ہدایات (انتخابی)</label>
                   </div>
-                  <textarea placeholder="Note on your order" defaultValue={""} />
+                  <textarea placeholder="Order Notes" defaultValue={""} />
                 </fieldset>
               </form>
             </div>
           </div>
           <div className="d-flex flex-column sidebar-checkout-custom">
-          <h5 className="title has-account">
+            <h5 className="title has-account">
               <span className="fw-semibold">Your Order</span>
               <span className="fw-semibold">آپ کا آرڈر</span>
-          </h5>
-          <div className="flat-sidebar-checkout position-relative top-0 w-100">
-            <div className="sidebar-checkout-content">
-              <div className="has-account field-flex">
-                <span className="fw-semibold">Order Details</span>
-                <span className="fw-semibold">آرڈر کی تفصیلات</span>
-              </div>
-              {cartData ? (
-                <ul className="list-product">
-                  <li className="item-product d-flex align-items-center">
-                    <a href="#" className="img-product">
-                      <Image
-                        alt=""
-                        src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
-                        width={500}
-                        height={500}
-                      />
-                    </a>
-                    <div className="content-box">
-                      <a
-                        href={`/product-details/${cartData.productSlug}`}
-                        className="link-secondary body-md-2 fw-semibold"
-                      >
-                        {cartData.productName}
-                      </a>
-                      <div className="body-md-2 text-main-2">
-                        <button
-                          className="text-primary link check-btn"
-                          onClick={removeItem}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              ) : (
-                <div className="w-100 d-flex justify-content-center align-items-center">
-                  <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
+            </h5>
+            <div className="flat-sidebar-checkout position-relative top-0 w-100">
+              <div className="sidebar-checkout-content">
+                <div className="has-account field-flex">
+                  <span className="fw-semibold">Order Details</span>
+                  <span className="fw-semibold">آرڈر کی تفصیلات</span>
                 </div>
-              )}
-              <ul className="sec-total-price">
-                <li>
-                  <span className="body-text-3">Advance Amount: {" "}
-                    <span className="body-text-3 text-primary">
-                    Rs. {cartData?.selectedPlan?.advance.toLocaleString() || "0"}
-                  </span>
-                  </span>
-                  <span className="body-text-3">
-                    ایڈوانس رقم
-                  </span>
-                </li>
-                <li>
-                  <span className="body-text-3">Monthly Amount: {" "}
-                    <span className="body-text-3">
-                      <span className="text-primary">Rs. {cartData?.selectedPlan?.monthlyAmount.toLocaleString() || "0"}</span> / for{" "}
-                      {cartData?.selectedPlan?.months} Months
-                    </span>
-                  </span>
-                  <span className="body-text-3">
-                    ماہانہ رقم
-                  </span>
-                </li>
-                <li>
-                  <span className="body-text-3">Total Deal Value: {" "}
-                    <span className="body-text-3 text-primary">
-                      Rs. {cartData?.selectedPlan?.totalPrice.toLocaleString() || "0"}
-                    </span>
-                  </span>
-                  <span className="body-text-3">
-                    کل مالیاتی قیمت
-                  </span>
-                </li>
-                <li>
-                  <span className="body-md-2 fw-semibold text-uppercase d-flex flex-column gap-1">
-                    <span>
-                      Total Advance
-                    </span>
-                    <span>
-                      کل ایڈوانس
-                    </span>
-                  </span>
-                  <span className="body-md-2 fw-semibold text-primary">
-                    Rs. {cartData?.selectedPlan?.advance.toLocaleString() || "0"}
-                  </span>
-                </li>
-                <li></li>
-                   <div className="body-md-2 fw-semibold mb-2">
-                    <p><span className="text-success">✓</span> Free Delivery / مفت ڈیلیوری</p>
-                    <p><span className="text-success">✓</span> Advance Cash on Delivery / آدائیگی آئٹم سپردگی کے وقت</p>
-                   </div>
-                   <div className="body-md-2 fw-semibold">
-                    <p className="mb-1">Free delivery on all orders / No verification charges / Shop without bank account/card / No charges for documentation</p>
-                    <p>تمام آرڈرز پر مفت ڈیلیوری / کوئی تصدیق کے چارجز نہیں / بینک اکاؤنٹ/کارڈ کے بغیر شاپنگ / دستاویزات کے لیے کوئی چارجز نہیں</p>
-                   </div>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-4">
-            <p>By clicking on Place Order, I have read and accepted the <a href="/terms-conditions" className="text-primary">terms and conditions</a> and <a href="/privacy" className="text-primary">privacy policy</a> of Qist Market.<span className="text-primary">*</span></p>
-            <p className="text-end">میں شرائط و ضوابط سے اتفاق کرتا ہوں</p>
-          </div>
-          <div className="wrap mt-4">
-            <div className="box-btn">
-              <button
-                onClick={handlePlaceOrder}
-                className="tf-btn w-100 justify-content-start"
-                type="button"
-                disabled={isLoading}
-              >
-                  {isLoading ? 
-                    <div className="w-100 text-white">
-                      Placing order...
+                {cartData ? (
+                  <ul className="list-product">
+                    <li className="item-product d-flex align-items-center">
+                      <a href="#" className="img-product">
+                        <Image
+                          alt=""
+                          src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
+                          width={500}
+                          height={500}
+                        />
+                      </a>
+                      <div className="content-box">
+                        <a
+                          href={`/product-details/${cartData.productSlug}`}
+                          className="link-secondary body-md-2 fw-semibold"
+                        >
+                          {cartData.productName}
+                        </a>
+                        <div className="body-md-2 text-main-2">
+                          <button
+                            className="text-primary link check-btn"
+                            onClick={removeItem}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                ) : (
+                  <div className="w-100 d-flex justify-content-center align-items-center">
+                    <div className="spinner-border" role="status">
+                      <span className="visually-hidden">Loading...</span>
                     </div>
-                   : 
+                  </div>
+                )}
+                <ul className="sec-total-price">
+                  <li>
+                    <span className="body-text-3">
+                      Advance Amount:{" "}
+                      <span className="body-text-3 text-primary">
+                        Rs. {cartData?.selectedPlan?.advance.toLocaleString() || "0"}
+                      </span>
+                    </span>
+                    <span className="body-text-3">ایڈوانس رقم</span>
+                  </li>
+                  <li>
+                    <span className="body-text-3">
+                      Monthly Amount:{" "}
+                      <span className="body-text-3">
+                        <span className="text-primary">
+                          Rs. {cartData?.selectedPlan?.monthlyAmount.toLocaleString() || "0"}
+                        </span>{" "}
+                        / for {cartData?.selectedPlan?.months} Months
+                      </span>
+                    </span>
+                    <span className="body-text-3">ماہانہ رقم</span>
+                  </li>
+                  <li>
+                    <span className="body-text-3">
+                      Total Deal Value:{" "}
+                      <span className="body-text-3 text-primary">
+                        Rs. {cartData?.selectedPlan?.totalPrice.toLocaleString() || "0"}
+                      </span>
+                    </span>
+                    <span className="body-text-3">کل مالیاتی قیمت</span>
+                  </li>
+                  <li>
+                    <span className="body-md-2 fw-semibold text-uppercase d-flex flex-column gap-1">
+                      <span>Total Advance</span>
+                      <span>کل ایڈوانس</span>
+                    </span>
+                    <span className="body-md-2 fw-semibold text-primary">
+                      Rs. {cartData?.selectedPlan?.advance.toLocaleString() || "0"}
+                    </span>
+                  </li>
+                  <li></li>
+                  <div className="body-md-2 fw-semibold mb-2">
+                    <p>
+                      <span className="text-success">✓</span> Free Delivery / مفت ڈیلیوری
+                    </p>
+                    <p>
+                      <span className="text-success">✓</span> Advance Cash on Delivery / آدائیگی آئٹم سپردگی کے وقت
+                    </p>
+                  </div>
+                  <div className="body-md-2 fw-semibold">
+                    <p className="mb-1">
+                      Free delivery on all orders / No verification charges / Shop without bank
+                      account/card / No charges for documentation
+                    </p>
+                    <p>
+                      تمام آرڈرز پر مفت ڈیلیوری / کوئی تصدیق کے چارجز نہیں / بینک اکاؤنٹ/کارڈ کے بغیر شاپنگ /
+                      دستاویزات کے لیے کوئی چارجز نہیں
+                    </p>
+                  </div>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-4">
+              <p>
+                By clicking on Place Order, I have read and accepted the{" "}
+                <a href="/terms-conditions" className="text-primary">
+                  terms and conditions
+                </a>{" "}
+                and{" "}
+                <a href="/privacy" className="text-primary">
+                  privacy policy
+                </a>{" "}
+                of Qist Market.<span className="text-primary">*</span>
+              </p>
+              <p className="text-end">میں شرائط و ضوابط سے اتفاق کرتا ہوں</p>
+            </div>
+            <div className="wrap mt-4">
+              <div className="box-btn">
+                <button
+                  onClick={handlePlaceOrder}
+                  className="tf-btn w-100 justify-content-start"
+                  type="button"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="w-100 text-white">Placing order...</div>
+                  ) : (
                     <div className="w-100 d-flex justify-content-between text-white">
                       <p>Place order</p>
                       <p>آرڈر کریں</p>
                     </div>
-                  }
-              </button>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
 }

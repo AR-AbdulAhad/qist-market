@@ -32,6 +32,13 @@ export default function MyAccount() {
           >
             edit your password and account details
           </Link>
+          , and {" "}
+          <Link
+            className="text-secondary link fw-medium"
+            href={`/track-your-order`}
+          >
+            track your order
+          </Link>
           .
         </p>
       </div>

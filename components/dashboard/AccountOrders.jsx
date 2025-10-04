@@ -117,9 +117,9 @@ export default function AccountOrders() {
                     >
                       {order.status}
                     </td>
-                    <td className="body-text-3">Rs. {order.advanceAmount}</td>
+                    <td className="body-text-3">Rs. {Number(order.advanceAmount).toLocaleString()}</td>
                     <td className="body-text-3">
-                      Rs. {order.monthlyAmount} / {order.months} months
+                      Rs. {Number(order.monthlyAmount).toLocaleString()} / {order.months} months
                     </td>
                     <td>
                       {order.status === "Cancelled" ? (

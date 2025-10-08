@@ -10,7 +10,6 @@ export default function AddToQuickview({ product, tooltipClass = "" }) {
       console.error("Invalid product passed to AddToQuickview:", product);
       return;
     }
-    console.log("Setting quickViewItem:", product);
     setQuickViewItem(product);
     openModal("quickView");
   };

@@ -16,7 +16,6 @@ export default function Context({ children }) {
 
   // Log quickViewItem updates
   useEffect(() => {
-    console.log("quickViewItem updated:", quickViewItem);
   }, [quickViewItem]);
 
   // Dynamically import Bootstrap Modal on the client side
@@ -64,7 +63,6 @@ export default function Context({ children }) {
 
   const openModal = (modalId, props = {}) => {
     if (typeof window !== "undefined" && Modal) {
-      console.log("Opening modal:", modalId);
       closeAllModals();
       setModalProps(props);
       setActiveModal(modalId);

@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import Area from "@/components/common/Area";
+import axios from "axios";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -19,7 +20,12 @@ export default function Checkout() {
   const [errors, setErrors] = useState({});
   const [useDefaultAddress, setUseDefaultAddress] = useState(false);
   const [defaultAddress, setDefaultAddress] = useState(null);
+  const [showOtpInput, setShowOtpInput] = useState(false);
+  const [otpCode, setOtpCode] = useState(["", "", "", "", "", ""]);
+  const [otpError, setOtpError] = useState("");
+  const [otpLoading, setOtpLoading] = useState(false);
   const router = useRouter();
+  const otpInputRefs = useRef([]);
 
   const emailRef = useRef(null);
   const phoneRef = useRef(null);
@@ -99,6 +105,7 @@ export default function Checkout() {
   const removeItem = () => {
     Cookies.remove("cartData", { path: "/" });
     setCartData(null);
+    router.push("/shop-cart");
   };
 
   const handleCityChange = (e) => {
@@ -142,7 +149,7 @@ export default function Checkout() {
         break;
       case "phone":
         if (!value || !/^\d{11,}$/.test(value)) {
-          error = "A valid whatsapp number (minimum 11 digits) is required";
+          error = "A valid WhatsApp number (minimum 11 digits) is required";
         }
         break;
       case "alternativePhone":
@@ -192,7 +199,7 @@ export default function Checkout() {
       newErrors.email = "Invalid email format";
     }
     if (!formData.phone || !/^\d{11,}$/.test(formData.phone)) {
-      newErrors.phone = "A valid whatsapp number (minimum 11 digits) is required";
+      newErrors.phone = "A valid WhatsApp number (minimum 11 digits) is required";
     }
     if (formData.alternativePhone && !/^\d{11,}$/.test(formData.alternativePhone)) {
       newErrors.alternativePhone = "Alternative phone number must be at least 11 digits if provided";
@@ -231,6 +238,88 @@ export default function Checkout() {
       newErrors.months = "Months must be a non-negative integer";
     }
     return newErrors;
+  };
+
+  // OTP handlers
+  const handleOtpChange = (index, value) => {
+    if (/^\d?$/.test(value)) {
+      const newCode = [...otpCode];
+      newCode[index] = value;
+      setOtpCode(newCode);
+      setOtpError("");
+      if (value && index < 5) {
+        otpInputRefs.current[index + 1].focus();
+      }
+    }
+  };
+
+  const handleOtpKeyDown = (index, e) => {
+    if (e.key === "Backspace" && !otpCode[index] && index > 0) {
+      otpInputRefs.current[index - 1].focus();
+    }
+  };
+
+  const handleOtpPaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text").trim();
+    if (/^\d{6}$/.test(pasted)) {
+      setOtpCode(pasted.split(""));
+      setOtpError("");
+      otpInputRefs.current[5].focus();
+    }
+  };
+
+  const handleSendOtp = async (phone) => {
+    if (!phone || !/^\d{11,}$/.test(phone)) {
+      toast.error("Valid WhatsApp number required to send OTP");
+      return false;
+    }
+    setOtpLoading(true);
+    try {
+      await axios.post(`${BACKEND_URL}/api/customer/resend`, {
+        identifier: phone,
+        isForReset: false,
+      });
+      toast.success("OTP sent to your WhatsApp number");
+      setShowOtpInput(true);
+      return true;
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to send OTP");
+      return false;
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleResendOtp = async (phone) => {
+    setOtpLoading(true);
+    try {
+      await axios.post(`${BACKEND_URL}/api/customer/resend`, {
+        identifier: phone,
+        isForReset: false,
+      });
+      toast.success("OTP resent to your WhatsApp number");
+      setOtpCode(["", "", "", "", "", ""]);
+      setOtpError("");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to resend OTP");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async (phone, verificationCode) => {
+    try {
+      await axios.post(`${BACKEND_URL}/api/customer/verify`, {
+        identifier: phone,
+        code: verificationCode,
+        isForReset: false,
+      });
+      return true;
+    } catch (err) {
+      setOtpError(err.response?.data?.error || "Failed to verify OTP");
+      return false;
+    }
   };
 
   const handlePlaceOrder = async (e) => {
@@ -300,6 +389,31 @@ export default function Checkout() {
       return;
     }
 
+    // If OTP input is not shown, send OTP and show input fields
+    if (!showOtpInput) {
+      const otpSent = await handleSendOtp(formData.phone);
+      setIsLoading(false);
+      if (!otpSent) {
+        return;
+      }
+      return;
+    }
+
+    // Verify OTP
+    const verificationCode = otpCode.join("");
+    if (verificationCode.length !== 6) {
+      setOtpError("Please enter a 6-digit OTP");
+      setIsLoading(false);
+      return;
+    }
+
+    const otpVerified = await handleVerifyOtp(formData.phone, verificationCode);
+    if (!otpVerified) {
+      setIsLoading(false);
+      return;
+    }
+
+    // Proceed with order placement
     try {
       const response = await fetch(`${BACKEND_URL}/api/order`, {
         method: "POST",
@@ -311,17 +425,20 @@ export default function Checkout() {
         const orderData = await response.json();
         sessionStorage.setItem("orderData", JSON.stringify(orderData));
         Cookies.remove("cartData", { path: "/" });
+        setShowOtpInput(false);
+        setOtpCode(["", "", "", "", "", ""]);
+        setOtpError("");
         router.push("/order-details");
       } else {
         const errorData = await response.json();
-        toast.error("Error:", errorData.error || "Failed to create order");
+        toast.error(errorData.error || "Failed to create order");
         setErrors({
           api: errorData.error || "Failed to create order",
           details: errorData.details,
         });
       }
     } catch (error) {
-      toast.error("Network error:", error);
+      toast.error("Network error: " + error.message);
       setErrors({
         api: "Failed to connect to the server",
         details: error.message,
@@ -395,7 +512,7 @@ export default function Checkout() {
                   <label className="body-md-2 fw-semibold">
                     WhatsApp Number <span className="text-primary">*</span>
                   </label>
-                  <label className="body-md-2 fw-semibold">فون نمبر</label>
+                  <label className="body-md-2 fw-semibold">واٹس ایپ نمبر</label>
                 </div>
                 <input
                   className="def"
@@ -709,16 +826,51 @@ export default function Checkout() {
               </p>
               <p className="text-end">میں شرائط و ضوابط سے اتفاق کرتا ہوں</p>
             </div>
+            {showOtpInput && (
+              <div className="wrap mt-4">
+                <h5 className="title fw-semibold">Verify WhatsApp Number</h5>
+                <p className="body-text-3 mb-2">
+                  A 6-digit OTP has been sent to your WhatsApp number. Enter it to proceed.
+                </p>
+                <div className="d-flex justify-content-center gap-2">
+                  {otpCode.map((digit, index) => (
+                    <input
+                      key={index}
+                      type="text"
+                      maxLength="1"
+                      value={digit}
+                      onChange={(e) => handleOtpChange(index, e.target.value)}
+                      onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                      onPaste={index === 0 ? handleOtpPaste : undefined}
+                      ref={(el) => (otpInputRefs.current[index] = el)}
+                      className={`form-control text-center ${otpError ? "is-invalid" : ""}`}
+                      style={{ width: "40px" }}
+                    />
+                  ))}
+                </div>
+                {otpError && <p className="caption text-danger text-center">{otpError}</p>}
+                <p className="body-text-3 text-center mt-3">
+                  Didn't receive the code?{" "}
+                  <a
+                    href="#"
+                    className="text-primary"
+                    onClick={() => handleResendOtp(phoneRef.current.value)}
+                  >
+                    Resend OTP
+                  </a>
+                </p>
+              </div>
+            )}
             <div className="wrap mt-4">
               <div className="box-btn">
                 <button
                   onClick={handlePlaceOrder}
                   className="tf-btn w-100 justify-content-start"
                   type="button"
-                  disabled={isLoading}
+                  disabled={isLoading || otpLoading}
                 >
-                  {isLoading ? (
-                    <div className="w-100 text-white">Placing order...</div>
+                  {isLoading || otpLoading ? (
+                    <div className="w-100 text-white">Processing...</div>
                   ) : (
                     <div className="w-100 d-flex justify-content-between text-white">
                       <p>Place order</p>

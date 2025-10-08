@@ -12,7 +12,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export default function ProductsCategory1({ categorySlug }) {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    itemPerPage: 10,
+    itemPerPage: 20,
   });
   const {
     price,

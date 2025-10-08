@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import "@/public/css/quill-out.css"
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -34,7 +35,7 @@ export default function VerificationProcess() {
             </div>
           </div>
         ) : verificationProcess? (
-          <div dangerouslySetInnerHTML={{ __html: verificationProcess.content }} />
+          <div className="body-text-3 body-text-33" dangerouslySetInnerHTML={{ __html: verificationProcess.content }} />
         ) : (
           <div className="d-flex flex-col align-items-center justify-content-center py-12">
             <p>No Verification Process Content Available</p>

@@ -12,7 +12,7 @@ import axios from "axios";
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function ProductsSearch() {
-  const [state, dispatch] = useReducer(reducer, { ...initialState, itemPerPage: 10 });
+  const [state, dispatch] = useReducer(reducer, { ...initialState, itemPerPage: 20 });
   const { price, sortingOption, currentPage, itemPerPage } = state;
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";

@@ -12,7 +12,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export default function Products1() {
   const [state, dispatch] = useReducer(reducer, {
     ...initialState,
-    itemPerPage: 10,
+    itemPerPage: 20,
   });
   const {
     price,
@@ -124,7 +124,6 @@ export default function Products1() {
 
         const { data, pagination } = await response.json();
         setProductData(data);
-        console.log("Fetched products:", data);
         setTotalItems(pagination.totalItems);
         setTotalPages(pagination.totalPages);
       } catch (error) {

@@ -3,15 +3,13 @@
 import { useState } from "react";
 
 const options = [
-  { value: "0-10", label: "Show: 10" },
-  { value: "0-15", label: "Show: 15" },
   { value: "0-20", label: "Show: 20" },
   { value: "0-50", label: "Show: 50" },
 ];
 
 export default function ShowLength({ allProps }) {
   const [isOpenDD, setIsOpenDD] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(options[0]); // Default to "Show: 10"
+  const [selectedValue, setSelectedValue] = useState(options[0]);
 
   const handleClick = (value) => {
     setSelectedValue(value);

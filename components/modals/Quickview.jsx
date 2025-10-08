@@ -34,7 +34,6 @@ export default function Quickview() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      console.log("API Response:", data);
       setProductData({ ...quickViewItem, ...data });
     } catch (error) {
       console.error("Error fetching product:", error);
@@ -117,7 +116,6 @@ export default function Quickview() {
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => {
       const newIndex = prev === 0 ? quickviewImages.length - 1 : prev - 1;
-      console.log("Previous image, new index:", newIndex);
       return newIndex;
     });
   };
@@ -125,14 +123,12 @@ export default function Quickview() {
   const handleNextImage = () => {
     setCurrentImageIndex((prev) => {
       const newIndex = prev === quickviewImages.length - 1 ? 0 : prev + 1;
-      console.log("Next image, new index:", newIndex);
       return newIndex;
     });
   };
 
   const handleThumbnailClick = (index) => {
     setCurrentImageIndex(index);
-    console.log("Thumbnail clicked, new index:", index);
   };
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

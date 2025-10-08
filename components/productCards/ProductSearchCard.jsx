@@ -74,7 +74,7 @@ export default function ProductSearchCard({ product }) {
           </div>
         )}
       </div>
-      <div className="card-product-btn">
+      <div className="card-product-btn res-btn-card">
         <a
           href="#"
           data-bs-toggle="offcanvas"

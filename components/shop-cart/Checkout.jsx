@@ -30,8 +30,7 @@ export default function Checkout() {
   const emailRef = useRef(null);
   const phoneRef = useRef(null);
   const alternativePhoneRef = useRef(null);
-  const firstNameRef = useRef(null);
-  const lastNameRef = useRef(null);
+  const fullNameRef = useRef(null);
   const cnicRef = useRef(null);
   const cityRef = useRef(null);
   const addressRef = useRef(null);
@@ -65,8 +64,7 @@ export default function Checkout() {
       emailRef.current.value = user.email || "";
       phoneRef.current.value = user.phone || "";
       alternativePhoneRef.current.value = user.alternativePhone || "";
-      firstNameRef.current.value = user.firstName || "";
-      lastNameRef.current.value = user.lastName || "";
+      fullNameRef.current.value = user.fullName || "";
       cnicRef.current.value = user.cnic || "";
 
       const fetchDefaultAddress = async () => {
@@ -157,14 +155,9 @@ export default function Checkout() {
           error = "Alternative phone number must be at least 11 digits if provided";
         }
         break;
-      case "firstName":
+      case "fullName":
         if (!value) {
-          error = "First name is required";
-        }
-        break;
-      case "lastName":
-        if (!value) {
-          error = "Last name is required";
+          error = "Full Name is required";
         }
         break;
       case "cnic":
@@ -204,11 +197,8 @@ export default function Checkout() {
     if (formData.alternativePhone && !/^\d{11,}$/.test(formData.alternativePhone)) {
       newErrors.alternativePhone = "Alternative phone number must be at least 11 digits if provided";
     }
-    if (!formData.firstName) {
-      newErrors.firstName = "First name is required";
-    }
-    if (!formData.lastName) {
-      newErrors.lastName = "Last name is required";
+    if (!formData.fullName) {
+      newErrors.fullName = "Full Name is required";
     }
     if (!formData.cnic || !/^\d{13}$/.test(formData.cnic)) {
       newErrors.cnic = "A valid 13-digit CNIC number is required";
@@ -350,8 +340,7 @@ export default function Checkout() {
       email: emailRef.current.value || null,
       phone: phoneRef.current.value,
       alternativePhone: alternativePhoneRef.current.value || null,
-      firstName: firstNameRef.current.value,
-      lastName: lastNameRef.current.value,
+      fullName: fullNameRef.current.value,
       cnic: cnicRef.current.value,
       city: cityRef.current.value,
       area: selectedArea,
@@ -375,8 +364,7 @@ export default function Checkout() {
         email: emailRef,
         phone: phoneRef,
         alternativePhone: alternativePhoneRef,
-        firstName: firstNameRef,
-        lastName: lastNameRef,
+        fullName: fullNameRef,
         cnic: cnicRef,
         city: cityRef,
         address: addressRef,
@@ -552,37 +540,19 @@ export default function Checkout() {
                   <fieldset>
                     <div className="field-flex">
                       <label>
-                        First Name <span className="text-primary">*</span>
+                        Full Name <span className="text-primary">*</span>
                       </label>
                       <label className="body-md-2 fw-semibold">پہلا نام</label>
                     </div>
                     <input
                       type="text"
-                      placeholder="First Name (e.g., Abdul)"
-                      ref={firstNameRef}
+                      placeholder="Full Name (e.g., Abdul Ahad)"
+                      ref={fullNameRef}
                       required
-                      onChange={(e) => validateField("firstName", e.target.value)}
+                      onChange={(e) => validateField("fullName", e.target.value)}
                     />
-                    {errors.firstName && (
-                      <p className="caption text-danger">{errors.firstName}</p>
-                    )}
-                  </fieldset>
-                  <fieldset>
-                    <div className="field-flex">
-                      <label>
-                        Last Name <span className="text-primary">*</span>
-                      </label>
-                      <label className="body-md-2 fw-semibold">آخری نام</label>
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Last Name (e.g., Ahad)"
-                      ref={lastNameRef}
-                      required
-                      onChange={(e) => validateField("lastName", e.target.value)}
-                    />
-                    {errors.lastName && (
-                      <p className="caption text-danger">{errors.lastName}</p>
+                    {errors.fullName && (
+                      <p className="caption text-danger">{errors.fullName}</p>
                     )}
                   </fieldset>
                 </div>

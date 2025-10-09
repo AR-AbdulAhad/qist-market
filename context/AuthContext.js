@@ -22,8 +22,7 @@ export const AuthProvider = ({ children }) => {
             setUser({
               customerId: decoded.customerId,
               email: decoded.email,
-              firstName: decoded.firstName,
-              lastName: decoded.lastName,
+              fullName: decoded.fullName,
               phone: decoded.phone,
               alternativePhone: decoded.alternativePhone,
               cnic: decoded.cnic,

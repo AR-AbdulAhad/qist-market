@@ -224,7 +224,7 @@ export default function OrderDetails() {
                         <span className="fw-medium">Customer Name:</span>
                       </td>
                       <td>
-                        <span className="fw-medium">{orderData.firstName} {orderData.lastName}</span>
+                        <span className="fw-medium">{orderData.fullName}</span>
                       </td>
                     </tr>
                     <tr className="tf-order-item">

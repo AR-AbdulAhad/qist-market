@@ -9,7 +9,7 @@ export default function MyAccount() {
   return (
     <div className="my-account-content account-dashboard">
       <div className="mb_60">
-        <h3 className="fw-semibold mb-20">Hello {user ? <>{user.firstName} {user.lastName},</> : "loading..."}</h3>
+        <h3 className="fw-semibold mb-20">Hello {user ? <>{user.fullName},</> : "loading..."}</h3>
         <p>
           From your account dashboard you can view your{" "}
           <Link

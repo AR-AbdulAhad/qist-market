@@ -9,8 +9,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export default function Register() {
   const { openModal } = useContextElement();
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    fullName: "",
     email: "",
     cnic: "",
     phone: "",
@@ -25,12 +24,8 @@ export default function Register() {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    }
-    
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+    if (!formData.fullName.trim()) {
+      newErrors.fullName = "Full Name is required";
     }
     
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -77,8 +72,7 @@ export default function Register() {
 
   const resetForm = () => {
     setFormData({
-      firstName: "",
-      lastName: "",
+      fullName: "",
       email: "",
       cnic: "",
       phone: "",
@@ -135,36 +129,18 @@ export default function Register() {
               <div className="form-content">
                 <fieldset>
                   <label className="fw-semibold body-md-2">
-                    First Name <span className="text-primary">*</span>
+                    Full Name <span className="text-primary">*</span>
                   </label>
                   <input
                     type="text"
-                    name="firstName"
-                    placeholder="First Name (e.g., Abdul)"
-                    value={formData.firstName}
+                    name="fullName"
+                    placeholder="Full Name (e.g., Abdul Ahad)"
+                    value={formData.fullName}
                     onChange={handleChange}
-                    className={errors.firstName ? "is-invalid" : ""}
+                    className={errors.fullName ? "is-invalid" : ""}
                   />
-                  {errors.firstName && (
-                    <div className="invalid-feedback">{errors.firstName}</div>
-                  )}
-                </fieldset>
-              </div>
-              <div className="form-content">
-                <fieldset>
-                  <label className="fw-semibold body-md-2">
-                    Last Name <span className="text-primary">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    placeholder="Last Name (e.g., Ahad)"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className={errors.lastName ? "is-invalid" : ""}
-                  />
-                  {errors.lastName && (
-                    <div className="invalid-feedback">{errors.lastName}</div>
+                  {errors.fullName && (
+                    <div className="invalid-feedback">{errors.fullName}</div>
                   )}
                 </fieldset>
               </div>

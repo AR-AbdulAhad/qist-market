@@ -9,7 +9,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export default function AccountEdit() {
   const { token, user, refreshUser, logout } = useContext(AuthContext);
   const router = useRouter();
-  const [profile, setProfile] = useState({ firstName: "", lastName: "", phone: "", alternativePhone: "", email: "", cnic: "" });
+  const [profile, setProfile] = useState({ fullName: "", phone: "", alternativePhone: "", email: "", cnic: "" });
   const [passwordData, setPasswordData] = useState({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
   const [profileErrors, setProfileErrors] = useState({});
   const [passwordErrors, setPasswordErrors] = useState({});
@@ -24,8 +24,7 @@ export default function AccountEdit() {
   useEffect(() => {
     if (user) {
       setProfile({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
+        fullName: user.fullName || "",
         phone: user.phone || "",
         alternativePhone: user.alternativePhone || "",
         email: user.email || "",
@@ -40,12 +39,8 @@ export default function AccountEdit() {
   const validateProfile = () => {
     const newErrors = {};
 
-    if (!profile.firstName.trim()) {
-      newErrors.firstName = "First name is required";
-    }
-
-    if (!profile.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+    if (!profile.fullName.trim()) {
+      newErrors.fullName = "Full Name is required";
     }
 
     if (!user.cnic) {
@@ -112,8 +107,7 @@ export default function AccountEdit() {
     setProfileLoading(true);
 
     const payload = {
-      firstName: profile.firstName,
-      lastName: profile.lastName,
+      fullName: profile.fullName,
       alternativePhone: profile.alternativePhone,
     };
     if (!user.cnic) {
@@ -185,35 +179,19 @@ export default function AccountEdit() {
         <form onSubmit={handleProfileSubmit} className="form-account-details">
           <div className="cols mb-3">
             <fieldset>
-              <label htmlFor="firstName" className="fw-semibold body-md-2">
-                First Name <span className="text-primary">*</span>
+              <label htmlFor="fullName" className="fw-semibold body-md-2">
+                Full Name <span className="text-primary">*</span>
               </label>
               <input
                 type="text"
-                id="firstName"
-                value={profile.firstName}
+                id="fullName"
+                value={profile.fullName}
                 onChange={handleProfileChange}
-                placeholder="First Name (e.g., Abdul)"
-                className={profileErrors.firstName ? "is-invalid" : ""}
+                placeholder="Full Name (e.g., Abdul Ahad)"
+                className={profileErrors.fullName ? "is-invalid" : ""}
               />
-              {profileErrors.firstName && (
-                <div className="invalid-feedback">{profileErrors.firstName}</div>
-              )}
-            </fieldset>
-            <fieldset>
-              <label htmlFor="lastName" className="fw-semibold body-md-2">
-                Last Name <span className="text-primary">*</span>
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                value={profile.lastName}
-                onChange={handleProfileChange}
-                placeholder="Last Name (e.g., Ahad)"
-                className={profileErrors.lastName ? "is-invalid" : ""}
-              />
-              {profileErrors.lastName && (
-                <div className="invalid-feedback">{profileErrors.lastName}</div>
+              {profileErrors.fullName && (
+                <div className="invalid-feedback">{profileErrors.fullName}</div>
               )}
             </fieldset>
           </div>
@@ -254,7 +232,7 @@ export default function AccountEdit() {
           </div>
           <div className="cols mb-3">
              <fieldset>
-              <label htmlFor="lastName" className="fw-semibold body-md-2">
+              <label htmlFor="alternativePhone" className="fw-semibold body-md-2">
                 Alternative Number (optional)
               </label>
               <input
@@ -263,11 +241,7 @@ export default function AccountEdit() {
                 value={profile.alternativePhone}
                 onChange={handleProfileChange}
                 placeholder="Alternative Number (e.g., 03009876543)"
-                className={profileErrors.alternativePhone ? "is-invalid" : ""}
               />
-              {profileErrors.lastName && (
-                <div className="invalid-feedback">{profileErrors.lastName}</div>
-              )}
             </fieldset>
             <fieldset>
               <label htmlFor="cnic" className="fw-semibold body-md-2">

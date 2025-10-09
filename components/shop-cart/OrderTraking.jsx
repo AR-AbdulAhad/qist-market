@@ -432,7 +432,7 @@ export default function OrderTracking() {
                           </td>
                           <td>
                             <span className="fw-medium">
-                              {orderData.firstName} {orderData.lastName}
+                              {orderData.fullName}
                             </span>
                           </td>
                         </tr>

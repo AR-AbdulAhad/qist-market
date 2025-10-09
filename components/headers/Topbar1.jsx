@@ -77,7 +77,9 @@ export default function Topbar1({ parentClass = "tf-topbar line-bt" }) {
                         strokeWidth="0.3"
                       />
                     </svg>
-                    <span className="body-small">{user.firstName}</span>
+                    <span className="body-small">
+                      {user.fullName.split(' ')[0]}
+                    </span>
                     <i className="icon-arrow-down" />
                   </a>
                   <ul className="dropdown-menu" aria-labelledby="accountDropdown">

@@ -240,7 +240,7 @@ export default function Footer1({ fullWidth = false }) {
                   )}
                 </ul>
               )}
-              <p className="nocopy caption text-center mb-5">
+              <p className="nocopy caption text-center res-mb-ft">
                 <span className="fw-medium">{settings?.name || "Qist Market"}</span>© {getCurrentYear()}. All rights reserved - Developed by <a href="https://elipsestudio.com" target="_blank" className="link">Elipse Studio</a>
               </p>
             </div>

@@ -5,7 +5,7 @@ import { useSettings } from "@/context/SettingsContext";
 import Link from "next/link";
 import React, { useContext } from "react";
 
-export default function Topbar1({ parentClass = "tf-topbar line-bt" }) {
+export default function Topbar1({ parentClass = "tf-topbar line-bt top-pad" }) {
   const { user, logout } = useContext(AuthContext);
   const { settings, isLoading, error } = useSettings();
 

@@ -35,7 +35,7 @@ export default function TermsAndPrivacy() {
             </div>
           </div>
         ) : termsAndPrivacy? (
-          <div className="body-text-3 body-text-33" dangerouslySetInnerHTML={{ __html: termsAndPrivacy.content }} />
+          <div className="body-text-33" dangerouslySetInnerHTML={{ __html: termsAndPrivacy.content }} />
         ) : (
           <div className="d-flex flex-col align-items-center justify-content-center py-12">
             <p>No Terms and Privacy Content Available</p>

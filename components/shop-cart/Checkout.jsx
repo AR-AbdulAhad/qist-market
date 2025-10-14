@@ -542,7 +542,7 @@ export default function Checkout() {
                       <label>
                         Full Name <span className="text-primary">*</span>
                       </label>
-                      <label className="body-md-2 fw-semibold">پہلا نام</label>
+                      <label className="body-md-2 fw-semibold">پورا نام</label>
                     </div>
                     <input
                       type="text"

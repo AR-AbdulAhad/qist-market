@@ -13,10 +13,13 @@ import {
 } from "react-icons/fa";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useSettings } from "@/context/SettingsContext";
+import Image from "next/image";
 
 export default function Details1({ singleProduct, loading }) {
   const [selectedPlan, setSelectedPlan] = useState(null);
   const router = useRouter();
+  const { settings } = useSettings();
 
   const handlePlanSelection = (plan) => {
     setSelectedPlan(plan);
@@ -156,7 +159,14 @@ export default function Details1({ singleProduct, loading }) {
                                 href={`/shop`}
                                 className="caption text-secondary link"
                               >
-                                Supplied and Shipped by {singleProduct.brand || "Qist Market"}
+                                Supplied and Shipped by
+                                <Image
+                                  src={settings?.logo_url}
+                                  alt={settings?.name || "Qist Market"}
+                                  width={80}
+                                  height={30}
+                                  className="ms-2"
+                                />
                               </Link>
                             )}
                           </li>
@@ -187,9 +197,9 @@ export default function Details1({ singleProduct, loading }) {
                                 Select Your Installment Plan
                               </h5>
                               {singleProduct?.ProductInstallments?.map((installment, index) => (
-                                <div key={installment.id} className="card mb-2">
-                                  <div className="card-body">
-                                    <div className="form-check">
+                                <label key={installment.id} className="card" htmlFor={`plan-${installment.id}`}>
+                                  <div className="card-body rounded plan-hover-effect">
+                                    <div className="form-check d-flex align-items-center gap-3 body-text-3">
                                       <input
                                         type="radio"
                                         className="form-check-input"
@@ -199,22 +209,22 @@ export default function Details1({ singleProduct, loading }) {
                                         checked={selectedPlan?.id === installment.id}
                                         onChange={() => handlePlanSelection(installment)}
                                       />
-                                      <label
-                                        className="form-check-label"
-                                        htmlFor={`plan-${installment.id}`}
+                                      <div
+                                        className="form-check-label d-flex flex-column gap-1"
                                       >
-                                        Plan {index + 1} - Rs {installment.monthlyAmount.toLocaleString()} x {installment.months} months
-                                        <span style={{ color: "red" }}> Rs {installment.advance.toLocaleString()} Advance</span>
-                                      </label>
+                                        <div><strong>Plan {index + 1}</strong></div>
+                                        <div><strong>Rs {installment.monthlyAmount.toLocaleString()}</strong> x {installment.months} months</div>
+                                        <div><strong>Rs {installment.advance.toLocaleString()} <span className="text-primary">Advance</span></strong></div>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
+                                </label>
                               ))}
                               <button
                                 onClick={handleNext}
                                 className="tf-btn mt-2 w-100 text-white"
                               >
-                                Next
+                                Order Now
                               </button>
                             </div>
                           )}

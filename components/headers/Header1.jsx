@@ -15,7 +15,7 @@ export default function Header1() {
 
   return (
     <header className="tf-header style-2">
-      <div className="inner-header">
+      <div className="pt-2 pb-2">
         <div className="container">
           <div className="row">
             <div className="col-xl-2 col-md-3 col-7 d-flex align-items-center">

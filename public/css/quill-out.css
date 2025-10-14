@@ -114,3 +114,17 @@
     margin-left: 10px;
   }
 }
+
+.description-truncated {
+  position: relative;
+}
+.description-truncated::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: linear-gradient(to bottom, transparent, white);
+  pointer-events: none;
+}

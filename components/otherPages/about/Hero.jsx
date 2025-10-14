@@ -35,7 +35,7 @@ export default function Hero() {
             </div>
           </div>
       ) : about? (
-        <div className="body-text-3 body-text-33" dangerouslySetInnerHTML={{ __html: about.content }} />
+        <div className="body-text-33" dangerouslySetInnerHTML={{ __html: about.content }} />
       ) : (
         <div className="d-flex flex-col align-items-center justify-content-center py-12">
           <p>No About Content Available</p>

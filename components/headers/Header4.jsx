@@ -17,7 +17,7 @@ export default function Header4({ fullWidth = false }) {
 
   return (
     <header className="tf-header">
-      <div className="inner-header line-bt">
+      <div className="pt-2 pb-2 line-bt">
         <div className={`container${fullWidth ? "-full" : ""}`}>
           <div className="row">
             <div className="col-lg-2 col-6 d-flex align-items-center">

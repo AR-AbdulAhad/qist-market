@@ -35,7 +35,7 @@ export default function DeliveryPolicy() {
             </div>
           </div>
         ) : deliveryPolicy? (
-          <div className="body-text-3 body-text-33" dangerouslySetInnerHTML={{ __html: deliveryPolicy.content }} />
+          <div className="body-text-33" dangerouslySetInnerHTML={{ __html: deliveryPolicy.content }} />
         ) : (
           <div className="d-flex flex-col align-items-center justify-content-center py-12">
             <p>No Delivery Policy Content Available</p>

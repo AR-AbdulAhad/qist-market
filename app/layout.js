@@ -21,6 +21,7 @@ import ChangePassword from "@/components/modals/ChangePassword";
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from "@/context/AuthContext";
 import { SettingsProvider } from "@/context/SettingsContext";
+import WhatsAppBtn from "@/components/common/WhatsAppBtn";
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -136,6 +137,7 @@ export default function RootLayout({ children }) {
             <Quickview />
             <MobileMenu />
             <ScrollTop />
+            <WhatsAppBtn />
             <Toolbar />
             <Search />
             <AddParallax />

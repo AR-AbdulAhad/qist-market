@@ -35,7 +35,7 @@ export default function ReturnsRefundsPolicy() {
             </div>
           </div>
         ) : returnsRefundsPolicy? (
-          <div className="body-text-3 body-text-33" dangerouslySetInnerHTML={{ __html: returnsRefundsPolicy.content }} />
+          <div className="body-text-33" dangerouslySetInnerHTML={{ __html: returnsRefundsPolicy.content }} />
         ) : (
           <div className="d-flex flex-col align-items-center justify-content-center py-12">
             <p>No Returns and Refunds Policy Content Available</p>

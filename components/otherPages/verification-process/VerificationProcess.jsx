@@ -35,7 +35,7 @@ export default function VerificationProcess() {
             </div>
           </div>
         ) : verificationProcess? (
-          <div className="body-text-3 body-text-33" dangerouslySetInnerHTML={{ __html: verificationProcess.content }} />
+          <div className="body-text-33" dangerouslySetInnerHTML={{ __html: verificationProcess.content }} />
         ) : (
           <div className="d-flex flex-col align-items-center justify-content-center py-12">
             <p>No Verification Process Content Available</p>

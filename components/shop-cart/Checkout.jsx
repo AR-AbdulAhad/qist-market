@@ -312,7 +312,7 @@ export default function Checkout() {
     }
   };
 
-  const handlePlaceOrder = async (e) => {
+    const handlePlaceOrder = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -336,6 +336,22 @@ export default function Checkout() {
       }
     }
 
+    // Retrieve referralSource from cookie
+    let referralSource = { type: "unknown" };
+    try {
+      const cookieValue = Cookies.get("referralSource");
+      if (cookieValue) {
+        referralSource = JSON.parse(cookieValue);
+        // Ensure referralSource has valid structure
+        if (!referralSource.type || typeof referralSource.type !== "string") {
+          referralSource = { type: "unknown" };
+        }
+      }
+    } catch (error) {
+      console.error("Error parsing referralSource cookie:", error);
+      referralSource = { type: "unknown" };
+    }
+
     const formData = {
       email: emailRef.current.value || null,
       phone: phoneRef.current.value,
@@ -353,6 +369,7 @@ export default function Checkout() {
       monthlyAmount: selectedPlan.monthlyAmount,
       months: selectedPlan.months,
       customerID: user ? user.customerId : null,
+      referralSource,
     };
 
     const newErrors = validateForm(formData);
@@ -377,7 +394,6 @@ export default function Checkout() {
       return;
     }
 
-    // If OTP input is not shown, send OTP and show input fields
     if (!showOtpInput) {
       const otpSent = await handleSendOtp(formData.phone);
       setIsLoading(false);
@@ -387,7 +403,6 @@ export default function Checkout() {
       return;
     }
 
-    // Verify OTP
     const verificationCode = otpCode.join("");
     if (verificationCode.length !== 6) {
       setOtpError("Please enter a 6-digit OTP");
@@ -401,7 +416,6 @@ export default function Checkout() {
       return;
     }
 
-    // Proceed with order placement
     try {
       const response = await fetch(`${BACKEND_URL}/api/order`, {
         method: "POST",
@@ -413,6 +427,7 @@ export default function Checkout() {
         const orderData = await response.json();
         sessionStorage.setItem("orderData", JSON.stringify(orderData));
         Cookies.remove("cartData", { path: "/" });
+        Cookies.remove("referralSource", { path: "/" });
         setShowOtpInput(false);
         setOtpCode(["", "", "", "", "", ""]);
         setOtpError("");

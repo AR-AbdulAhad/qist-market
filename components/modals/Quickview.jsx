@@ -7,7 +7,16 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaFacebookF, FaTwitter, FaWhatsapp, FaLinkedinIn } from "react-icons/fa";
+import {
+  FaFacebookF,
+  FaWhatsapp,
+  FaLinkedinIn,
+  FaPinterest,
+  FaCheck,
+} from "react-icons/fa";
+import { MdOutlineContentCopy } from "react-icons/md";
+import { RiTwitterXFill } from "react-icons/ri";
+import { LuMail } from "react-icons/lu";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useSettings } from "@/context/SettingsContext";
@@ -20,6 +29,7 @@ export default function Quickview() {
   const [productData, setProductData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [isCopied, setIsCopied] = useState(false);
   const router = useRouter();
 
   const fetchProduct = async () => {
@@ -134,6 +144,49 @@ export default function Quickview() {
   };
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const handleCopy = async () => {
+    const productUrl = `https://qistmarket.pk/product-detail/${productData?.slugName || quickViewItem?.slugName || ""}`;
+  
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(productUrl);
+          setIsCopied(true);
+          toast.success("URL copied to clipboard");
+          setTimeout(() => setIsCopied(false), 3000);
+        } catch (err) {
+          fallbackCopy(productUrl);
+        }
+      } else {
+        fallbackCopy(productUrl);
+      }
+    };
+  
+    const fallbackCopy = (text) => {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.top = "-999px";
+      textArea.style.left = "-999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          setIsCopied(true);
+          toast.success("URL copied to clipboard");
+          setTimeout(() => setIsCopied(false), 3000);
+        } else {
+          toast.error("Failed to copy URL");
+        }
+      } catch (err) {
+        toast.error("Failed to copy URL");
+      }
+      document.body.removeChild(textArea);
+    };
+
+
   const productUrl = `https://qistmarket.pk/product-detail/${productData?.slugName || quickViewItem?.slugName || ""}`;
   const quickviewImages = productData?.ProductImage?.map((img) => img.url) || [productData?.imgSrc || quickViewItem?.imgSrc].filter(Boolean);
 
@@ -292,28 +345,36 @@ export default function Quickview() {
                     <div className="tf-product-info-content w-100">
                       <div className="infor-heading">
                         {loading ? (
-                          <Skeleton width={200} height={20} />
-                        ) : (
-                          <p className="caption">
-                            Categories:{" "}
-                            <Link href="/product-category" className="link text-secondary">
-                              {productData?.category || quickViewItem?.category || productData?.category_name || quickViewItem?.category_name ||  "Consumer Electronics"}
-                            </Link>
-                            {productData?.subCategory || quickViewItem?.subCategory || productData?.subcategory_name || quickViewItem?.subcategory_name ? (
-                              <>
-                                ,{" "}
-                                <Link href="/product-category" className="link text-secondary">
-                                  {productData?.subCategory || quickViewItem?.subCategory || productData?.subcategory_name || quickViewItem?.subcategory_name}
-                                </Link>
-                              </>
-                            ) : null}
-                          </p>
-                        )}
-                        {loading ? (
                           <Skeleton width={350} height={25} />
                         ) : (
                           <h5 className="product-info-name fw-semibold d-flex flex-column gap-3">
                             {productData?.title || productData?.name || quickViewItem?.title || "Product Name"}
+                            <div className="d-flex align-items-center gap-1 text-main-2">
+                              <div className="d-flex gap-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <svg
+                                  key={star}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="15"
+                                  height="15"
+                                  fill="#f59e0b"
+                                  stroke="#f59e0b"
+                                  strokeWidth="1.5"
+                                  className="cursor-pointer"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.346l5.518.444a.562.562 0 01.312.986l-4.19 3.67a.563.563 0 00-.182.557l1.24 5.385a.562.562 0 01-.84.61l-4.725-2.86a.563.563 0 00-.586 0l-4.725 2.86a.562.562 0 01-.84-.61l1.24-5.386a.563.563 0 00-.182-.556l-4.19-3.67a.562.562 0 01.312-.986l5.518-.444a.563.563 0 00.475-.346L11.48 3.5z"
+                                  />
+                                </svg>
+                              ))}
+                            </div>
+                              <button className="body-text-3 text-main-2 link border-0 bg-transparent p-0">
+                                ({productData.approved_reviews_count} customer reviews)
+                              </button>
+                            </div>
                             {productData?.isDeal && (
                               <span data-wow-delay={0}>
                                 <h5 className="fw-semibold fs-5 text-primary flat-title-has-icon">
@@ -402,50 +463,110 @@ export default function Quickview() {
                           )}
                         </>
                       )}
-                      <div className="mt-3">
+                      <div className="mt-3 d-flex flex-column gap-2">
                         {loading ? (
-                          <Skeleton width={150} height={20} />
+                          <Skeleton width={200} height={20} />
                         ) : (
-                          <strong>Share This Product</strong>
+                          <p>
+                            <strong>Categories:</strong>{" "}
+                            <Link
+                              href={`/product-category/${productData?.category_slug_name || quickViewItem?.category_slug_name}`}
+                              className="link text-secondary"
+                            >
+                              {productData?.category || quickViewItem?.category || productData?.category_name || quickViewItem?.category_name}
+                            </Link>
+                            ,{" "}
+                            <Link
+                              href={`/product-category/${productData?.category_slug_name || quickViewItem?.category_slug_name}/${productData?.subcategory_slug_name || quickViewItem?.subcategory_slug_name}`}
+                              className="link text-secondary"
+                            >
+                              {productData?.subCategory || quickViewItem?.subCategory || productData?.subcategory_name || quickViewItem?.subcategory_name}
+                            </Link>
+                          </p>
                         )}
                         {loading ? (
-                          <div className="d-flex gap-3 mt-3">
+                          <Skeleton width={200} height={20} />
+                        ) : (
+                          <p>
+                            <strong>Tags:</strong>{" "}
+                            {productData?.tags?.map((tag, index) => (
+                              <span key={tag.id}>
+                                <Link
+                                  href={`/product-category/${tag.slugName}`}
+                                  className="link text-secondary"
+                                >
+                                  {tag.name}
+                                </Link>
+                                {index < productData.tags.length - 1 && ", "}
+                              </span>
+                            ))}
+                          </p>
+                        )}
+                        {loading ? (
+                          <div className="d-flex gap-3 mt-3 align-items-center flex-wrap">
+                            <Skeleton width={40} height={40} circle />
+                            <Skeleton width={40} height={40} circle />
+                            <Skeleton width={40} height={40} circle />
                             <Skeleton width={40} height={40} circle />
                             <Skeleton width={40} height={40} circle />
                             <Skeleton width={40} height={40} circle />
                             <Skeleton width={40} height={40} circle />
                           </div>
                         ) : (
-                          <div className="d-flex gap-3 mt-3">
-                            <a
+                          <div className="d-flex gap-2 mt-3 align-items-center">
+                          <strong>Share:</strong>
+                          <div className="d-flex gap-2 flex-wrap align-items-center">
+                              <a
                               href={`https://facebook.com/sharer/sharer.php?u=${productUrl}`}
                               target="_blank"
-                              className="text-primary rounded-circle border px-2 py-2 d-flex justify-content-center align-items-center"
+                              className="text-white rounded-circle border share-icon-con d-flex justify-content-center align-items-center" style={{backgroundColor: '#365493'}}
                             >
-                              <FaFacebookF />
+                              <FaFacebookF size={15} />
                             </a>
                             <a
-                              href={`https://twitter.com/intent/tweet?url=${productUrl}`}
+                              href={`https://x.com/share?url=${productUrl}`}
                               target="_blank"
-                              className="text-primary rounded-circle border px-2 py-1 d-flex justify-content-center align-items-center"
+                              className="text-white rounded-circle border share-icon-con d-flex justify-content-center align-items-center" style={{backgroundColor: '#000000'}}
                             >
-                              <FaTwitter />
+                              <RiTwitterXFill size={15} />
                             </a>
                             <a
-                              href={`https://api.whatsapp.com/send?text=${productUrl}`}
+                              href={`mailto:?subject=Check This ${productUrl}`}
                               target="_blank"
-                              className="text-primary rounded-circle border px-2 py-1 d-flex justify-content-center align-items-center"
+                              className="text-white rounded-circle border share-icon-con d-flex justify-content-center align-items-center" style={{backgroundColor: '#f89a1e'}}
                             >
-                              <FaWhatsapp />
+                              <LuMail size={15} />
+                            </a>
+                            <a
+                              href={`https://pinterest.com/pin/create/button/?url=${productUrl}`}
+                              target="_blank"
+                              className="text-white rounded-circle border share-icon-con d-flex justify-content-center align-items-center" style={{backgroundColor: '#cb2027'}}
+                            >
+                              <FaPinterest size={15} />
                             </a>
                             <a
                               href={`https://www.linkedin.com/shareArticle?mini=true&url=${productUrl}`}
                               target="_blank"
-                              className="text-primary rounded-circle border px-2 py-1 d-flex justify-content-center align-items-center"
+                              className="text-white rounded-circle border share-icon-con d-flex justify-content-center align-items-center" style={{backgroundColor: '#0274b3'}}
                             >
-                              <FaLinkedinIn />
+                              <FaLinkedinIn size={15} />
                             </a>
+                            <a
+                              href={`https://api.whatsapp.com/send?text=${productUrl}`}
+                              target="_blank"
+                              className="text-white rounded-circle border share-icon-con d-flex justify-content-center align-items-center" style={{backgroundColor: '#1ebea5'}}
+                            >
+                              <FaWhatsapp size={15} />
+                            </a>
+                            <div
+                              onClick={handleCopy}
+                              className="text-white rounded-circle border share-icon-con d-flex justify-content-center align-items-center cursor-pointer"
+                              style={{backgroundColor: '#000000'}}
+                            >
+                              {isCopied ? <FaCheck size={15} /> : <MdOutlineContentCopy size={15} />}
+                            </div>
                           </div>
+                        </div>
                         )}
                       </div>
                     </div>

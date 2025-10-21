@@ -1,10 +1,11 @@
 "use client";
 import Context from "@/context/Context";
 import "../public/scss/main.scss";
-import "@/public/css/global.css"
+import "@/public/css/global.css";
 import "photoswipe/dist/photoswipe.css";
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import Cookies from "js-cookie"; // Import js-cookie
 import Cart from "@/components/modals/Cart";
 import Login from "@/components/modals/Login";
 import Register from "@/components/modals/Register";
@@ -14,21 +15,66 @@ import MobileMenu from "@/components/modals/MobileMenu";
 import Toolbar from "@/components/modals/Toolbar";
 import Search from "@/components/modals/Search";
 import AddParallax from "@/utlis/AddParallax";
-import 'react-loading-skeleton/dist/skeleton.css'
+import 'react-loading-skeleton/dist/skeleton.css';
 import ForgotPassword from "@/components/modals/ForgotPassword";
 import VerificationCode from "@/components/modals/VerificationCode";
 import ChangePassword from "@/components/modals/ChangePassword";
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from "@/context/AuthContext";
 import { SettingsProvider } from "@/context/SettingsContext";
-import WhatsAppBtn from "@/components/common/WhatsAppBtn";
+// import WhatsAppBtn from "@/components/common/WhatsAppBtn";
+
+// Function to parse UTM parameters from URL
+function getUTMParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utm_source: params.get("utm_source") || "",
+    utm_medium: params.get("utm_medium") || "",
+    utm_campaign: params.get("utm_campaign") || "",
+    // Add more UTM params if needed (e.g., utm_term, utm_content)
+  };
+}
+
+// Function to determine source if no UTM
+function getReferralSource(referrer) {
+  if (!referrer) return "direct";
+  if (referrer.includes("google.com")) return "organic_google";
+  if (referrer.includes("facebook.com")) return "social_facebook";
+  if (referrer.includes("bing.com")) return "organic_bing";
+  // Add more rules as needed for other sources
+  return "other_" + new URL(referrer).hostname;
+}
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
+
+  // Referral source tracking
   useEffect(() => {
     if (typeof window !== "undefined") {
-      import("bootstrap/dist/js/bootstrap.esm").then(() => {
-      });
+      const existingSource = Cookies.get("referralSource");
+      if (!existingSource) { // Only set if not already present
+        const utm = getUTMParams();
+        let source;
+        if (utm.utm_source) {
+          source = {
+            type: "ad_or_campaign",
+            details: utm,
+          };
+        } else {
+          const referrer = document.referrer || "";
+          source = {
+            type: getReferralSource(referrer),
+            details: { referrer },
+          };
+        }
+        Cookies.set("referralSource", JSON.stringify(source), { expires: 7 }); // Expires in 7 days
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      import("bootstrap/dist/js/bootstrap.esm").then(() => {});
     }
   }, []);
 
@@ -96,6 +142,7 @@ export default function RootLayout({ children }) {
       }
     });
   }, [pathname]);
+
   useEffect(() => {
     const WOW = require("@/utlis/wow");
     const wow = new WOW.default({
@@ -104,6 +151,7 @@ export default function RootLayout({ children }) {
     });
     wow.init();
   }, [pathname]);
+
   return (
     <html lang="en">
       <head>
@@ -125,25 +173,25 @@ export default function RootLayout({ children }) {
       <body>
         <div id="wrapper">
           <SettingsProvider>
-          <AuthProvider>
-          <Context>
-            {children}
-            <Login />
-            <Register />
-            <ForgotPassword />
-            <VerificationCode />
-            <ChangePassword />
-            <Cart />
-            <Quickview />
-            <MobileMenu />
-            <ScrollTop />
-            <WhatsAppBtn />
-            <Toolbar />
-            <Search />
-            <AddParallax />
-            <ToastContainer />
-          </Context>
-          </AuthProvider>
+            <AuthProvider>
+              <Context>
+                {children}
+                <Login />
+                <Register />
+                <ForgotPassword />
+                <VerificationCode />
+                <ChangePassword />
+                <Cart />
+                <Quickview />
+                <MobileMenu />
+                <ScrollTop />
+                {/* <WhatsAppBtn /> */}
+                <Toolbar />
+                <Search />
+                <AddParallax />
+                <ToastContainer />
+              </Context>
+            </AuthProvider>
           </SettingsProvider>
         </div>
       </body>

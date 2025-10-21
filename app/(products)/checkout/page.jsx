@@ -32,7 +32,6 @@ export default function page() {
           </ul>
         </div>
       </div>
-
       <Checkout />
       <NewProducts />
       <Footer1 />

@@ -88,8 +88,8 @@ export default function ShopCart() {
                 </thead>
                 <tbody>
                   <tr className="tf-cart-item">
-                    <td className="d-flex w-20">
-                      <a href="#" className="img-box">
+                    <td className="d-flex w-20 gap-2">
+                      <a href={`/${cartData.categories_SlugName}/${cartData.subcategory_SlugName}/${cartData.productSlug}`} className="img-box">
                         <Image
                           alt="product-image"
                           src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
@@ -99,7 +99,7 @@ export default function ShopCart() {
                       </a>
                       <div className="d-flex justify-content-center align-items-center">
                         <a
-                          href={`/product-detail/${cartData.productSlug}`}
+                          href={`/${cartData.categories_SlugName}/${cartData.subcategory_SlugName}/${cartData.productSlug}`}
                           className="cart-title body-md-2 fw-semibold link"
                         >
                           {cartData.productName}
@@ -177,7 +177,7 @@ export default function ShopCart() {
                 </div>
                 <div className="py-3 border-bottom">
                   <a
-                    href={`/product-details/${cartData?.productSlug}`}
+                    href={`/${cartData?.categories_SlugName}/${cartData?.subcategory_SlugName}/${cartData?.productSlug}`}
                     className="cart-title body-md-2 fw-semibold link"
                   >
                     {cartData?.productName} x 1

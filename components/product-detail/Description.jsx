@@ -5,7 +5,7 @@ import axios from "axios";
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { Pencil, Trash, ZoomIn, ZoomOut, RotateCcw, RotateCw, RefreshCw } from "lucide-react";
-import "@/public/css/quill-out.css";
+
 import { useContextElement } from "@/context/Context";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;

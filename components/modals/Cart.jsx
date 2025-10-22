@@ -60,7 +60,7 @@ export default function Cart() {
               <div className="card-product style-row row-small-2 align-items-center">
                 <div className="card-product-wrapper">
                   <Link
-                    href={`/product/${cartData.productSlug}`}
+                    href={`/${cartData.categories_SlugName}/${cartData.subcategory_SlugName}/${cartData.productSlug}`}
                     className="product-img"
                   >
                     <Image
@@ -75,7 +75,7 @@ export default function Cart() {
                 <div className="card-product-info">
                   <div className="box-title">
                     <Link
-                      href={`/product-detail/${cartData.productSlug}`}
+                      href={`/${cartData.categories_SlugName}/${cartData.subcategory_SlugName}/${cartData.productSlug}`}
                       className="name-product body-md-2 fw-semibold text-secondary link"
                     >
                       {cartData.productName}

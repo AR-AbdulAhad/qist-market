@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 
-export default function AddToCart({ productSlugName, tooltipClass = "" }) {
+export default function AddToCart({ productSlugName, categoriesSlugName, subcategorySlugName, tooltipClass = "" }) {
 
   const router = useRouter();
   
     const goToProduct = () => {
-      router.push(`/product-detail/${productSlugName}`);
+      router.push(`/${categoriesSlugName}/${subcategorySlugName}/${productSlugName}`);
     };
 
   return (

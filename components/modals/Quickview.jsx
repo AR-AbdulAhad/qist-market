@@ -106,6 +106,8 @@ export default function Quickview() {
         productId: productData.id,
         productName: productData.title || productData.name,
         productSlug: productData.slugName,
+        categories_SlugName: productData.categories_SlugName,
+        subcategory_SlugName: productData.subcategory_SlugName,
         imageUrl: productData.imgSrc || productData.ProductImage?.[0]?.url,
         selectedPlan: {
           id: selectedPlan.id,
@@ -146,7 +148,7 @@ export default function Quickview() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleCopy = async () => {
-    const productUrl = `https://qistmarket.pk/product-detail/${productData?.slugName || quickViewItem?.slugName || ""}`;
+    const productUrl = `https://qistmarket.pk/${productData?.categories_SlugName || quickViewItem?.categories_SlugName}/${productData?.subcategory_SlugName || quickViewItem?.subcategory_SlugName}/${productData?.slugName || quickViewItem?.slugName || ""}`;
   
       if (navigator.clipboard && window.isSecureContext) {
         try {
@@ -187,7 +189,7 @@ export default function Quickview() {
     };
 
 
-  const productUrl = `https://qistmarket.pk/product-detail/${productData?.slugName || quickViewItem?.slugName || ""}`;
+  const productUrl = `https://qistmarket.pk/${productData?.categories_SlugName || quickViewItem?.categories_SlugName}/${productData?.subcategory_SlugName || quickViewItem?.subcategory_SlugName}/${productData?.slugName || quickViewItem?.slugName || ""}`;
   const quickviewImages = productData?.ProductImage?.map((img) => img.url) || [productData?.imgSrc || quickViewItem?.imgSrc].filter(Boolean);
 
   if (!quickViewItem && !loading) {
@@ -263,7 +265,7 @@ export default function Quickview() {
                     ) : quickviewImages.length === 1 ? (
                       <div className="single-image tf-product-media-main">
                         <Link
-                          href={`/product-detail/${productData?.slugName || quickViewItem?.slugName || ""}`}
+                          href={`/${productData?.categories_SlugName || quickViewItem?.categories_SlugName}/${productData?.subcategory_SlugName || quickViewItem?.subcategory_SlugName}/${productData?.slugName || quickViewItem?.slugName || ""}`}
                           className="d-block tf-image-view"
                         >
                           <Image
@@ -299,7 +301,7 @@ export default function Quickview() {
                             </>
                           )}
                           <Link
-                            href={`/product-detail/${productData?.slugName || quickViewItem?.slugName || ""}`}
+                            href={`/${productData?.categories_SlugName || quickViewItem?.categories_SlugName}/${productData?.subcategory_SlugName || quickViewItem?.subcategory_SlugName}/${productData?.slugName || quickViewItem?.slugName || ""}`}
                             className="d-block tf-image-view"
                           >
                             <Image

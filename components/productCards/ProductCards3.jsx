@@ -10,13 +10,15 @@ export default function ProductCards3({ product }) {
   const router = useRouter();
 
   const goToProduct = () => {
-    router.push(`/product-detail/${product.slugName}`);
+    router.push(`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`);
   };
+
+  console.log(product)
 
   return (
     <div className="card-product">
       <div className="card-product-wrapper">
-        <Link href={`/product-detail/${product.slugName}`} className="product-img">
+        <Link href={`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`} className="product-img">
           <img
             className="img-product ls-is-cached lazyloaded"
             src={productImageData || "/images/product-placeholder/product-placeholder-image.png"}
@@ -34,7 +36,7 @@ export default function ProductCards3({ product }) {
         </Link>
         <ul className="list-product-btn top-0 end-0">
           <li>
-            <AddToCart productSlugName={product.slugName} tooltipClass="tooltip-left" />
+            <AddToCart productSlugName={product.slugName} categoriesSlugName={product.categories_SlugName} subcategorySlugName={product.subcategory_SlugName} tooltipClass="tooltip-left" />
           </li>
           <li>
             <AddToQuickview product={product} tooltipClass="tooltip-left" />
@@ -45,7 +47,7 @@ export default function ProductCards3({ product }) {
         <div className="box-title">
           <div>
             <Link
-              href={`/product-detail/${product.slugName}`}
+              href={`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`}
               className="name-product body-md-2 fw-semibold text-secondary link"
             >
               {product.name}

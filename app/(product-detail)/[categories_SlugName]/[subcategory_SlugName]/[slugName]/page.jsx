@@ -13,7 +13,7 @@ export async function generateMetadata({ params }) {
   const productImage = product.ProductImage[0]?.url || '/default-image.png';
   const siteName = 'Qist Market';
   const baseUrl = 'https://qistmarket.pk';
-  const productUrl = `${baseUrl}/product-detail/${params.slugName}`;
+  const productUrl = `${baseUrl}/${product?.category_slug_name}/${product?.subcategory_slug_name}/${params.slugName}`;
   const productKeywords = product?.meta_keywords;
 
   return {

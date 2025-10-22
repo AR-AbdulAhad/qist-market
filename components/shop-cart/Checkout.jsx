@@ -702,7 +702,7 @@ export default function Checkout() {
                 {cartData ? (
                   <ul className="list-product">
                     <li className="item-product d-flex align-items-center">
-                      <a href="#" className="img-product">
+                      <a href={`/${cartData.categories_SlugName}/${cartData.subcategory_SlugName}/${cartData.productSlug}`} className="img-product">
                         <Image
                           alt=""
                           src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
@@ -712,7 +712,7 @@ export default function Checkout() {
                       </a>
                       <div className="content-box">
                         <a
-                          href={`/product-details/${cartData.productSlug}`}
+                          href={`/${cartData.categories_SlugName}/${cartData.subcategory_SlugName}/${cartData.productSlug}`}
                           className="link-secondary body-md-2 fw-semibold"
                         >
                           {cartData.productName}

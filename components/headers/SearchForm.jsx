@@ -179,7 +179,7 @@ export default function SearchForm({
             <div
               key={product.id}
               className="suggestion-item"
-              onClick={() => router.push(`/product-detail/${product.slugName}`)}
+              onClick={() => router.push(`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`)}
             >
               <img
                 src={product.image_url || "/images/product-placeholder/product-placeholder-image.png"}

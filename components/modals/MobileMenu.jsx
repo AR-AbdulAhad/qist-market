@@ -84,10 +84,10 @@ export default function MobileMenu() {
     }
   };
 
-  const handleSuggestionClick = (slugName) => {
+  const handleSuggestionClick = (slugName, categories_SlugName, subcategory_SlugName) => {
     setSearchTerm("");
     setSuggestions([]);
-    router.push(`/product-detail/${slugName}`);
+    router.push(`/${categories_SlugName}/${subcategory_SlugName}/${slugName}`);
   };
 
   const handleCancel = () => {
@@ -210,7 +210,7 @@ export default function MobileMenu() {
                           <div
                             key={product.id}
                             className="suggestion-item"
-                            onClick={() => handleSuggestionClick(product.slugName)}
+                            onClick={() => handleSuggestionClick(product.slugName, product.categories_SlugName, product.subcategory_SlugName)}
                           >
                             <img
                               src={product.image_url || "/images/product-placeholder/product-placeholder-image.png"}

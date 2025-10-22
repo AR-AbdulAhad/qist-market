@@ -61,7 +61,9 @@ export default function NewProducts({
           title: item.name,
           slugName: item.slugName,
           category: item.category_name,
+          categories_SlugName: item.categories_SlugName,
           subCategory: item.subcategory_name,
+          subcategory_SlugName: item.subcategory_SlugName,
           advance: item.ProductInstallments[0]?.advance || 0,
           imgSrc: item.image_url,
           imgWidth: 300,
@@ -164,7 +166,7 @@ export default function NewProducts({
               >
                 <div className="card-product-wrapper">
                   <Link
-                    href={`/product-detail/${product.slugName}`}
+                    href={`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`}
                     className="product-img"
                   >
                     <Image
@@ -190,7 +192,7 @@ export default function NewProducts({
                         {product.category}, {product.subCategory}
                       </p>
                       <Link
-                        href={`/product-detail/${product.slugName}`}
+                        href={`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`}
                         className="name-product body-md-2 fw-semibold text-secondary link"
                       >
                         {product.title}

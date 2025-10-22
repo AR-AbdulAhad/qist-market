@@ -16,7 +16,9 @@ export default function TopCategoryProductCard({ product, index }) {
     id: product.id,
     title: product.name,
     category: product.category_name,
+    categories_SlugName: product.categories_SlugName,
     subCategory: product.subcategory_name,
+    subcategory_SlugName: product.subcategory_SlugName,
     slugName: product.slugName,
     imgSrc: product.image_url,
     advance: product.advance || 0,
@@ -33,7 +35,7 @@ export default function TopCategoryProductCard({ product, index }) {
     >
       <div className="card-product-wrapper overflow-visible">
         <div className="product-thumb-image">
-          <Link href={`/product-detail/${productData.slugName}`} className="product-img">
+          <Link href={`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`} className="product-img">
             <Image
               alt="Image Product"
               className="lazyload img-product"
@@ -52,7 +54,7 @@ export default function TopCategoryProductCard({ product, index }) {
         </div>
         <ul className="list-product-btn top-0 end-0">
           <li>
-            <AddToCart tooltipClass="tooltip-left" productSlugName={productData.slugName} />
+            <AddToCart tooltipClass="tooltip-left" productSlugName={productData.slugName} categoriesSlugName={productData.categories_SlugName} subcategorySlugName={productData.subcategory_SlugName} />
           </li>
           <li>
             <AddToQuickview product={productData} tooltipClass="tooltip-left" />
@@ -66,7 +68,7 @@ export default function TopCategoryProductCard({ product, index }) {
               {productData.category}, {productData.subCategory}
             </p>
             <Link
-              href={`/product-detail/${productData.slugName}`}
+              href={`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`}
               className="name-product body-md-2 fw-semibold text-secondary link"
             >
               {productData.title}

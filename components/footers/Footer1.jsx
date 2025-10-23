@@ -39,6 +39,42 @@ export default function Footer1({ fullWidth = false }) {
     };
   }, []);
 
+  // Define static pages for "ABOUT", "INFORMATION", and "QUICK_LINKS" categories
+  const staticAboutPages = [
+    { title: "FAQs", slug: "faq", category: "ABOUT" },
+    { title: "Contact", slug: "contact", category: "ABOUT" },
+    { title: "Visit Us", slug: "visit-us", category: "ABOUT" },
+  ];
+
+  const staticInformationPages = [
+    { title: "Account", slug: "my-account", category: "INFORMATION" },
+    { title: "Agreement", slug: "agreement", category: "INFORMATION" },
+  ];
+
+  const staticQuickLinksPages = [
+    { title: "Track Order", slug: "track-your-order", category: "QUICK_LINKS" },
+  ];
+
+  // Combine dynamic pages from settings with static pages
+  const allPages = [
+    ...(settings?.pages || []),
+    ...staticAboutPages,
+    ...staticInformationPages,
+    ...staticQuickLinksPages,
+  ];
+
+  // Extract unique categories and format them to title case
+  const categories = [
+    ...new Set(allPages.map((page) => page.category)),
+  ].sort(); // Sort for consistent order
+
+  const formatCategoryTitle = (category) => {
+    return category
+      .toLowerCase()
+      .replace(/_/g, " ") // Replace underscores with spaces
+      .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+  };
+
   return (
     <footer className="tf-footer mt-5">
       <div className="ft-body-wrap">
@@ -123,93 +159,26 @@ export default function Footer1({ fullWidth = false }) {
                 </div>
               </div>
               <ul className="ft-link-wrap w-100 tf-grid-layout md-col-2 lg-col-3">
-                <li className="footer-col-block">
-                  <h6 className="ft-heading footer-heading-mobile fw-semibold">
-                    About
-                  </h6>
-                  <div className="tf-collapse-content">
-                    <ul className="ft-menu-list">
-                      <li>
-                        <Link href="/about" className="link">
-                          About Us
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/faq" className="link">
-                          FAQs
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/contact" className="link">
-                          Contact
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/visit-us" className="link">
-                          Visit Us
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-                <li className="footer-col-block">
-                  <h6 className="ft-heading footer-heading-mobile fw-semibold">
-                    Information
-                  </h6>
-                  <div className="tf-collapse-content">
-                    <ul className="ft-menu-list">
-                      <li>
-                        <Link href="/my-account" className="link">
-                          Account
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/verification-process" className="link">
-                          Verification Process
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/delivery-policy" className="link">
-                          Delivery Policy
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/agreement" className="link">
-                          Agreement
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
-                <li className="footer-col-block">
-                  <h6 className="ft-heading footer-heading-mobile fw-semibold">
-                    Quick Links
-                  </h6>
-                  <div className="tf-collapse-content">
-                    <ul className="ft-menu-list">
-                      <li>
-                        <Link href="/terms-conditions" className="link">
-                          Terms & Conditions
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/returns-refunds-policy" className="link">
-                          Returns & Refunds Policy
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/track-your-order" className="link">
-                          Track your Order
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="/privacy" className="link">
-                          Privacy Policy
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
+                {categories.map((category, index) => (
+                  <li key={index} className="footer-col-block">
+                    <h6 className="ft-heading footer-heading-mobile fw-semibold">
+                      {formatCategoryTitle(category)}
+                    </h6>
+                    <div className="tf-collapse-content">
+                      <ul className="ft-menu-list">
+                        {allPages
+                          .filter((page) => page.category === category)
+                          .map((page, pageIndex) => (
+                            <li key={pageIndex}>
+                              <Link href={`/${page.slug}`} className="link">
+                                {page.title}
+                              </Link>
+                            </li>
+                          ))}
+                      </ul>
+                    </div>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>

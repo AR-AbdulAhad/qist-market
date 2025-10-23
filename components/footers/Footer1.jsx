@@ -52,14 +52,14 @@ export default function Footer1({ fullWidth = false }) {
   ];
 
   const staticQuickLinksPages = [
-    { title: "Track Order", slug: "track-your-order", category: "QUICK_LINKS" },
+    { title: "Track Your Order", slug: "track-your-order", category: "QUICK_LINKS" },
   ];
 
   // Combine dynamic pages from settings with static pages
   const allPages = [
+    ...staticInformationPages,
     ...(settings?.pages || []),
     ...staticAboutPages,
-    ...staticInformationPages,
     ...staticQuickLinksPages,
   ];
 

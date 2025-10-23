@@ -322,14 +322,14 @@ export default function Details1({ singleProduct, loading }) {
                           <p>
                             <strong>Categories:</strong>{" "}
                             <Link
-                              href={`/product-category/${singleProduct.category_slug_name}`}
+                              href={`/category/${singleProduct.category_slug_name}`}
                               className="link text-secondary"
                             >
                               {singleProduct.category_name}
                             </Link>
                             ,{" "}
                             <Link
-                              href={`/product-category/${singleProduct.category_slug_name}/${singleProduct.subcategory_slug_name}`}
+                              href={`/category/${singleProduct.category_slug_name}/${singleProduct.subcategory_slug_name}`}
                               className="link text-secondary"
                             >
                               {singleProduct.subcategory_name}
@@ -344,7 +344,7 @@ export default function Details1({ singleProduct, loading }) {
                             {singleProduct?.tags?.map((tag, index) => (
                               <span key={tag.id}>
                                 <Link
-                                  href={`/product-category/${tag.slugName}`}
+                                  href={`/category/${tag.slugName}`}
                                   className="link text-secondary"
                                 >
                                   {tag.name}

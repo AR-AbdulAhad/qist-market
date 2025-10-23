@@ -100,7 +100,7 @@ export default function Hero() {
                     {categories.map((category) => (
                       <li key={category.id} className="menu-item">
                         <Link
-                          href={`/product-category/${category.slugName}`}
+                          href={`/category/${category.slugName}`}
                           className="item-link body-text-3"
                         >
                           <span className="flex items-center gap-2">
@@ -117,7 +117,7 @@ export default function Hero() {
                               {category.subcategories.map((subcategory) => (
                                 <li key={subcategory.id} className="sub-menu-item">
                                   <Link
-                                    href={`/product-category/${category.slugName}/${subcategory.slugName}`}
+                                    href={`/category/${category.slugName}/${subcategory.slugName}`}
                                     className="body-text-3 link"
                                   >
                                     {subcategory.name}

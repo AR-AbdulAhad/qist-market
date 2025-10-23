@@ -76,7 +76,7 @@ export default function NavCategories({ styleClass = "" }) {
           <ul id="primary-menu" className="megamenu">
             {categories.map((category) => (
             <li key={category.id} className="menu-item">
-              <Link href={`/product-category/${category.slugName}`} className="item-link body-text-3">
+              <Link href={`/category/${category.slugName}`} className="item-link body-text-3">
                 <span
                   className="w-6 h-6"
                   dangerouslySetInnerHTML={{ __html: category.icon || "" }}

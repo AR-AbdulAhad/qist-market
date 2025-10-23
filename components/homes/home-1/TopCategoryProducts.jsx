@@ -52,7 +52,7 @@ export default function TopCategoryProducts() {
                 />
                 <div className="d-flex justify-content-between align-items-center mb-5 border px-4">
                   <h2 className="fs-3">{category.category_name}</h2>
-                  <Link href={`/product-category/${category.slugName}`} className="check-btn link">
+                  <Link href={`/category/${category.slugName}`} className="check-btn link">
                     View All
                   </Link>
                 </div>

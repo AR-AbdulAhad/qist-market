@@ -16,7 +16,7 @@ export async function generateMetadata({ params }) {
   const categoryKeywords = category?.meta_keywords || null;
   const siteName = 'Qist Market';
   const baseUrl = 'https://qistmarket.pk';
-  const categoryUrl = `${baseUrl}/product-category/${params.categorySlug}`;
+  const categoryUrl = `${baseUrl}/category/${params.categorySlug}`;
 
   return {
     title: `${categoryName} | ${siteName}`,

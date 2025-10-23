@@ -348,7 +348,7 @@ export default function MobileMenu() {
                           <>
                             <div className="mb-menu-link-wrapper">
                               <Link
-                                href={`/product-category/${category.slugName}`}
+                                href={`/category/${category.slugName}`}
                                 className="mb-menu-link link"
                               >
                                 <span>{category.name}</span>
@@ -369,7 +369,7 @@ export default function MobileMenu() {
                                 {category.subcategories.map((subcategory) => (
                                   <li key={subcategory.id}>
                                     <Link
-                                      href={`/product-category/${category.slugName}/${subcategory.slugName}`}
+                                      href={`/category/${category.slugName}/${subcategory.slugName}`}
                                       className="sub-nav-link link"
                                     >
                                       {subcategory.name}
@@ -381,7 +381,7 @@ export default function MobileMenu() {
                           </>
                         ) : (
                           <Link
-                            href={`/product-category/${category.slugName}`}
+                            href={`/category/${category.slugName}`}
                             className="mb-menu-link link"
                           >
                             <span>{category.name}</span>

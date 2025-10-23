@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
   const subcategoryKeywords = subcategory?.meta_keywords || null;
   const siteName = 'Qist Market';
   const baseUrl = 'https://qistmarket.pk';
-  const subcategoryUrl = `${baseUrl}/product-category/${params.categorySlug}/${params.subCategorySlug}`;
+  const subcategoryUrl = `${baseUrl}/category/${params.categorySlug}/${params.subCategorySlug}`;
 
   return {
     title: `${subcategoryName} | ${siteName}`,

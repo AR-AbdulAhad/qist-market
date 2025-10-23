@@ -8,6 +8,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import Area from "@/components/common/Area";
 import axios from "axios";
+import { useSettings } from "@/context/SettingsContext";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -16,7 +17,7 @@ export default function Checkout() {
   const [cartData, setCartData] = useState(null);
   const [selectedCity, setSelectedCity] = useState("");
   const [selectedArea, setSelectedArea] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isCheckLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [useDefaultAddress, setUseDefaultAddress] = useState(false);
   const [defaultAddress, setDefaultAddress] = useState(null);
@@ -26,6 +27,7 @@ export default function Checkout() {
   const [otpLoading, setOtpLoading] = useState(false);
   const router = useRouter();
   const otpInputRefs = useRef([]);
+  const { settings, isLoading, error } = useSettings();
 
   const emailRef = useRef(null);
   const phoneRef = useRef(null);
@@ -451,6 +453,20 @@ export default function Checkout() {
     }
   };
 
+  const quickLinksPages = [
+    ...(settings?.pages?.filter((page) => page.category === "QUICK_LINKS") || []),
+    { title: "Track Order", slug: "track-your-order", category: "QUICK_LINKS" }, // Static page from Footer1
+  ];
+
+  // Filter pages for Terms & Conditions and Privacy Policy by title (case-insensitive)
+  const legalPages = quickLinksPages
+    .filter((page) =>
+      ["terms & condition", "privacy policy"].some((title) =>
+        page.title.toLowerCase().includes(title.toLowerCase())
+      )
+    )
+    .slice(0, 2); // Limit to two pages
+
   return (
     <section className="tf-sp-2">
       <div className="container">
@@ -800,14 +816,25 @@ export default function Checkout() {
             <div className="mt-4">
               <p>
                 By clicking on Place Order, I have read and accepted the{" "}
-                <a href="/terms-conditions" className="text-primary">
-                  terms and conditions
-                </a>{" "}
-                and{" "}
-                <a href="/privacy" className="text-primary">
-                  privacy policy
-                </a>{" "}
-                of Qist Market.<span className="text-primary">*</span>
+                {isLoading ? (
+                  "Loading..."
+                ) : error ? (
+                  <span className="text-danger">Error loading policies</span>
+                ) : legalPages.length > 0 ? (
+                  legalPages.map((page, index) => (
+                    <React.Fragment key={index}>
+                      <a href={`/${page.slug}`} className="text-primary">
+                        {page.title.toLowerCase()}
+                      </a>
+                      {index === 0 && legalPages.length === 2 ? " and " : ""}
+                      {index === 0 && legalPages.length === 1 ? " of Qist Market." : ""}
+                      {index === 1 ? " of Qist Market." : ""}
+                    </React.Fragment>
+                  ))
+                ) : (
+                  "policies"
+                )}
+                <span className="text-primary">*</span>
               </p>
               <p className="text-end">میں شرائط و ضوابط سے اتفاق کرتا ہوں</p>
             </div>
@@ -852,9 +879,9 @@ export default function Checkout() {
                   onClick={handlePlaceOrder}
                   className="tf-btn w-100 justify-content-start"
                   type="button"
-                  disabled={isLoading || otpLoading}
+                  disabled={isCheckLoading || otpLoading}
                 >
-                  {isLoading || otpLoading ? (
+                  {isCheckLoading || otpLoading ? (
                     <div className="w-100 text-white">Processing...</div>
                   ) : (
                     <div className="w-100 d-flex justify-content-between text-white">

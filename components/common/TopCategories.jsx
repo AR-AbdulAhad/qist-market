@@ -55,7 +55,7 @@ export default function TopCategories() {
         <div className="d-none d-lg-block py-4">
           <div className="custom-grid">
             {categories.map((cat) => (
-              <Link key={cat.id} href={`/product-category/${cat.slugName}`}>
+              <Link key={cat.id} href={`/category/${cat.slugName}`}>
                 <div className="cat-card">
                   <div
                     dangerouslySetInnerHTML={{ __html: cat.icon }}
@@ -81,7 +81,7 @@ export default function TopCategories() {
           onTouchEnd={stopDrag}
         >
           {categories.map((cat) => (
-            <Link key={cat.id} href={`/product-category/${cat.slugName}`}>
+            <Link key={cat.id} href={`/category/${cat.slugName}`}>
               <div className="cat-card">
                 <div
                   dangerouslySetInnerHTML={{ __html: cat.icon }}

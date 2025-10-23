@@ -67,7 +67,7 @@ function ShowAllCategories() {
                 onClick={() => category.subcategories.length > 0 && toggleDropdown(category.id)}
               >
                 <Link
-                  href={`/product-category/${category.slugName}`}
+                  href={`/category/${category.slugName}`}
                   className={`item-link body-text-3 flex-grow ${category.slugName === categorySlug ? 'active' : ''}`}
                 >
                   {category.name}
@@ -87,7 +87,7 @@ function ShowAllCategories() {
                         className={`sub-menu-item py-1 px-3 ${subcategory.slugName === subCategorySlug ? 'active' : ''}`}
                       >
                         <Link
-                          href={`/product-category/${category.slugName}/${subcategory.slugName}`}
+                          href={`/category/${category.slugName}/${subcategory.slugName}`}
                           className={`body-text-3 link transition-colors ${subcategory.slugName === subCategorySlug ? 'active' : ''}`}
                         >
                           {subcategory.name}

@@ -472,14 +472,14 @@ export default function Quickview() {
                           <p>
                             <strong>Categories:</strong>{" "}
                             <Link
-                              href={`/product-category/${productData?.category_slug_name || quickViewItem?.category_slug_name}`}
+                              href={`/category/${productData?.category_slug_name || quickViewItem?.category_slug_name}`}
                               className="link text-secondary"
                             >
                               {productData?.category || quickViewItem?.category || productData?.category_name || quickViewItem?.category_name}
                             </Link>
                             ,{" "}
                             <Link
-                              href={`/product-category/${productData?.category_slug_name || quickViewItem?.category_slug_name}/${productData?.subcategory_slug_name || quickViewItem?.subcategory_slug_name}`}
+                              href={`/category/${productData?.category_slug_name || quickViewItem?.category_slug_name}/${productData?.subcategory_slug_name || quickViewItem?.subcategory_slug_name}`}
                               className="link text-secondary"
                             >
                               {productData?.subCategory || quickViewItem?.subCategory || productData?.subcategory_name || quickViewItem?.subcategory_name}
@@ -494,7 +494,7 @@ export default function Quickview() {
                             {productData?.tags?.map((tag, index) => (
                               <span key={tag.id}>
                                 <Link
-                                  href={`/product-category/${tag.slugName}`}
+                                  href={`/category/${tag.slugName}`}
                                   className="link text-secondary"
                                 >
                                   {tag.name}

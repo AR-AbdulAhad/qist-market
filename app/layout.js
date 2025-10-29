@@ -31,17 +31,42 @@ function getUTMParams() {
     utm_source: params.get("utm_source") || "",
     utm_medium: params.get("utm_medium") || "",
     utm_campaign: params.get("utm_campaign") || "",
-    // Add more UTM params if needed (e.g., utm_term, utm_content)
+    utm_term: params.get("utm_term") || "",
+    utm_content: params.get("utm_content") || "",
+    utm_id: params.get("utm_id") || "",
+    utm_source_platform: params.get("utm_source_platform") || "",
+    utm_creative_format: params.get("utm_creative_format") || "",
+    utm_marketing_tactic: params.get("utm_marketing_tactic") || "",
   };
 }
 
 // Function to determine source if no UTM
 function getReferralSource(referrer) {
   if (!referrer) return "direct";
+
   if (referrer.includes("google.com")) return "organic_google";
-  if (referrer.includes("facebook.com")) return "social_facebook";
   if (referrer.includes("bing.com")) return "organic_bing";
-  // Add more rules as needed for other sources
+  if (referrer.includes("yahoo.com")) return "organic_yahoo";
+  if (referrer.includes("duckduckgo.com")) return "organic_duckduckgo";
+
+  if (referrer.includes("facebook.com")) return "social_facebook";
+  if (referrer.includes("instagram.com")) return "social_instagram";
+  if (referrer.includes("twitter.com") || referrer.includes("x.com")) return "social_twitter";
+  if (referrer.includes("linkedin.com")) return "social_linkedin";
+  if (referrer.includes("youtube.com")) return "social_youtube";
+  if (referrer.includes("tiktok.com")) return "social_tiktok";
+  if (referrer.includes("pinterest.com")) return "social_pinterest";
+  if (referrer.includes("snapchat.com")) return "social_snapchat";
+  if (referrer.includes("threads.net")) return "social_threads";
+  if (referrer.includes("whatsapp.com")) return "social_whatsapp";
+
+  if (referrer.includes("telegram.org")) return "messenger_telegram";
+  if (referrer.includes("discord.com")) return "messenger_discord";
+  if (referrer.includes("reddit.com")) return "community_reddit";
+
+  if (referrer.includes("amazon.com")) return "affiliate_amazon";
+  if (referrer.includes("ebay.com")) return "affiliate_ebay";
+
   return "other_" + new URL(referrer).hostname;
 }
 

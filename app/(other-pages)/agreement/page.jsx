@@ -5,10 +5,59 @@ import React from "react";
 import Link from "next/link";
 import Agreement from "@/components/otherPages/agreement/Agreement";
 
-export const metadata = {
-  title: "Qist Market - Agreement",
-  robots: "noindex, nofollow",
-};
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
+const siteName = 'Qist Market';
+const baseUrl = 'https://qistmarket.pk';
+
+export async function generateMetadata() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/meta/agreement`, { cache: 'no-store' });
+    const meta = await res.json();
+
+    if (!res.ok || !meta) {
+      return {
+        title: 'Agreement - Qist Market',
+        description: 'Qist Market Agreement Page.',
+        robots: { index: false, follow: false },
+      };
+    }
+
+    return {
+      title: `${meta.metaTitle} | ${siteName}`,
+      description: meta.metaDescription,
+      keywords: meta.metaKeywords,
+      robots: {
+        index: true,
+        follow: true,
+      },
+      alternates: {
+        canonical: `${baseUrl}/agreement`,
+      },
+      metadataBase: new URL(baseUrl),
+      openGraph: {
+        title: `${meta.metaTitle} | ${siteName}`,
+        description: meta.metaDescription,
+        siteName: siteName,
+        locale: 'en_GB',
+        type: 'website',
+        url: `${baseUrl}/agreement`,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${meta.metaTitle} | ${siteName}`,
+        description: meta.metaDescription,
+        creator: '@qistmarket',
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching shop metadata:', error);
+    return {
+      title: 'Agreement - Qist Market',
+      description: 'Qist Market Agreement Page.',
+      robots: { index: false, follow: false },
+    };
+  }
+}
 
 export default function page() {
   return (

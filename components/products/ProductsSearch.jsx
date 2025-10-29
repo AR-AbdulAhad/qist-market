@@ -67,6 +67,41 @@ export default function ProductsSearch() {
     fetchProducts();
   }, [currentPage, itemPerPage, price, sortingOption, query, category, subcategory]);
 
+  useEffect(() => {
+    const handleOpenFilter = () => {
+      if (window.innerWidth <= 1200) {
+        const sidebar = document.querySelector(".sidebar-filter");
+        const overlay = document.querySelector(".overlay-filter");
+        if (sidebar && overlay) {
+          sidebar.classList.add("show");
+          overlay.classList.add("show");
+          document.body.classList.add("no-scroll");
+        }
+      }
+    };
+
+    const handleCloseFilter = () => {
+      const sidebar = document.querySelector(".sidebar-filter");
+      const overlay = document.querySelector(".overlay-filter");
+      if (sidebar && overlay) {
+        sidebar.classList.remove("show");
+        overlay.classList.remove("show");
+        document.body.classList.remove("no-scroll");
+      }
+    };
+
+    const openButtons = document.querySelectorAll("#filterShop, .sidebar-btn");
+    const closeButtons = document.querySelectorAll(".close-filter, .overlay-filter");
+
+    openButtons.forEach((btn) => btn.addEventListener("click", handleOpenFilter));
+    closeButtons.forEach((btn) => btn.addEventListener("click", handleCloseFilter));
+
+    return () => {
+      openButtons.forEach((btn) => btn.removeEventListener("click", handleOpenFilter));
+      closeButtons.forEach((btn) => btn.removeEventListener("click", handleCloseFilter));
+    };
+  }, []);
+
   return (
     <div className="flat-content">
       <div className="container">

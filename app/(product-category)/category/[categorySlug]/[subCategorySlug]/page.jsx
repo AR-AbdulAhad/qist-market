@@ -47,7 +47,7 @@ export async function generateMetadata({ params }) {
       description: subcategoryDesc,
       url: subcategoryUrl,
       siteName: siteName,
-      locale: 'en_PK',
+      locale: 'en_GB',
       type: 'website',
     },
     twitter: {

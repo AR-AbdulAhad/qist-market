@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
-import { othersPages } from "@/data/menu";
 import { useSettings } from "@/context/SettingsContext";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -18,14 +17,6 @@ export default function MobileMenu() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isSearchLoading, setIsSearchLoading] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
-
-  const isMenuActive = (link) => {
-    return link.href?.split("/")[1] === pathname.split("/")[1];
-  };
-
-  const isMenuParentActive = (menu) => {
-    return menu.some((elm) => isMenuActive(elm));
-  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -258,36 +249,18 @@ export default function MobileMenu() {
                       </Link>
                     </li>
                     <li
-                      className={`nav-mb-item ${
-                        isMenuParentActive(othersPages) ? "active" : ""
-                      } `}
+                      className={`nav-mb-item ${pathname === "/contact" ? "active" : ""}`}
                     >
-                      <a
-                        href="#dropdown-menu-page"
-                        className="collapsed mb-menu-link"
-                        data-bs-toggle="collapse"
-                        aria-expanded="true"
-                        aria-controls="dropdown-menu-page"
-                      >
-                        <span>Pages</span>
-                        <span className="btn-open-sub" />
-                      </a>
-                      <div id="dropdown-menu-page" className="collapse">
-                        <ul className="sub-nav-menu">
-                          {othersPages.map((item, i) => (
-                            <li key={i}>
-                              <Link
-                                href={item.href}
-                                className={`sub-nav-link body-md-2 ${
-                                  isMenuActive(item) ? "active" : ""
-                                }`}
-                              >
-                                <span>{item.text}</span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                      <Link href="/contact" className="mb-menu-link">
+                        <span>Contact</span>
+                      </Link>
+                    </li>
+                    <li
+                      className={`nav-mb-item ${pathname === "/faqs" ? "active" : ""}`}
+                    >
+                      <Link href="/faqs" className="mb-menu-link">
+                        <span>FAQs</span>
+                      </Link>
                     </li>
                     <li>
                       <Link href="/track-your-order" className="text-primary pt-3">Track your Order</Link>

@@ -1,9 +1,8 @@
-// app/pages/shop/page.jsx
-import React from "react";
-import Products1 from "@/components/products/Products1";
 import Footer1 from "@/components/footers/Footer1";
-import Link from "next/link";
 import Header4 from "@/components/headers/Header4";
+import Faqs from "@/components/otherPages/Faqs";
+import React from "react";
+import Link from "next/link";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const siteName = 'Qist Market';
@@ -11,13 +10,13 @@ const baseUrl = 'https://qistmarket.pk';
 
 export async function generateMetadata() {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/meta/shop`, { cache: 'no-store' });
+    const res = await fetch(`${BACKEND_URL}/api/meta/faqs`, { cache: 'no-store' });
     const meta = await res.json();
 
     if (!res.ok || !meta) {
       return {
-        title: 'Shop - Qist Market',
-        description: 'Browse our collection of products available on easy installments.',
+        title: 'FAQs - Qist Market',
+        description: 'Qist Market FAQs Page.',
         robots: { index: false, follow: false },
       };
     }
@@ -31,7 +30,7 @@ export async function generateMetadata() {
         follow: true,
       },
       alternates: {
-        canonical: `${baseUrl}/shop`,
+        canonical: `${baseUrl}/faqs`,
       },
       metadataBase: new URL(baseUrl),
       openGraph: {
@@ -40,7 +39,7 @@ export async function generateMetadata() {
         siteName: siteName,
         locale: 'en_GB',
         type: 'website',
-        url: `${baseUrl}/shop`,
+        url: `${baseUrl}/faqs`,
       },
       twitter: {
         card: 'summary_large_image',
@@ -52,37 +51,39 @@ export async function generateMetadata() {
   } catch (error) {
     console.error('Error fetching shop metadata:', error);
     return {
-      title: 'Shop - Qist Market',
-      description: 'Browse our collection of products available on easy installments.',
+      title: 'FAQs - Qist Market',
+      description: 'Qist Market FAQs Page.',
       robots: { index: false, follow: false },
     };
   }
 }
 
-export default function ShopPage() {
+export default function page() {
   return (
     <>
+      {" "}
       <Header4 />
-      <div className="tf-sp-1">
+      <div className="tf-sp-3">
         <div className="container">
           <ul className="breakcrumbs">
             <li>
-              <Link href="/" className="body-small link">
-                Home
+              <Link href={`/`} className="body-small link">
+                {" "}
+                Home{" "}
               </Link>
             </li>
+
             <li className="d-flex align-items-center">
               <i className="icon icon-arrow-right" />
             </li>
             <li>
-              <span className="body-small">Shop</span>
+              <span className="body-small">Faqs</span>
             </li>
           </ul>
         </div>
       </div>
-      <Products1 />
+      <Faqs />
       <Footer1 />
-      <div className="overlay-filter" id="overlay-filter" />
     </>
   );
 }

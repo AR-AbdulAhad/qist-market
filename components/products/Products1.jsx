@@ -136,31 +136,41 @@ export default function Products1() {
   }, [currentPage, itemPerPage, subcategories, price, sortingOption]);
 
   useEffect(() => {
-    const handleOpenFilter = () => {
-      if (window.innerWidth <= 1200) {
-        document.querySelector(".sidebar-filter").classList.add("show");
-        document.querySelector(".overlay-filter").classList.add("show");
-        document.body.classList.toggle("no-scroll");
+  const handleOpenFilter = () => {
+    if (window.innerWidth <= 1200) {
+      const sidebar = document.querySelector(".sidebar-filter");
+      const overlay = document.querySelector(".overlay-filter");
+      if (sidebar && overlay) {
+        sidebar.classList.add("show");
+        overlay.classList.add("show");
+        document.body.classList.add("no-scroll");
       }
-    };
+    }
+  };
 
-    const handleCloseFilter = () => {
-      document.querySelector(".sidebar-filter").classList.remove("show");
-      document.querySelector(".overlay-filter").classList.remove("show");
-      document.body.classList.toggle("no-scroll");
-    };
+  const handleCloseFilter = () => {
+    const sidebar = document.querySelector(".sidebar-filter");
+    const overlay = document.querySelector(".overlay-filter");
+    if (sidebar && overlay) {
+      sidebar.classList.remove("show");
+      overlay.classList.remove("show");
+      document.body.classList.remove("no-scroll");
+    }
+  };
 
-    const openButtons = document.querySelectorAll("#filterShop, .sidebar-btn");
-    const closeButtons = document.querySelectorAll(".close-filter, .overlay-filter");
+  const openButtons = document.querySelectorAll("#filterShop, .sidebar-btn");
+  const closeButtons = document.querySelectorAll(".close-filter, .overlay-filter");
 
-    openButtons.forEach((button) => button.addEventListener("click", handleOpenFilter));
+  // Add listeners
+  openButtons.forEach((button) => button.addEventListener("click", handleOpenFilter));
+  closeButtons.forEach((button) => button.addEventListener("click", handleCloseFilter));
+
+  // Cleanup on unmount
+  return () => {
+    openButtons.forEach((button) => button.removeEventListener("click", handleOpenFilter));
     closeButtons.forEach((button) => button.removeEventListener("click", handleCloseFilter));
-
-    return () => {
-      openButtons.forEach((button) => button.removeEventListener("click", handleOpenFilter));
-      closeButtons.forEach((button) => button.removeEventListener("click", handleCloseFilter));
-    };
-  }, []);
+  };
+}, []);
 
   return (
     <div className="flat-content">

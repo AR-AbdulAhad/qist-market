@@ -29,17 +29,10 @@ export default function Nav() {
         </Link>
       </li>
       <li
-        className={`nav-item ${pathname === "/faq" ? "active" : ""}`}
+        className={`nav-item ${pathname === "/faqs" ? "active" : ""}`}
       >
-        <Link href="/faq" className="item-link body-md-2 fw-semibold">
+        <Link href="/faqs" className="item-link body-md-2 fw-semibold">
           <span>FAQs</span>
-        </Link>
-      </li>
-      <li
-        className={`nav-item ${pathname === "/privacy" ? "active" : ""}`}
-      >
-        <Link href="/privacy" className="item-link body-md-2 fw-semibold">
-          <span>Privacy</span>
         </Link>
       </li>
     </>

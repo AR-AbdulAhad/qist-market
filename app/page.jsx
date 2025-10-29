@@ -41,7 +41,7 @@ export const metadata = {
         alt: `${siteName} - Online Installment Shopping`,
       },
     ],
-    locale: "en_PK",
+    locale: "en_GB",
     type: "website",
   },
   twitter: {

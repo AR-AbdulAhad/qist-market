@@ -34,7 +34,7 @@ export async function generateMetadata({ params }) {
       title: `${categoryName} | ${siteName}`,
       description: categoryDesc,
       siteName: siteName,
-      locale: 'en_PK',
+      locale: 'en_GB',
       type: 'website',
     },
     twitter: {

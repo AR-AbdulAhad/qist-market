@@ -41,7 +41,7 @@ export default function Footer1({ fullWidth = false }) {
 
   // Define static pages for "ABOUT", "INFORMATION", and "QUICK_LINKS" categories
   const staticAboutPages = [
-    { title: "FAQs", slug: "faq", category: "ABOUT" },
+    { title: "FAQs", slug: "faqs", category: "ABOUT" },
     { title: "Contact", slug: "contact", category: "ABOUT" },
     { title: "Visit Us", slug: "visit-us", category: "ABOUT" },
   ];

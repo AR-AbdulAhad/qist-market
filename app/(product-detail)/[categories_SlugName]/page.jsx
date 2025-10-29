@@ -40,7 +40,7 @@ export async function generateMetadata({ params }) {
         title: `${page.metaTitle} | ${siteName}`,
         description: page.metaDescription,
         siteName: siteName,
-        locale: 'en_PK',
+        locale: 'en_GB',
         type: 'website',
       },
       twitter: {

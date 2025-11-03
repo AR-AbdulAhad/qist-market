@@ -83,7 +83,6 @@ export default function page() {
         </div>
       </div>
       <Contact />
-      <NewProducts />
       <Footer1 />
     </>
   );

@@ -69,6 +69,7 @@ export default function Cart() {
                       alt="product-image"
                       width={500}
                       height={500}
+                      fetchPriority="high"
                     />
                   </Link>
                 </div>

@@ -42,6 +42,7 @@ export default function TopCategoryProductCard({ product, index }) {
               src={currentImage || "/images/product-placeholder/product-placeholder-image.png"}
               width={productData.width}
               height={productData.height}
+              fetchPriority="high"
             />
             <Image
               alt="Image Product"
@@ -49,6 +50,7 @@ export default function TopCategoryProductCard({ product, index }) {
               src={currentImage || "/images/product-placeholder/product-placeholder-image.png"}
               width={productData.width}
               height={productData.height}
+              fetchPriority="high"
             />
           </Link>
         </div>

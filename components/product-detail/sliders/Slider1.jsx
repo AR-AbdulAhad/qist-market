@@ -24,7 +24,7 @@ export default function Slider1({ images }) {
             alt="Product Image"
             width={600}
             height={600}
-            priority
+            fetchPriority="high"
           />
       </div>
     );
@@ -139,7 +139,7 @@ export default function Slider1({ images }) {
             alt="Product Image"
             width={600}
             height={600}
-            priority
+            fetchPriority="high"
           />
         </a>
       </div>
@@ -212,6 +212,7 @@ export default function Slider1({ images }) {
                     alt="Product Thumbnail"
                     width={600}
                     height={600}
+                    fetchPriority="high"
                   />
                 </div>
               </SwiperSlide>

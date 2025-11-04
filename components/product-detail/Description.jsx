@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { Pencil, Trash, ZoomIn, ZoomOut, RotateCcw, RotateCw, RefreshCw } from "lucide-react";
 
 import { useContextElement } from "@/context/Context";
+import Image from "next/image";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -686,12 +687,15 @@ export default function Description({ singleProduct, loading }) {
                                       <div className="d-flex flex-wrap gap-2">
                                         {newReview.medias.map((media, index) => (
                                           <div key={media.preview} className="position-relative">
-                                            <img
+                                            <Image
                                               src={media.preview}
                                               alt={`preview-${index}`}
                                               className="img-thumbnail cursor-pointer"
                                               style={{ width: "80px", height: "80px", objectFit: "cover" }}
                                               onClick={() => openImageModal(media.preview)}
+                                              width={80}
+                                              height={80}
+                                              fetchPriority="high"
                                             />
                                             <button
                                               type="button"
@@ -815,12 +819,15 @@ export default function Description({ singleProduct, loading }) {
                                         {review.mediaUrls?.length > 0 && (
                                           <div className="d-flex gap-2 flex-wrap mb-2">
                                             {review.mediaUrls.map((url, i) => (
-                                              <img
+                                              <Image
                                                 key={i}
                                                 src={url}
                                                 alt="Review Media"
                                                 className="rounded mb-2 review-img cursor-pointer border"
                                                 onClick={() => openImageModal(url)}
+                                                width={50}
+                                                height={50}
+                                                fetchPriority="high"
                                               />
                                             ))}
                                           </div>
@@ -934,12 +941,15 @@ export default function Description({ singleProduct, loading }) {
                                   {review.mediaUrls?.length > 0 && (
                                     <div className="d-flex gap-2 flex-wrap mb-2">
                                       {review.mediaUrls.map((url, i) => (
-                                        <img
+                                        <Image
                                           key={i}
                                           src={url}
                                           alt="Review Media"
                                           className="rounded mb-2 review-img cursor-pointer border"
                                           onClick={() => openImageModal(url)}
+                                          width={50}
+                                          height={50}
+                                          fetchPriority="high"
                                         />
                                       ))}
                                     </div>

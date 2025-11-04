@@ -133,12 +133,13 @@ export default function Search() {
                           className="suggestion-item"
                           onClick={() => handleSuggestionClick(product.slugName, product.categories_SlugName, product.subcategory_SlugName)}
                         >
-                          <img
+                          <Image
                             src={product.image_url || "/images/product-placeholder/product-placeholder-image.png"}
                             alt={product.name}
                             className="suggestion-image"
                             width={50}
                             height={50}
+                            fetchPriority="high"
                           />
                           <div className="suggestion-details">
                             <span className="suggestion-name">{product.name}</span>

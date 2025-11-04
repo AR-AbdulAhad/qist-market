@@ -191,6 +191,7 @@ export default function NewProducts({
                       alt="image-product"
                       width={product.imgWidth}
                       height={product.imgHeight}
+                      fetchPriority="high"
                     />
                     <Image
                       className="img-hover lazyload"
@@ -198,6 +199,7 @@ export default function NewProducts({
                       alt="image-product"
                       width={product.hoverWidth}
                       height={product.hoverHeight}
+                      fetchPriority="high"
                     />
                   </Link>
                 </div>

@@ -724,6 +724,7 @@ export default function Checkout() {
                           src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
                           width={500}
                           height={500}
+                          fetchPriority="high"
                         />
                       </a>
                       <div className="content-box">

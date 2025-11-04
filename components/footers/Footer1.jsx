@@ -89,6 +89,7 @@ export default function Footer1({ fullWidth = false }) {
                       src="/images/logo/logo.png"
                       width={185}
                       height={41}
+                      fetchPriority="high"
                     />
                   ) : error ? (
                     <span>Error loading logo</span>
@@ -98,6 +99,7 @@ export default function Footer1({ fullWidth = false }) {
                       src={settings.logo_url}
                       width={185}
                       height={41}
+                      fetchPriority="high"
                     />
                   ) : (
                     <Image
@@ -105,6 +107,7 @@ export default function Footer1({ fullWidth = false }) {
                       src="/images/logo/logo.png"
                       width={185}
                       height={41}
+                      fetchPriority="high"
                     />
                   )}
                 </Link>

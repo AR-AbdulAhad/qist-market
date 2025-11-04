@@ -251,6 +251,7 @@ export default function Details1({ singleProduct, loading }) {
                                   width={80}
                                   height={30}
                                   className="ms-2"
+                                  fetchPriority="high"
                                 />
                               </Link>
                             )}

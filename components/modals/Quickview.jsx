@@ -259,7 +259,7 @@ export default function Quickview() {
                           alt="Product Image"
                           width={600}
                           height={600}
-                          priority
+                          fetchPriority="high"
                         />
                       </div>
                     ) : quickviewImages.length === 1 ? (
@@ -274,7 +274,7 @@ export default function Quickview() {
                             className="lazyload"
                             width={600}
                             height={600}
-                            priority
+                            fetchPriority="high"
                             onError={() => console.error("Image failed to load:", quickviewImages[0])}
                           />
                         </Link>
@@ -310,7 +310,7 @@ export default function Quickview() {
                               className="lazyload"
                               width={600}
                               height={600}
-                              priority
+                              fetchPriority="high"
                               onError={() => console.error("Image failed to load:", quickviewImages[currentImageIndex])}
                             />
                           </Link>
@@ -328,6 +328,7 @@ export default function Quickview() {
                                   alt="thumbnail"
                                   width={100}
                                   height={100}
+                                  fetchPriority="high"
                                   onError={() => console.error("Thumbnail failed to load:", elm)}
                                 />
                               </div>
@@ -402,6 +403,7 @@ export default function Quickview() {
                                   width={80}
                                   height={30}
                                   className="ms-2"
+                                  fetchPriority="high"
                                 />
                               </Link>
                             )}

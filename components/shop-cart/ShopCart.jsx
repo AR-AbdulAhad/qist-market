@@ -95,6 +95,7 @@ export default function ShopCart() {
                           src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
                           width={300}
                           height={300}
+                          fetchPriority="high"
                         />
                       </a>
                       <div className="d-flex justify-content-center align-items-center">

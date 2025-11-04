@@ -189,6 +189,7 @@ export default function Hero() {
                           height={600}
                           style={{ objectFit: 'cover', height: '100%' }}
                           priority={index === 0}
+                          fetchPriority="high"
                         />
                       </Link>
                     </div>

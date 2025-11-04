@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -181,10 +182,13 @@ export default function SearchForm({
               className="suggestion-item"
               onClick={() => router.push(`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`)}
             >
-              <img
+              <Image
                 src={product.image_url || "/images/product-placeholder/product-placeholder-image.png"}
                 alt={product.name}
                 className="suggestion-image"
+                width={200}
+                height={200}
+                fetchPriority="high"
               />
               <div className="suggestion-details">
                 <span className="suggestion-name">{product.name}</span>

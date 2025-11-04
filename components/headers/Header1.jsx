@@ -27,6 +27,7 @@ export default function Header1() {
                       src="/images/logo/logo.png"
                       width={185}
                       height={41}
+                      fetchPriority="high"
                     />
                   ) : error ? (
                     <span>Error loading logo</span>
@@ -36,6 +37,7 @@ export default function Header1() {
                       src={settings.logo_url}
                       width={185}
                       height={41}
+                      fetchPriority="high"
                     />
                   ) : (
                     <Image
@@ -43,6 +45,7 @@ export default function Header1() {
                       src="/images/logo/logo.png"
                       width={185}
                       height={41}
+                      fetchPriority="high"
                     />
                   )}
                 </Link>
@@ -63,6 +66,7 @@ export default function Header1() {
                     src="/icons/headphone-2.svg"
                     width={44}
                     height={44}
+                    fetchPriority="high"
                   />
                   <div className="content">
                     {isLoading ? (

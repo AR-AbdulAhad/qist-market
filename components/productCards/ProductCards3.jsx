@@ -4,6 +4,7 @@ import React from "react";
 import AddToCart from "../common/AddToCart";
 import AddToQuickview from "../common/AddToQuickview";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function ProductCards3({ product }) {
   const productImageData = product.ProductImage[0]?.url;
@@ -19,19 +20,21 @@ export default function ProductCards3({ product }) {
     <div className="card-product">
       <div className="card-product-wrapper">
         <Link href={`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`} className="product-img">
-          <img
+          <Image
             className="img-product ls-is-cached lazyloaded"
             src={productImageData || "/images/product-placeholder/product-placeholder-image.png"}
             alt="image-product"
             width={500}
             height={500}
+            fetchPriority="high"
           />
-          <img
+          <Image
             className="img-hover ls-is-cached lazyloaded"
             src={productImageData || "/images/product-placeholder/product-placeholder-image.png"}
             alt="image-product"
             width={500}
             height={500}
+            fetchPriority="high"
           />
         </Link>
         <ul className="list-product-btn top-0 end-0">

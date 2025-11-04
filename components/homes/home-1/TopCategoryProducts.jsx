@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
+import Image from "next/image";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -45,10 +46,13 @@ export default function TopCategoryProducts() {
           return (
             <div key={index} className="category-section mt-4">
               <div className="mb-4">
-                <img
+                <Image
                   src={category.image_url}
                   alt={`Banner for ${category.category_name}`}
                   className="product-banner mt-5"
+                  width={1000}
+                  height={1000}
+                  fetchPriority="high"
                 />
                 <div className="d-flex justify-content-between align-items-center mb-5 border px-4">
                   <h2 className="fs-3">{category.category_name}</h2>

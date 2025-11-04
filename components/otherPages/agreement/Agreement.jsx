@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React, { useState, useEffect } from "react";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -66,10 +67,13 @@ export default function Agreement() {
           <>
             {agreementData?.images?.map((image) => (
                 <div key={image.id} className="w-full max-w-md d-flex align-items-center justify-content-center">
-                <img
+                <Image
                     src={image.image_url}
                     alt={`Agreement image ${image.id}`}
                     className="w-full h-auto rounded-lg shadow-md object-cover"
+                    width={1000}
+                    height={1000}
+                    fetchPriority="high"
                 />
                 </div>
             ))}

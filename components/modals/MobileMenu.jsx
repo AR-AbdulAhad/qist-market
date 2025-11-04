@@ -105,6 +105,7 @@ export default function MobileMenu() {
               src="/images/logo/logo.png"
               width={185}
               height={41}
+              fetchPriority="high"
             />
           ) : error ? (
             <span>Error loading logo</span>
@@ -114,6 +115,7 @@ export default function MobileMenu() {
               src={settings.logo_url}
               width={185}
               height={41}
+              fetchPriority="high"
             />
           ) : (
             <Image
@@ -121,6 +123,7 @@ export default function MobileMenu() {
               src="/images/logo/logo.png"
               width={185}
               height={41}
+              fetchPriority="high"
             />
           )}
         </Link>
@@ -203,12 +206,13 @@ export default function MobileMenu() {
                             className="suggestion-item"
                             onClick={() => handleSuggestionClick(product.slugName, product.categories_SlugName, product.subcategory_SlugName)}
                           >
-                            <img
+                            <Image
                               src={product.image_url || "/images/product-placeholder/product-placeholder-image.png"}
                               alt={product.name}
                               className="suggestion-image"
                               width={50}
                               height={50}
+                              fetchPriority="high"
                             />
                             <div className="suggestion-details">
                               <span className="suggestion-name">{product.name}</span>

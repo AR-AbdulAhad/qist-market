@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { useSettings } from "@/context/SettingsContext";
+import MapEmbed from "@/components/common/MapEmbed";
 
 export default function Contact() {
   const { settings, isLoading, error } = useSettings();
@@ -76,18 +77,15 @@ export default function Contact() {
     <section className="tf-sp-2">
       <div className="container">
         <div className="wg-map">
+          {/* Map Section - Now Memoized */}
           {isLoading ? (
-            <span>Loading...</span>
+            <span>Loading map...</span>
           ) : error ? (
             <div className="text-center py-12">Error loading map</div>
-          ) : settings && settings.map_iframe ? (
-            <div
-              style={{ borderRadius: 8, width: "100%" }}
-              dangerouslySetInnerHTML={{ __html: settings.map_iframe }}
-            />
           ) : (
-            <div className="text-center py-12">No map available</div>
+            <MapEmbed iframeHtml={settings?.map_iframe} />
           )}
+
           <div className="bottom">
             <div className="contact-wrap">
               <div className="box-title">
@@ -151,10 +149,12 @@ export default function Contact() {
                 </div>
               </form>
             </div>
+
+            {/* Contact Info Section */}
             <div className="contact-info">
               <h5 className="fw-semibold">Contact Information</h5>
               {isLoading ? (
-                  <span>Loading...</span>
+                <span>Loading...</span>
               ) : error ? (
                 <p className="body-text-3">Error loading contact information</p>
               ) : settings ? (

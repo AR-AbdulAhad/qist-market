@@ -9,7 +9,7 @@ import ProtectedRoute from "@/components/common/ProtectedRoute";
 
 export const metadata = {
   title: "Qist Market - Dashboard - Account",
-  robots: "noindex, nofollow",
+  robots: "index, follow",
 };
 
 export default function page() {

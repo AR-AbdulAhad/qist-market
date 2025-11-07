@@ -8,7 +8,7 @@ import React from "react";
 
 export const metadata = {
   title: "Qist Market - Order Confirmation",
-  robots: "noindex, nofollow",
+  robots: "index, follow",
 };
 
 export default function page() {

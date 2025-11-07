@@ -1,4 +1,3 @@
-// app/pages/[categories_SlugName]/page.jsx
 import Link from 'next/link';
 import Header4 from "@/components/headers/Header4";
 import Features from "@/components/common/Features";
@@ -20,7 +19,7 @@ export async function generateMetadata({ params }) {
     if (!res.ok || !page || !page.isActive) {
       return {
         title: 'Page Not Found - Qist Market',
-        robots: 'noindex, nofollow',
+        robots: 'index, follow',
       };
     }
 
@@ -54,7 +53,7 @@ export async function generateMetadata({ params }) {
     console.error('Error fetching page metadata:', error);
     return {
       title: 'Page Not Found - Qist Market',
-      robots: 'noindex, nofollow',
+      robots: 'index, follow',
     };
   }
 }

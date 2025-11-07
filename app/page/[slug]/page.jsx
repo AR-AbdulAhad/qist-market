@@ -20,7 +20,7 @@ export async function generateMetadata({ params }) {
     if (!res.ok || !page || !page.isActive) {
       return {
         title: 'Page Not Found - Qist Market',
-        robots: 'noindex, nofollow',
+        robots: 'index, follow',
       };
     }
 
@@ -54,7 +54,7 @@ export async function generateMetadata({ params }) {
     console.error('Error fetching page metadata:', error);
     return {
       title: 'Page Not Found - Qist Market',
-      robots: 'noindex, nofollow',
+      robots: 'index, follow',
     };
   }
 }

@@ -7,7 +7,7 @@ import NewProducts from "@/components/common/NewProducts";
 
 export const metadata = {
   title: "Qist Market - Shopping Cart",
-  robots: "noindex, nofollow",
+  robots: "index, follow",
 };
 
 export default function page() {

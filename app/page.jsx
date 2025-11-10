@@ -13,7 +13,7 @@ const siteDescription =
   "Qist Market is Pakistan’s leading online installment shopping platform. Buy mobiles, electronics, home appliances, and more on easy installments. Shop smart, shop Qist Market!";
 const siteKeywords =
   "Qist Market, Installment Shopping, Online Shopping Pakistan, Mobile Installments, Electronics, Easy Installments, Home Appliances";
-const siteUrl = "https://qistmarket.pk";
+const siteUrl = "https://www.qistmarket.pk";
 const siteImage = `${siteUrl}/images/banner/qist-market-banner.jpg`;
 
 export const metadata = {

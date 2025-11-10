@@ -27,7 +27,7 @@ export async function generateMetadata({ params }) {
     `Browse ${categoryName} ${subcategoryName} at the best prices in Pakistan`;
   const subcategoryKeywords = subcategory?.meta_keywords || null;
   const siteName = 'Qist Market';
-  const baseUrl = 'https://qistmarket.pk';
+  const baseUrl = 'https://www.qistmarket.pk';
   const subcategoryUrl = `${baseUrl}/category/${params.categorySlug}/${params.subCategorySlug}`;
 
   return {

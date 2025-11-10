@@ -10,7 +10,7 @@ const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 export async function generateMetadata({ params }) {
   const { categories_SlugName } = params;
   const siteName = 'Qist Market';
-  const baseUrl = 'https://qistmarket.pk';
+  const baseUrl = 'https://www.qistmarket.pk';
 
   try {
     const res = await fetch(`${BACKEND_URL}/api/pages/${categories_SlugName}`, { cache: 'no-store' });

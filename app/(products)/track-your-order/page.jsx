@@ -6,7 +6,7 @@ import React from "react";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const siteName = 'Qist Market';
-const baseUrl = 'https://qistmarket.pk';
+const baseUrl = 'https://www.qistmarket.pk';
 
 export async function generateMetadata() {
   try {

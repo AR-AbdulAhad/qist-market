@@ -148,7 +148,7 @@ export default function Quickview() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleCopy = async () => {
-    const productUrl = `${window.location.origin}/${productData?.categories_SlugName || quickViewItem?.categories_SlugName}/${productData?.subcategory_SlugName || quickViewItem?.subcategory_SlugName}/${productData?.slugName || quickViewItem?.slugName || ""}`;
+    const productUrl = `https://www.qistmarket.pk/${productData?.categories_SlugName || quickViewItem?.categories_SlugName}/${productData?.subcategory_SlugName || quickViewItem?.subcategory_SlugName}/${productData?.slugName || quickViewItem?.slugName || ""}`;
   
       if (navigator.clipboard && window.isSecureContext) {
         try {
@@ -189,7 +189,7 @@ export default function Quickview() {
     };
 
 
-  const productUrl = `${window.location.origin}/${productData?.categories_SlugName || quickViewItem?.categories_SlugName}/${productData?.subcategory_SlugName || quickViewItem?.subcategory_SlugName}/${productData?.slugName || quickViewItem?.slugName || ""}`;
+  const productUrl = `https://www.qistmarket.pk/${productData?.categories_SlugName || quickViewItem?.categories_SlugName}/${productData?.subcategory_SlugName || quickViewItem?.subcategory_SlugName}/${productData?.slugName || quickViewItem?.slugName || ""}`;
   const quickviewImages = productData?.ProductImage?.map((img) => img.url) || [productData?.imgSrc || quickViewItem?.imgSrc].filter(Boolean);
 
   if (!quickViewItem && !loading) {

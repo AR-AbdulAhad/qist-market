@@ -63,7 +63,7 @@ export default function Details1({ singleProduct, loading }) {
   };
 
   const handleCopy = async () => {
-  const productUrl = `${window.location.origin}/${singleProduct?.category_slug_name}/${singleProduct?.subcategory_slug_name}/${singleProduct?.slugName}`;
+  const productUrl = `https://www.qistmarket.pk/${singleProduct?.category_slug_name}/${singleProduct?.subcategory_slug_name}/${singleProduct?.slugName}`;
 
     if (navigator.clipboard && window.isSecureContext) {
       try {
@@ -103,7 +103,7 @@ export default function Details1({ singleProduct, loading }) {
     document.body.removeChild(textArea);
   };
 
-  const productUrl = `${window.location.origin}/${singleProduct?.category_slug_name}/${singleProduct?.subcategory_slug_name}/${singleProduct?.slugName}`;
+  const productUrl = `https://www.qistmarket.pk/${singleProduct?.category_slug_name}/${singleProduct?.subcategory_slug_name}/${singleProduct?.slugName}`;
 
   return (
     <>

@@ -3,7 +3,6 @@ import Header4 from "@/components/headers/Header4";
 import Contact from "@/components/otherPages/Contact";
 import React from "react";
 import Link from "next/link";
-import NewProducts from "@/components/common/NewProducts";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 const siteName = 'Qist Market';
@@ -18,7 +17,7 @@ export async function generateMetadata() {
       return {
         title: 'Contact - Qist Market',
         description: 'Qist Market Contact Page.',
-        robots: { index: false, follow: false },
+        robots: { index: false, follow: false, },
       };
     }
 
@@ -54,7 +53,7 @@ export async function generateMetadata() {
     return {
       title: 'Contact - Qist Market',
       description: 'Qist Market Contact Page.',
-      robots: { index: false, follow: false },
+      robots: { index: false, follow: false, },
     };
   }
 }

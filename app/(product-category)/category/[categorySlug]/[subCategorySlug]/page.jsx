@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+
 export async function generateMetadata({ params }) {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subcategories/name/${params.subCategorySlug}`,
@@ -61,6 +63,27 @@ export async function generateMetadata({ params }) {
 
 import SubCategoryClient from './SubCategoryClient';
 
-export default function SubCategoryPage({ params }) {
+export default async function SubCategoryPage({ params }) {
+
+  let product = null;
+    
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subcategories/name/${params.subCategorySlug}`, {
+          cache: 'no-store',
+        });
+    
+        if (!res.ok) {
+          redirect('/not-found');
+        }
+    
+        product = await res.json();
+    
+        if (!product || product.isDeleted || product.isActive === false) {
+          redirect('/not-found');
+        }
+      } catch (error) {
+        console.error('Product fetch failed:', error);
+        redirect('/not-found');
+      }
   return <SubCategoryClient categorySlug={params.categorySlug} subCategorySlug={params.subCategorySlug} />;
 }

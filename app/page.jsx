@@ -21,8 +21,8 @@ export const metadata = {
   description: siteDescription,
   keywords: siteKeywords,
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
   },
   alternates: {
     canonical: siteUrl,

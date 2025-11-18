@@ -62,6 +62,8 @@ export default function Details1({ singleProduct, loading }) {
     }
   };
 
+  console.log('Single Product:', singleProduct);
+
   const handleCopy = async () => {
   const productUrl = `https://www.qistmarket.pk/${singleProduct?.category_slug_name}/${singleProduct?.subcategory_slug_name}/${singleProduct?.slugName}`;
 
@@ -226,10 +228,7 @@ export default function Details1({ singleProduct, loading }) {
                             {singleProduct.isDeal && (
                               <span className="" data-wow-delay={0}>
                                 <h5 className="fw-semibold fs-5 text-primary flat-title-has-icon">
-                                  <span className="icon">
-                                    <i className="icon-fire tf-ani-tada" />
-                                  </span>
-                                  Deal Of The Day
+                                  {singleProduct.dealName}
                                 </h5>
                               </span>
                             )}

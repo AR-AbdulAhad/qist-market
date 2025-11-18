@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+
 export async function generateMetadata({ params }) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/product/name/${params.slugName}`, {
     cache: 'no-store',
@@ -21,8 +23,8 @@ export async function generateMetadata({ params }) {
     description: productDesc,
     keywords: productKeywords,
     robots: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
     },
     alternates: {
       canonical: productUrl,
@@ -56,6 +58,29 @@ export async function generateMetadata({ params }) {
 
 import ProductDetailClient from './ProductDetailClient';
 
-export default function ProductDetailPage({ params }) {
-  return <ProductDetailClient slugName={params.slugName} />;
+export default async function ProductDetailPage({ params }) {
+  const { slugName } = params;
+
+  let product = null;
+
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/product/name/${slugName}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      redirect('/not-found');
+    }
+
+    product = await res.json();
+
+    if (!product || product.isDeleted || product.isActive === false) {
+      redirect('/not-found');
+    }
+  } catch (error) {
+    console.error('Product fetch failed:', error);
+    redirect('/not-found');
+  }
+
+  return <ProductDetailClient slugName={slugName} />;
 }

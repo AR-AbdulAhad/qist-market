@@ -31,6 +31,8 @@ export default function Products1() {
 
   const deal = deals[0];
 
+  console.log('Rendering deal:', deal);
+
   const getSlidesPerView = () => {
     if (typeof window === 'undefined') return 4;
     if (window.innerWidth >= 992) return 4;
@@ -47,10 +49,7 @@ export default function Products1() {
         <div className="flat-title pb-8 wow fadeInUp" data-wow-delay={0}>
           <h5 className="fw-semibold text-primary flat-title-has-icon deal-align">
             <div className="d-flex gap-2 align-items-center">
-              <span className="icon">
-                <i className="icon-fire tf-ani-tada" />
-              </span>
-              Deal Of The Day
+              {deal.name}
             </div>
             <div className="d-flex gap-2 align-items-center">
               <span className="deal-dates ms-2">Ends in:</span>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Header4 from "@/components/headers/Header4";
 import Features from "@/components/common/Features";
 import Footer1 from "@/components/footers/Footer1";
-import { notFound } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import DynamicPagesComp from '@/components/otherPages/DynamicPagesComp';
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -19,7 +19,7 @@ export async function generateMetadata({ params }) {
     if (!res.ok || !page || !page.isActive) {
       return {
         title: 'Page Not Found - Qist Market',
-        robots: 'index, follow',
+        robots: { index: false, follow: false },
       };
     }
 
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }) {
     console.error('Error fetching page metadata:', error);
     return {
       title: 'Page Not Found - Qist Market',
-      robots: 'index, follow',
+      robots: { index: false, follow: false },
     };
   }
 }
@@ -64,14 +64,19 @@ export default async function DynamicPage({ params }) {
   let page;
   try {
     const res = await fetch(`${BACKEND_URL}/api/pages/${categories_SlugName}`, { cache: 'no-store' });
+    
+    if (!res.ok) {
+      redirect('/not-found');
+    }
+
     page = await res.json();
 
-    if (!res.ok || !page || !page.isActive) {
-      notFound();
+    if (!page || !page.isActive) {
+      redirect('/not-found');
     }
   } catch (error) {
     console.error('Error fetching page:', error);
-    notFound();
+    redirect('/not-found');
   }
 
   return (

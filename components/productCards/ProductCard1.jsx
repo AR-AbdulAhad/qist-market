@@ -54,13 +54,6 @@ export default function ProductCard1({ product, index }) {
             <AddToQuickview product={productData} tooltipClass="tooltip-left" />
           </li>
         </ul>
-        <div className="box-sale-wrap top-0 start-0 z-5">
-          <p className="title-sidebar-2">
-            <span className="icon">
-              <i className="icon-fire tf-ani-tada" />
-            </span>
-          </p>
-        </div>
       </div>
       <div className="card-product-info">
         <div className="box-title">

@@ -127,6 +127,8 @@ export default function Quickview() {
     }
   };
 
+  console.log("Product Data in Quickview:", productData);
+
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => {
       const newIndex = prev === 0 ? quickviewImages.length - 1 : prev - 1;
@@ -381,10 +383,7 @@ export default function Quickview() {
                             {productData?.isDeal && (
                               <span data-wow-delay={0}>
                                 <h5 className="fw-semibold fs-5 text-primary flat-title-has-icon">
-                                  <span className="icon">
-                                    <i className="icon-fire tf-ani-tada" />
-                                  </span>
-                                  Deal Of The Day
+                                  {productData.dealName}
                                 </h5>
                               </span>
                             )}

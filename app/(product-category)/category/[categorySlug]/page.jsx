@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+
 export async function generateMetadata({ params }) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/name/${params.categorySlug}`, {
     cache: 'no-store',
@@ -48,6 +50,27 @@ export async function generateMetadata({ params }) {
 
 import CategoryClient from './CategoryClient';
 
-export default function CategoryPage({ params }) {
+export default async function CategoryPage({ params }) {
+  
+    let product = null;
+  
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/name/${params.categorySlug}`, {
+        cache: 'no-store',
+      });
+  
+      if (!res.ok) {
+        redirect('/not-found');
+      }
+  
+      product = await res.json();
+  
+      if (!product || product.isDeleted || product.isActive === false) {
+        redirect('/not-found');
+      }
+    } catch (error) {
+      console.error('Product fetch failed:', error);
+      redirect('/not-found');
+    }
   return <CategoryClient categorySlug={params.categorySlug} />;
 }

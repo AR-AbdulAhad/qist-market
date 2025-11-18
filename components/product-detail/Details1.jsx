@@ -62,8 +62,6 @@ export default function Details1({ singleProduct, loading }) {
     }
   };
 
-  console.log('Single Product:', singleProduct);
-
   const handleCopy = async () => {
   const productUrl = `https://www.qistmarket.pk/${singleProduct?.category_slug_name}/${singleProduct?.subcategory_slug_name}/${singleProduct?.slugName}`;
 

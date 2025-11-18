@@ -14,8 +14,6 @@ export default function ProductCards3({ product }) {
     router.push(`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`);
   };
 
-  console.log(product)
-
   return (
     <div className="card-product">
       <div className="card-product-wrapper">

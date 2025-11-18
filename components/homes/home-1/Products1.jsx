@@ -31,8 +31,6 @@ export default function Products1() {
 
   const deal = deals[0];
 
-  console.log('Rendering deal:', deal);
-
   const getSlidesPerView = () => {
     if (typeof window === 'undefined') return 4;
     if (window.innerWidth >= 992) return 4;

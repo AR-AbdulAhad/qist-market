@@ -127,8 +127,6 @@ export default function Quickview() {
     }
   };
 
-  console.log("Product Data in Quickview:", productData);
-
   const handlePrevImage = () => {
     setCurrentImageIndex((prev) => {
       const newIndex = prev === 0 ? quickviewImages.length - 1 : prev - 1;

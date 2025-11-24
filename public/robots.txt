@@ -1,0 +1,19 @@
+User-agent: *
+
+Allow: /
+
+# Disallow sensitive pages
+Disallow: /my-account
+Disallow: /my-account-address
+Disallow: /my-account-edit
+Disallow: /my-account-orders
+Disallow: /not-found
+Disallow: /shop-cart
+Disallow: /checkout
+Disallow: /order-details
+Disallow: /order-details
+Disallow: /order-details
+
+Crawl-delay: 5
+
+Sitemap: https://www.qistmarket.pk/sitemap.xml

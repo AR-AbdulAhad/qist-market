@@ -10,9 +10,10 @@ const nextConfig = {
     if (IS_MAINTENANCE_MODE) {
       return [
         {
-          source: '/((?!maintenance).*)', 
+          source: '/((?!maintenance|sitemap\\.xml|robots\\.txt).*)', 
           
           destination: '/maintenance',
+          
           permanent: false, 
         },
       ];

@@ -13,6 +13,7 @@ Disallow: /checkout
 Disallow: /order-details
 Disallow: /order-details
 Disallow: /order-details
+Disallow: /maintenance
 
 Crawl-delay: 5
 

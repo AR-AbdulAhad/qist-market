@@ -7,7 +7,6 @@ import Products1 from "@/components/homes/home-1/Products1";
 import NewProducts from "@/components/common/NewProducts";
 import TopCategoryProducts from "@/components/homes/home-1/TopCategoryProducts";
 import TopCategories from "@/components/common/TopCategories";
-import Maintenance from "@/components/common/maintenance";
 
 const siteName = "Qist Market";
 const siteDescription =
@@ -66,7 +65,6 @@ export default function Home() {
       <TopCategoryProducts />
       <NewProducts />
       <Footer1 />
-      <Maintenance />
     </>
   );
 }

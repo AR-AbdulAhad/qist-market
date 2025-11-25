@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const IS_MAINTENANCE_MODE = true; 
+const IS_MAINTENANCE_MODE = false; 
 
 const nextConfig = {
   images: {

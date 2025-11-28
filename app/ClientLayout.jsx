@@ -22,7 +22,6 @@ import ChangePassword from "@/components/modals/ChangePassword";
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from "@/context/AuthContext";
 import { SettingsProvider } from "@/context/SettingsContext";
-import Script from "next/script";
 // import WhatsAppBtn from "@/components/common/WhatsAppBtn";
 
 function getUTMParams() {

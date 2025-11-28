@@ -6,9 +6,20 @@ export default function ScriptInjector({ scripts, position = "head" }) {
   useEffect(() => {
     if (!scripts || scripts.length === 0) return;
 
+    const target = position === "head" ? document.head : document.body;
+
     scripts.forEach((item) => {
       const wrapper = document.createElement("div");
-      wrapper.innerHTML = item.script;
+      wrapper.innerHTML = item.script.trim();
+
+      wrapper.querySelectorAll("meta, link, title").forEach((el) => {
+        const existing = target.querySelector(
+          `${el.tagName}[name="${el.name}"], ${el.tagName}[property="${el.property}"], ${el.tagName}[href="${el.href}"]`
+        );
+        if (!existing) {
+          target.appendChild(el.cloneNode(true));
+        }
+      });
 
       wrapper.querySelectorAll("script").forEach((oldScript) => {
         const newScript = document.createElement("script");
@@ -19,22 +30,19 @@ export default function ScriptInjector({ scripts, position = "head" }) {
 
         newScript.innerHTML = oldScript.innerHTML;
 
-        if (position === "head") {
-          document.head.appendChild(newScript);
+        const existingScript = target.querySelector(`script[src="${oldScript.src}"]`);
+        if (existingScript) {
+          existingScript.replaceWith(newScript);
         } else {
-          document.body.appendChild(newScript);
+          target.appendChild(newScript);
         }
       });
-      
+
       wrapper.querySelectorAll("noscript").forEach((ns) => {
-        if (position === "head") {
-          document.head.insertAdjacentHTML("beforeend", ns.outerHTML);
-        } else {
-          document.body.insertAdjacentHTML("beforeend", ns.outerHTML);
-        }
+        target.insertAdjacentHTML("beforeend", ns.outerHTML);
       });
     });
-  }, [scripts]);
+  }, [scripts, position]);
 
   return null;
 }

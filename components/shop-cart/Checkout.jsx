@@ -29,6 +29,9 @@ export default function Checkout() {
   const otpInputRefs = useRef([]);
   const { settings, isLoading, error } = useSettings();
 
+  const [cities, setCities] = useState([]);
+  const [cityLoading, setCityLoading] = useState(false);
+
   const emailRef = useRef(null);
   const phoneRef = useRef(null);
   const alternativePhoneRef = useRef(null);
@@ -36,6 +39,21 @@ export default function Checkout() {
   const cnicRef = useRef(null);
   const cityRef = useRef(null);
   const addressRef = useRef(null);
+
+  useEffect(() => {
+    setCityLoading(true);
+    fetch(`${BACKEND_URL}/api/public/cities-areas`)
+      .then(res => res.json())
+      .then(data => {
+        const cityNames = Object.keys(data).sort();
+        setCities(cityNames);
+      })
+      .catch(() => {
+        toast.error("Failed to load cities");
+        setCities([]);
+      })
+      .finally(() => setCityLoading(false));
+  }, []);
 
   const updateCartData = () => {
     try {
@@ -621,21 +639,11 @@ export default function Checkout() {
                 <div className="cols">
                   <fieldset>
                     <div className="field-flex">
-                      <label>
-                        Select City <span className="text-primary">*</span>
-                      </label>
+                      <label>Select City <span className="text-primary">*</span></label>
                       <label className="body-md-2 fw-semibold">شہر منتخب کریں</label>
                     </div>
                     {useDefaultAddress && defaultAddress ? (
-                      <input
-                        type="text"
-                        ref={cityRef}
-                        value={defaultAddress.city}
-                        readOnly
-                        disabled
-                        className="def"
-                        onChange={(e) => validateField("city", e.target.value)}
-                      />
+                      <input type="text" ref={cityRef} value={defaultAddress.city} readOnly disabled className="def" />
                     ) : (
                       <div className="tf-select">
                         <select
@@ -645,15 +653,16 @@ export default function Checkout() {
                           value={selectedCity}
                           onChange={handleCityChange}
                           required
+                          disabled={useDefaultAddress && defaultAddress}
                         >
                           <option value="" disabled>
-                            Select The City
+                            {cityLoading ? "Loading cities..." : "Select The City"}
                           </option>
-                          <option value="Karachi">Karachi</option>
+                          {cities.map(city => (
+                            <option key={city} value={city}>{city}</option>
+                          ))}
                         </select>
-                        {errors.city && (
-                          <p className="caption text-danger">{errors.city}</p>
-                        )}
+                        {errors.city && <p className="caption text-danger">{errors.city}</p>}
                       </div>
                     )}
                   </fieldset>

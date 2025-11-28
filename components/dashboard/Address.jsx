@@ -6,10 +6,6 @@ import Area from "@/components/common/Area";
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-const CITY_OPTIONS = [
-  { value: "Karachi", label: "Karachi" },
-];
-
 export default function Address() {
   const { token, user } = useContext(AuthContext);
   const [showAddAddressForm, setShowAddAddressForm] = useState(false);
@@ -27,6 +23,10 @@ export default function Address() {
   const [selectedAreaNew, setSelectedAreaNew] = useState("");
   const [selectedAreaEdit, setSelectedAreaEdit] = useState("");
 
+  // NEW: Dynamic Cities from API
+  const [cities, setCities] = useState([]);
+  const [cityLoading, setCityLoading] = useState(false);
+
   const [newAddress, setNewAddress] = useState({
     address1: "",
     city: "",
@@ -41,14 +41,31 @@ export default function Address() {
     isDefault: false,
   });
 
+  // === FETCH CITIES FROM API ===
   useEffect(() => {
-    if (user) {
+    setCityLoading(true);
+    fetch(`${BACKEND_URL}/api/public/cities-areas`)
+      .then(res => res.json())
+      .then(data => {
+        const cityNames = Object.keys(data).sort();
+        setCities(cityNames);
+      })
+      .catch(() => {
+        toast.error("Failed to load cities");
+        setCities([]);
+      })
+      .finally(() => setCityLoading(false));
+  }, []);
+
+  // === FETCH ADDRESSES ===
+  useEffect(() => {
+    if (user && token) {
       fetchAddresses();
     } else {
       setLoading(false);
       setError("Please log in to view addresses");
     }
-  }, [token]);
+  }, [user, token]);
 
   const fetchAddresses = async () => {
     try {
@@ -71,21 +88,14 @@ export default function Address() {
   const validateAddress = (formData, formType = "new") => {
     const newErrors = {};
 
-    // Address1 validation
     if (!formData.address1.trim()) {
       newErrors.address1 = "Address line 1 is required";
     } else if (formData.address1.length < 5) {
       newErrors.address1 = "Address line 1 must be at least 5 characters long";
     }
 
-    // City validation
     if (!formData.city) {
       newErrors.city = "Please select a city";
-    }
-
-    // Area validation (optional)
-    if (formData.area && !formData.area.trim()) {
-      newErrors.area = "Please select a valid area";
     }
 
     if (formType === "new") {
@@ -102,12 +112,7 @@ export default function Address() {
 
   const handleHideAddAddressForm = () => {
     setShowAddAddressForm(false);
-    setNewAddress({
-      address1: "",
-      city: "",
-      area: "",
-      isDefault: false,
-    });
+    setNewAddress({ address1: "", city: "", area: "", isDefault: false });
     setNewAddressErrors({});
     setSelectedCityNew("");
     setSelectedAreaNew("");
@@ -129,7 +134,7 @@ export default function Address() {
   const handleCityChangeNew = (e) => {
     const city = e.target.value;
     setSelectedCityNew(city);
-    setSelectedAreaNew(""); // Reset area when city changes
+    setSelectedAreaNew("");
     setNewAddress((prev) => ({ ...prev, city, area: "" }));
     setNewAddressErrors((prev) => ({ ...prev, city: "", area: "" }));
   };
@@ -137,7 +142,7 @@ export default function Address() {
   const handleCityChangeEdit = (e) => {
     const city = e.target.value;
     setSelectedCityEdit(city);
-    setSelectedAreaEdit(""); // Reset area when city changes
+    setSelectedAreaEdit("");
     setEditAddressData((prev) => ({ ...prev, city, area: "" }));
     setEditAddressErrors((prev) => ({ ...prev, city: "", area: "" }));
   };
@@ -160,9 +165,7 @@ export default function Address() {
     e.preventDefault();
     setError(null);
 
-    if (!validateAddress(newAddress, "new")) {
-      return;
-    }
+    if (!validateAddress(newAddress, "new")) return;
 
     setAddAddressLoading(true);
     try {
@@ -208,9 +211,7 @@ export default function Address() {
     e.preventDefault();
     setError(null);
 
-    if (!validateAddress(editAddressData, "edit")) {
-      return;
-    }
+    if (!validateAddress(editAddressData, "edit")) return;
 
     setUpdateAddressLoading(true);
     try {
@@ -275,6 +276,7 @@ export default function Address() {
           <span className="text-white">Add new address</span>
         </button>
 
+        {/* === ADD ADDRESS FORM === */}
         <form
           className="wd-form-address show-form-address mb-20"
           style={{ display: showAddAddressForm ? "block" : "none" }}
@@ -294,6 +296,7 @@ export default function Address() {
                 <div className="invalid-feedback">{newAddressErrors.address1}</div>
               )}
             </fieldset>
+
             <fieldset>
               <label htmlFor="city">City <span className="text-primary">*</span></label>
               <div className="tf-select">
@@ -303,17 +306,14 @@ export default function Address() {
                   value={selectedCityNew}
                   onChange={handleCityChangeNew}
                   className={newAddressErrors.city ? "is-invalid" : ""}
+                  disabled={cityLoading}
                 >
                   <option value="" disabled>
-                    Select The City
+                    {cityLoading ? "Loading cities..." : "Select The City"}
                   </option>
-                  {CITY_OPTIONS.map((option, index) => (
-                    <option
-                      key={index}
-                      value={option.value}
-                      disabled={option.disabled || false}
-                    >
-                      {option.label}
+                  {cities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
                     </option>
                   ))}
                 </select>
@@ -322,6 +322,7 @@ export default function Address() {
                 )}
               </div>
             </fieldset>
+
             <fieldset>
               <label htmlFor="Area">Area</label>
               <Area
@@ -334,6 +335,7 @@ export default function Address() {
                 <div className="invalid-feedback">{newAddressErrors.area}</div>
               )}
             </fieldset>
+
             <div className="tf-cart-checkbox">
               <input
                 type="checkbox"
@@ -346,6 +348,7 @@ export default function Address() {
               <label htmlFor="isDefault">Set as default address</label>
             </div>
           </div>
+
           <div className="box-btn">
             <button className="tf-btn btn-large text-white" type="submit" disabled={addAddressLoading}>
               {addAddressLoading ? (
@@ -369,6 +372,7 @@ export default function Address() {
           </div>
         </form>
 
+        {/* === ADDRESS LIST === */}
         {loading ? (
           <div className="p-4 d-flex justify-content-center align-items-center">
             <div className="spinner-border" role="status">
@@ -421,6 +425,8 @@ export default function Address() {
             ))}
           </ul>
         )}
+
+        {/* === EDIT ADDRESS FORM === */}
         {editingAddressId && (
           <form
             className="wd-form-address edit-form-address show"
@@ -441,6 +447,7 @@ export default function Address() {
                   <div className="invalid-feedback">{editAddressErrors.address1}</div>
                 )}
               </fieldset>
+
               <fieldset>
                 <label htmlFor="city">City <span className="text-primary">*</span></label>
                 <div className="tf-select">
@@ -450,17 +457,14 @@ export default function Address() {
                     value={selectedCityEdit}
                     onChange={handleCityChangeEdit}
                     className={editAddressErrors.city ? "is-invalid" : ""}
+                    disabled={cityLoading}
                   >
                     <option value="" disabled>
-                      Select The City
+                      {cityLoading ? "Loading cities..." : "Select The City"}
                     </option>
-                    {CITY_OPTIONS.map((option, index) => (
-                      <option
-                        key={index}
-                        value={option.value}
-                        disabled={option.disabled || false}
-                      >
-                        {option.label}
+                    {cities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
                       </option>
                     ))}
                   </select>
@@ -469,6 +473,7 @@ export default function Address() {
                   )}
                 </div>
               </fieldset>
+
               <fieldset>
                 <label htmlFor="Area">Area</label>
                 <Area
@@ -481,6 +486,7 @@ export default function Address() {
                   <div className="invalid-feedback">{editAddressErrors.area}</div>
                 )}
               </fieldset>
+
               <div className="tf-cart-checkbox">
                 <input
                   type="checkbox"
@@ -493,6 +499,7 @@ export default function Address() {
                 <label htmlFor="isDefault">Set as default address</label>
               </div>
             </div>
+
             <div className="box-btn">
               <button className="tf-btn btn-large text-white" type="submit" disabled={updateAddressLoading}>
                 {updateAddressLoading ? (

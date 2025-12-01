@@ -54,36 +54,18 @@ export const metadata = {
   },
 };
 
-const componentMap = {
-  TopCategories,
-  Products1,
-  TopCategoryProducts,
-  FeaturedProducts,
-  NewProducts,
-};
-
-export default async function Home() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/home-sections`, {
-    cache: 'no-store',
-  });
-  const { data: sections } = await res.json();
-
-  const activeSections = sections
-    .filter(s => s.isActive)
-    .sort((a, b) => a.position - b.position);
-
+export default function Home() {
   return (
     <>
       <Topbar1 />
       <Header1 />
       <Hero />
       <Features />
-
-      {activeSections.map(section => {
-        const Component = componentMap[section.component];
-        return Component ? <Component key={section.id} /> : null;
-      })}
-
+      <TopCategories />
+      <Products1 /> 
+      <TopCategoryProducts />
+      <FeaturedProducts />
+      <NewProducts />
       <Footer1 />
     </>
   );

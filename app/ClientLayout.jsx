@@ -1,4 +1,5 @@
 "use client";
+
 import Context from "@/context/Context";
 import "../public/scss/main.scss";
 import "@/public/css/global.css";
@@ -96,7 +97,7 @@ export default function RootLayout({ children, footerScripts }) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      import("bootstrap/dist/js/bootstrap.esm").then(() => {});
+      import("bootstrap/dist/js/bootstrap.esm");
     }
   }, []);
 
@@ -147,31 +148,38 @@ export default function RootLayout({ children, footerScripts }) {
   }, [pathname]);
 
   useEffect(() => {
-    const bootstrap = require("bootstrap");
-    const modalElements = document.querySelectorAll(".modal.show");
-    modalElements.forEach((modal) => {
-      const modalInstance = bootstrap.Modal.getInstance(modal);
-      if (modalInstance) {
-        modalInstance.hide();
-      }
-    });
+    if (typeof window !== "undefined") {
+      import("bootstrap/dist/js/bootstrap.esm").then((bootstrap) => {
+        const modalElements = document.querySelectorAll(".modal.show");
+        modalElements.forEach((modal) => {
+          const modalInstance = bootstrap.Modal.getInstance(modal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        });
 
-    const offcanvasElements = document.querySelectorAll(".offcanvas.show");
-    offcanvasElements.forEach((offcanvas) => {
-      const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
-      if (offcanvasInstance) {
-        offcanvasInstance.hide();
-      }
-    });
+        const offcanvasElements = document.querySelectorAll(".offcanvas.show");
+        offcanvasElements.forEach((offcanvas) => {
+          const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
+          if (offcanvasInstance) {
+            offcanvasInstance.hide();
+          }
+        });
+      });
+    }
   }, [pathname]);
 
   useEffect(() => {
-    const WOW = require("@/utlis/wow");
-    const wow = new WOW.default({
-      mobile: false,
-      live: false,
-    });
-    wow.init();
+    if (typeof window !== "undefined") {
+      import("@/utlis/wow").then((WOWModule) => {
+        const WOW = WOWModule.default;
+        const wow = new WOW({
+          mobile: false,
+          live: false,
+        });
+        wow.init();
+      });
+    }
   }, [pathname]);
 
   return (

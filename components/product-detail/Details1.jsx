@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-// import Slider1 from "./sliders/Slider1";
+import Slider1 from "./sliders/Slider1";
 import Link from "next/link";
 import Skeleton from "react-loading-skeleton";
 import { toast } from "react-toastify";
@@ -18,7 +18,7 @@ import { LuMail } from "react-icons/lu";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useSettings } from "@/context/SettingsContext";
-// import Image from "next/image";
+import Image from "next/image";
 
 export default function Details1({ singleProduct, loading }) {
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -145,13 +145,13 @@ export default function Details1({ singleProduct, loading }) {
             <div className="row">
               <div className="col-md-6">
                 <div className="tf-product-media-wrap thumbs-default sticky-top">
-                  {/* <div className="thumbs-slider">
+                  <div className="thumbs-slider">
                     {loading ? (
                       <Skeleton height={600} />
                     ) : (
                       <Slider1 images={singleProduct.ProductImage} />
                     )}
-                  </div> */}
+                  </div>
                   <div className="tf-zoom-main"></div>
                 </div>
               </div>
@@ -188,7 +188,7 @@ export default function Details1({ singleProduct, loading }) {
                                 </svg>
                               ))}
                             </div>
-                              {/* <button className="body-text-3 text-main-2 link border-0 bg-transparent p-0"
+                              <button className="body-text-3 text-main-2 link border-0 bg-transparent p-0"
                               
                               onClick={() => {
                               const reviewsTab = document.querySelector('a[href="#prd-review"]');
@@ -221,7 +221,7 @@ export default function Details1({ singleProduct, loading }) {
                               }
                             }}
 
-                            >({singleProduct.approved_reviews_count} customer reviews)</button> */}
+                            >({singleProduct.approved_reviews_count} customer reviews)</button>
                             </div>
                             {singleProduct.isDeal && (
                               <span className="" data-wow-delay={0}>
@@ -232,7 +232,7 @@ export default function Details1({ singleProduct, loading }) {
                             )}
                           </h5>
                         )}
-                        {/* <ul className="product-info-rate-wrap">
+                        <ul className="product-info-rate-wrap">
                           <li className="d-flex">
                             {loading ? (
                               <Skeleton width={200} height={15} />
@@ -253,7 +253,7 @@ export default function Details1({ singleProduct, loading }) {
                               </Link>
                             )}
                           </li>
-                        </ul> */}
+                        </ul>
                       </div>
                       <div className="infor-bottom">
                         {loading ? (

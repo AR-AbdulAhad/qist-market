@@ -718,6 +718,16 @@ export default function Checkout() {
               <span className="fw-semibold">Your Order</span>
               <span className="fw-semibold">آپ کا آرڈر</span>
             </h5>
+
+            <div className="order-availability-banner mb-4 p-3 rounded bg-warning-subtle border border-warning d-flex justify-content-between">
+              <p className="mb-1 fw-bold text-dark fs-6">
+                Currently Available Exclusively in Karachi
+              </p>
+              <p className="text-end">
+                فی الحال صرف کراچی میں دستیاب ہے
+              </p>
+            </div>
+
             <div className="flat-sidebar-checkout position-relative top-0 w-100">
               <div className="sidebar-checkout-content">
                 <div className="has-account field-flex">

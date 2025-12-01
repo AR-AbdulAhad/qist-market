@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Qist Market | Site Maintenance",
-  robots: { index: false, follow: false },
+  robots: { index: true, follow: true },
 };
 
 const Maintenance = () => {

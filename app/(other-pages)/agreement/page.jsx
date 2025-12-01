@@ -18,7 +18,7 @@ export async function generateMetadata() {
       return {
         title: 'Agreement - Qist Market',
         description: 'Qist Market Agreement Page.',
-        robots: { index: false, follow: false },
+        robots: { index: true, follow: true },
       };
     }
 
@@ -54,7 +54,7 @@ export async function generateMetadata() {
     return {
       title: 'Agreement - Qist Market',
       description: 'Qist Market Agreement Page.',
-      robots: { index: false, follow: false, },
+      robots: { index: true, follow: true, },
     };
   }
 }

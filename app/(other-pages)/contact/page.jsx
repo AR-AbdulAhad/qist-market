@@ -17,7 +17,7 @@ export async function generateMetadata() {
       return {
         title: 'Contact - Qist Market',
         description: 'Qist Market Contact Page.',
-        robots: { index: false, follow: false, },
+        robots: { index: true, follow: true, },
       };
     }
 
@@ -53,7 +53,7 @@ export async function generateMetadata() {
     return {
       title: 'Contact - Qist Market',
       description: 'Qist Market Contact Page.',
-      robots: { index: false, follow: false, },
+      robots: { index: true, follow: true, },
     };
   }
 }

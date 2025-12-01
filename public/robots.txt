@@ -1,8 +1,41 @@
-User-agent: *
+# BEGIN Cloudflare Managed content
 
+User-agent: *
+Content-signal: search=yes,ai-train=no
 Allow: /
 
-# Disallow sensitive pages
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+# END Cloudflare Managed content
+
+
+# Default rules for all other bots
+User-agent: *
+Allow: /
+
+# Disallow sensitive or non-useful pages
 Disallow: /my-account
 Disallow: /my-account-address
 Disallow: /my-account-edit
@@ -11,10 +44,10 @@ Disallow: /not-found
 Disallow: /shop-cart
 Disallow: /checkout
 Disallow: /order-details
-Disallow: /order-details
-Disallow: /order-details
 Disallow: /maintenance
 
+# Crawl rate control (optional)
 Crawl-delay: 5
 
+# Sitemap
 Sitemap: https://www.qistmarket.pk/sitemap.xml

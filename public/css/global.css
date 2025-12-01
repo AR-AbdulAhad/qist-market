@@ -812,6 +812,12 @@
 
 }
 
+@media (max-width: 600px) {
+  .order-availability-banner {
+    flex-direction: column;
+  }
+}
+
 .top-pad {
   padding: 8px 0 !important;
 }

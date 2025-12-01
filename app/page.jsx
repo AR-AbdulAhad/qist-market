@@ -7,6 +7,7 @@ import Products1 from "@/components/homes/home-1/Products1";
 import NewProducts from "@/components/common/NewProducts";
 import TopCategoryProducts from "@/components/homes/home-1/TopCategoryProducts";
 import TopCategories from "@/components/common/TopCategories";
+import FeaturedProducts from "@/components/common/FeaturedProducts";
 
 const siteName = "Qist Market";
 const siteDescription =
@@ -53,17 +54,36 @@ export const metadata = {
   },
 };
 
-export default function Home() {
+const componentMap = {
+  TopCategories,
+  Products1,
+  TopCategoryProducts,
+  FeaturedProducts,
+  NewProducts,
+};
+
+export default async function Home() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/home-sections`, {
+    cache: 'no-store',
+  });
+  const { data: sections } = await res.json();
+
+  const activeSections = sections
+    .filter(s => s.isActive)
+    .sort((a, b) => a.position - b.position);
+
   return (
     <>
       <Topbar1 />
       <Header1 />
       <Hero />
       <Features />
-      <TopCategories />
-      <Products1 />
-      <TopCategoryProducts />
-      <NewProducts />
+
+      {activeSections.map(section => {
+        const Component = componentMap[section.component];
+        return Component ? <Component key={section.id} /> : null;
+      })}
+
       <Footer1 />
     </>
   );

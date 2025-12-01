@@ -191,6 +191,7 @@ export default function RootLayout({ children, footerScripts }) {
             <ScrollTop />
             <Toolbar />
             <Search />
+            {/* <WhatsAppBtn /> */}
             <AddParallax />
             <ToastContainer />
           </Context>

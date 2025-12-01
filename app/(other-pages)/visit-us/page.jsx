@@ -18,7 +18,7 @@ export async function generateMetadata() {
       return {
         title: 'Visit Us - Qist Market',
         description: 'Qist Market Visit Us Page.',
-        robots: { index: false, follow: false, },
+        robots: { index: true, follow: true, },
       };
     }
 
@@ -54,7 +54,7 @@ export async function generateMetadata() {
     return {
       title: 'Visit Us - Qist Market',
       description: 'Qist Market Visit Us Page.',
-      robots: { index: false, follow: false, },
+      robots: { index: true, follow: true, },
     };
   }
 }

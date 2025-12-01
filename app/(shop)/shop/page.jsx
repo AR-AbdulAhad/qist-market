@@ -18,7 +18,7 @@ export async function generateMetadata() {
       return {
         title: 'Shop - Qist Market',
         description: 'Browse our collection of products available on easy installments.',
-        robots: { index: false, follow: false },
+        robots: { index: true, follow: true },
       };
     }
 
@@ -54,7 +54,7 @@ export async function generateMetadata() {
     return {
       title: 'Shop - Qist Market',
       description: 'Browse our collection of products available on easy installments.',
-      robots: { index: false, follow: false },
+      robots: { index: true, follow: true },
     };
   }
 }

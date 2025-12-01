@@ -3,13 +3,22 @@ import { fetchProduct } from '@/lib/fetchProduct';
 import ProductDetailClient from './ProductDetailClient';
 
 export async function generateMetadata({ params }) {
-  let product;
+  let product = null;
+
   try {
-    product = await fetchProduct(params.slugName);
-  } catch (error) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/product/name/${params.slugName}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) throw new Error();
+
+    product = await res.json();
+
+    if (!product || product.isDeleted || product.isActive === false) throw new Error();
+  } catch {
     return {
       title: 'Product Not Found | Qist Market',
-      description: 'This product is not available.',
+      description: 'This product does not exist.',
       robots: { index: false, follow: false },
     };
   }
@@ -47,10 +56,11 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function ProductDetailPage({ params }) {
-  let product;
+  let product = null;
+
   try {
     product = await fetchProduct(params.slugName);
-  } catch (error) {
+  } catch {
     redirect('/not-found');
   }
 

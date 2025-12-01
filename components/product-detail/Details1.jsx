@@ -243,7 +243,7 @@ export default function Details1({ singleProduct, loading }) {
                               >
                                 Supplied and Shipped by
                                 <Image
-                                  src={settings?.logo_url}
+                                  src={settings?.logo_url || "/images/logo/logo.png"}
                                   alt={settings?.name || "Qist Market"}
                                   width={80}
                                   height={30}

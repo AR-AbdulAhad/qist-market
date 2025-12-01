@@ -1,54 +1,44 @@
 import { redirect } from 'next/navigation';
+import { fetchProduct } from '@/lib/fetchProduct';
+import ProductDetailClient from './ProductDetailClient';
 
 export async function generateMetadata({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/product/name/${params.slugName}`, {
-    cache: 'no-store',
-  });
-
-  let product = null;
-  if (res.ok) {
-    product = await res.json();
+  let product;
+  try {
+    product = await fetchProduct(params.slugName);
+  } catch (error) {
+    return {
+      title: 'Product Not Found | Qist Market',
+      description: 'This product is not available.',
+      robots: { index: false, follow: false },
+    };
   }
 
   const productName = product?.meta_title || 'Product';
   const productDesc = product?.meta_description || 'This is my product page.';
-  const productImage = product.ProductImage[0]?.url || '/default-image.png';
-  const siteName = 'Qist Market';
+  const productImage = product.ProductImage?.[0]?.url || '/images/product-placeholder/product-placeholder-image.png';
   const baseUrl = 'https://www.qistmarket.pk';
   const productUrl = `${baseUrl}/${product?.category_slug_name}/${product?.subcategory_slug_name}/${params.slugName}`;
-  const productKeywords = product?.meta_keywords;
 
   return {
-    title: `${productName} | ${siteName}`,
+    title: `${productName} | Qist Market`,
     description: productDesc,
-    keywords: productKeywords,
-    robots: {
-      index: true,
-      follow: true,
-    },
-    alternates: {
-      canonical: productUrl,
-    },
+    keywords: product?.meta_keywords,
+    robots: { index: true, follow: true },
+    alternates: { canonical: productUrl },
     metadataBase: new URL(baseUrl),
     openGraph: {
-      title: `${productName} | ${siteName}`,
+      title: `${productName} | Qist Market`,
       description: productDesc,
       url: productUrl,
-      siteName: siteName,
-      images: [
-        {
-          url: productImage,
-          width: 800,
-          height: 600,
-          alt: productName,
-        },
-      ],
+      siteName: 'Qist Market',
+      images: [{ url: productImage, width: 800, height: 600, alt: productName }],
       locale: 'en_GB',
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${productName} | ${siteName}`,
+      title: `${productName} | Qist Market`,
       description: productDesc,
       images: [productImage],
       creator: '@qistmarket',
@@ -56,31 +46,13 @@ export async function generateMetadata({ params }) {
   };
 }
 
-import ProductDetailClient from './ProductDetailClient';
-
 export default async function ProductDetailPage({ params }) {
-  const { slugName } = params;
-
-  let product = null;
-
+  let product;
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/product/name/${slugName}`, {
-      cache: 'no-store',
-    });
-
-    if (!res.ok) {
-      redirect('/not-found');
-    }
-
-    product = await res.json();
-
-    if (!product || product.isDeleted || product.isActive === false) {
-      redirect('/not-found');
-    }
+    product = await fetchProduct(params.slugName);
   } catch (error) {
-    console.error('Product fetch failed:', error);
     redirect('/not-found');
   }
 
-  return <ProductDetailClient slugName={slugName} product={product} />;
+  return <ProductDetailClient product={product} slugName={params.slugName} />;
 }

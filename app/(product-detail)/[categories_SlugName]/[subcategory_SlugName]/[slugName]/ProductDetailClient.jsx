@@ -3,24 +3,17 @@
 import Footer1 from "@/components/footers/Footer1";
 import Header4 from "@/components/headers/Header4";
 import Description from "@/components/product-detail/Description";
-import React, { useState } from "react";
 import Details1 from "@/components/product-detail/Details1";
 import Relatedproducts from "@/components/product-detail/Relatedproducts";
 
-export default function ProductDetailClient({ slugName, product }) {
-  const [singleProduct] = useState(product);
-  const [loading] = useState(false);
-
+export default function ProductDetailClient({ product }) {
   return (
     <>
       <Header4 />
-      <Details1 singleProduct={singleProduct} loading={loading} />
-      <Description singleProduct={singleProduct} loading={loading} />
-      {!loading && singleProduct && singleProduct.subcategory_slug_name && (
-        <Relatedproducts
-          subcategorySlugName={singleProduct.subcategory_slug_name}
-          loading={loading}
-        />
+      <Details1 singleProduct={product} loading={false} />
+      <Description singleProduct={product} loading={false} />
+      {product?.subcategory_slug_name && (
+        <Relatedproducts subcategorySlugName={product.subcategory_slug_name} loading={false} />
       )}
       <Footer1 />
     </>

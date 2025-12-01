@@ -82,5 +82,5 @@ export default async function ProductDetailPage({ params }) {
     redirect('/not-found');
   }
 
-  return <ProductDetailClient slugName={slugName} />;
+  return <ProductDetailClient slugName={slugName} product={product} />;
 }

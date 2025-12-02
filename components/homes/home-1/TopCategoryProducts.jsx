@@ -48,7 +48,7 @@ export default function TopCategoryProducts() {
               <div className="mb-4">
                 <Image
                   src={category.image_url}
-                  alt={`Banner for ${category.category_name}`}
+                  alt={`${category.alt_text || category.category_name}`}
                   className="product-banner mt-5"
                   width={1000}
                   height={1000}

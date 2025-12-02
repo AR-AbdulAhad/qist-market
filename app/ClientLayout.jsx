@@ -3,7 +3,7 @@ import Context from "@/context/Context";
 import "../public/scss/main.scss";
 import "@/public/css/global.css";
 import "photoswipe/dist/photoswipe.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import Cart from "@/components/modals/Cart";
@@ -22,7 +22,7 @@ import ChangePassword from "@/components/modals/ChangePassword";
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from "@/context/AuthContext";
 import { SettingsProvider } from "@/context/SettingsContext";
-// import WhatsAppBtn from "@/components/common/WhatsAppBtn";
+import WhatsAppBtn from "@/components/common/WhatsAppBtn";
 
 function getUTMParams() {
   const params = new URLSearchParams(window.location.search);
@@ -68,8 +68,9 @@ function getReferralSource(referrer) {
   return "other_" + new URL(referrer).hostname;
 }
 
-export default function RootLayout({ children, footerScripts }) {
+export default function RootLayout({ children }) {
   const pathname = usePathname();
+  const [showWhatsApp, setShowWhatsApp] = useState(true);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -174,6 +175,17 @@ export default function RootLayout({ children, footerScripts }) {
     wow.init();
   }, [pathname]);
 
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/site-config`)
+      .then(r => r.json())
+      .then(d => {
+        if (d.success) {
+          setShowWhatsApp(d.data.whatsappButtonEnabled);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <div id="wrapper">
       <SettingsProvider>
@@ -191,7 +203,7 @@ export default function RootLayout({ children, footerScripts }) {
             <ScrollTop />
             <Toolbar />
             <Search />
-            {/* <WhatsAppBtn /> */}
+            {showWhatsApp && <WhatsAppBtn />}
             <AddParallax />
             <ToastContainer />
           </Context>

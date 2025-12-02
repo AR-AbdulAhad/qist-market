@@ -183,7 +183,7 @@ export default function Hero() {
                       <Link href={banner.product_url} className="d-block w-100">
                         <Image
                           src={banner.image_url}
-                          alt={`Banner ${banner.id}`}
+                          alt={`${banner.alt_text || banner.id}`}
                           className="d-block w-100 lazyload"
                           width={1200}
                           height={600}

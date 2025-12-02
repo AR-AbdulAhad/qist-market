@@ -61,6 +61,7 @@ export default function FeaturedProducts({
           subcategory_SlugName: item.subcategory_slug || "",
           advance: item.ProductInstallments?.[0]?.advance || 0,
           imgSrc: item.image || "/images/product-placeholder/product-placeholder-image.png",
+          alt_text: item.image_alt_text,
           imgWidth: 300,
           imgHeight: 300,
           imgHover: item.image || "/images/product-placeholder/product-placeholder-image.png",
@@ -149,7 +150,7 @@ export default function FeaturedProducts({
                     <Image
                       className="img-product lazyload"
                       src={product.imgSrc}
-                      alt={product.title}
+                      alt={product.alt_text || product.title}
                       width={product.imgWidth}
                       height={product.imgHeight}
                       fetchPriority="high"
@@ -157,7 +158,7 @@ export default function FeaturedProducts({
                     <Image
                       className="img-hover lazyload"
                       src={product.imgHover}
-                      alt={product.title}
+                      alt={product.alt_text || product.title}
                       width={product.hoverWidth}
                       height={product.hoverHeight}
                       fetchPriority="high"

@@ -21,6 +21,7 @@ export default function TopCategoryProductCard({ product, index }) {
     subcategory_SlugName: product.subcategory_SlugName,
     slugName: product.slugName,
     imgSrc: product.image_url,
+    alt_text: product.image_alt_text,
     advance: product.advance || 0,
     progressWidth: "0%",
     width: 300,
@@ -37,7 +38,7 @@ export default function TopCategoryProductCard({ product, index }) {
         <div className="product-thumb-image">
           <Link href={`/${product.categories_SlugName}/${product.subcategory_SlugName}/${product.slugName}`} className="product-img">
             <Image
-              alt="Image Product"
+              alt={productData.alt_text || productData.title}
               className="lazyload img-product"
               src={currentImage || "/images/product-placeholder/product-placeholder-image.png"}
               width={productData.width}
@@ -45,7 +46,7 @@ export default function TopCategoryProductCard({ product, index }) {
               fetchPriority="high"
             />
             <Image
-              alt="Image Product"
+              alt={productData.alt_text || productData.title}
               className="lazyload img-hover"
               src={currentImage || "/images/product-placeholder/product-placeholder-image.png"}
               width={productData.width}

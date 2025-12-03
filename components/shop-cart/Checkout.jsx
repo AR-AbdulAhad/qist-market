@@ -739,7 +739,7 @@ export default function Checkout() {
                     <li className="item-product d-flex align-items-center">
                       <a href={`/${cartData.categories_SlugName}/${cartData.subcategory_SlugName}/${cartData.productSlug}`} className="img-product">
                         <Image
-                          alt=""
+                          alt={cartData.altText || cartData.productName}
                           src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
                           width={500}
                           height={500}

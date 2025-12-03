@@ -91,7 +91,7 @@ export default function ShopCart() {
                     <td className="d-flex w-20 gap-2">
                       <a href={`/${cartData.categories_SlugName}/${cartData.subcategory_SlugName}/${cartData.productSlug}`} className="img-box">
                         <Image
-                          alt="product-image"
+                          alt={cartData.altText || cartData.productName}
                           src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
                           width={300}
                           height={300}

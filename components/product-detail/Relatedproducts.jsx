@@ -74,6 +74,7 @@ export default function NewProducts({
           subcategory_SlugName: item.subcategory_SlugName,
           advance: item.advance || 0,
           imgSrc: item.image_url,
+          alt_text: item.image_alt_text,
           imgWidth: 300,
           imgHeight: 300,
           imgHover: item.image_url,
@@ -188,7 +189,7 @@ export default function NewProducts({
                     <Image
                       className="img-product lazyload"
                       src={product.imgSrc || "/images/product-placeholder/product-placeholder-image.png"}
-                      alt="image-product"
+                      alt={product.alt_text || product.title}
                       width={product.imgWidth}
                       height={product.imgHeight}
                       fetchPriority="high"
@@ -196,7 +197,7 @@ export default function NewProducts({
                     <Image
                       className="img-hover lazyload"
                       src={product.imgHover || "/images/product-placeholder/product-placeholder-image.png"}
-                      alt="image-product"
+                      alt={product.alt_text || product.title}
                       width={product.hoverWidth}
                       height={product.hoverHeight}
                       fetchPriority="high"

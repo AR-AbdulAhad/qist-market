@@ -44,6 +44,7 @@ export default function Details1({ singleProduct, loading }) {
         categories_SlugName: singleProduct.category_slug_name,
         subcategory_SlugName: singleProduct.subcategory_slug_name,
         imageUrl: singleProduct.ProductImage?.[0]?.url,
+        altText: singleProduct.ProductImage?.[0]?.alt_text,
         selectedPlan: {
           id: selectedPlan.id,
           totalPrice: selectedPlan.totalPrice,

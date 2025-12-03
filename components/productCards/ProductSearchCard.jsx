@@ -1,5 +1,4 @@
 "use client";
-import { useContextElement } from "@/context/Context";
 import Link from "next/link";
 import React from "react";
 import AddToCart from "../common/AddToCart";
@@ -22,7 +21,7 @@ export default function ProductSearchCard({ product }) {
           <Image
             className="img-product ls-is-cached lazyloaded"
             src={productImageData || "/images/product-placeholder/product-placeholder-image.png"}
-            alt="image-product"
+            alt={product.image_alt_text || product.name}
             width={500}
             height={500}
             fetchPriority="high"
@@ -30,7 +29,7 @@ export default function ProductSearchCard({ product }) {
           <Image
             className="img-hover ls-is-cached lazyloaded"
             src={productImageData || "/images/product-placeholder/product-placeholder-image.png"}
-            alt="image-product"
+            alt={product.image_alt_text || product.name}
             width={500}
             height={500}
             fetchPriority="high"

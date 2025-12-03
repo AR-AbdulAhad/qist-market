@@ -21,7 +21,7 @@ export default function Slider1({ images }) {
             className="tf-image-zoom lazyload"
             src='/images/product-placeholder/product-placeholder-image.png'
             data-zoom='/images/product-placeholder/product-placeholder-image.png'
-            alt="Product Image"
+            alt="Qist Market Placeholder Image"
             width={600}
             height={600}
             fetchPriority="high"
@@ -136,7 +136,7 @@ export default function Slider1({ images }) {
             className="tf-image-zoom lazyload"
             src={images[0].url}
             data-zoom={images[0].url}
-            alt="Product Image"
+            alt={images[0].alt_text || "Product Image"}
             width={600}
             height={600}
             fetchPriority="high"
@@ -168,7 +168,7 @@ export default function Slider1({ images }) {
                   className="tf-image-zoom lazyload"
                   src={item.url}
                   data-zoom={item.url}
-                  alt="Product Image"
+                  alt={item.alt_text || "Product Image"}
                   width={600}
                   height={600}
                   priority={i === 0}
@@ -209,7 +209,7 @@ export default function Slider1({ images }) {
                   <Image
                     className="lazyload"
                     src={item.url}
-                    alt="Product Thumbnail"
+                    alt={item.alt_text || "Product Image"}
                     width={600}
                     height={600}
                     fetchPriority="high"

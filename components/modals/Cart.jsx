@@ -66,7 +66,7 @@ export default function Cart() {
                     <Image
                       className="lazyload"
                       src={cartData.imageUrl || "/images/product-placeholder/product-placeholder-image.png"}
-                      alt="product-image"
+                      alt={cartData.altText || cartData.productName}
                       width={500}
                       height={500}
                       fetchPriority="high"

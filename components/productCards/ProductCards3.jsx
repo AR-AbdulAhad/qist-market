@@ -8,6 +8,7 @@ import Image from "next/image";
 
 export default function ProductCards3({ product }) {
   const productImageData = product.ProductImage[0]?.url;
+  const altText = product.ProductImage[0]?.alt_text;
   const router = useRouter();
 
   const goToProduct = () => {
@@ -21,7 +22,7 @@ export default function ProductCards3({ product }) {
           <Image
             className="img-product ls-is-cached lazyloaded"
             src={productImageData || "/images/product-placeholder/product-placeholder-image.png"}
-            alt="image-product"
+            alt={altText || product.name}
             width={500}
             height={500}
             fetchPriority="high"
@@ -29,7 +30,7 @@ export default function ProductCards3({ product }) {
           <Image
             className="img-hover ls-is-cached lazyloaded"
             src={productImageData || "/images/product-placeholder/product-placeholder-image.png"}
-            alt="image-product"
+            alt={altText || product.name}
             width={500}
             height={500}
             fetchPriority="high"

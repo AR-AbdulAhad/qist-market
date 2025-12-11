@@ -23,7 +23,7 @@ export async function generateMetadata() {
     }
 
     return {
-      title: `${meta.metaTitle} | ${siteName}`,
+      title: `${meta.metaTitle}`,
       description: meta.metaDescription,
       keywords: meta.metaKeywords,
       robots: {
@@ -35,7 +35,7 @@ export async function generateMetadata() {
       },
       metadataBase: new URL(baseUrl),
       openGraph: {
-        title: `${meta.metaTitle} | ${siteName}`,
+        title: `${meta.metaTitle}`,
         description: meta.metaDescription,
         siteName: siteName,
         locale: 'en_GB',
@@ -44,7 +44,7 @@ export async function generateMetadata() {
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${meta.metaTitle} | ${siteName}`,
+        title: `${meta.metaTitle}`,
         description: meta.metaDescription,
         creator: '@qistmarket',
       },

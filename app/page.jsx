@@ -21,14 +21,14 @@ export async function generateMetadata() {
 
     if (!res.ok || !meta) {
       return {
-        title: 'Qist Market - Home',
+        title: 'Qist Market - Har Chez Qist Pey',
         description: 'Online Installment Shopping in Pakistan. Buy Electronics, Appliances, Furniture, and more on easy installments.',
         robots: { index: true, follow: true },
       };
     }
 
     return {
-      title: `${siteName} - ${meta.metaTitle}`,
+      title: `${meta.metaTitle}`,
       description: meta.metaDescription,
       keywords: meta.metaKeywords,
       robots: {
@@ -40,7 +40,7 @@ export async function generateMetadata() {
       },
       metadataBase: new URL(baseUrl),
       openGraph: {
-        title: `${meta.metaTitle} | ${siteName}`,
+        title: `${meta.metaTitle}`,
         description: meta.metaDescription,
         siteName: siteName,
         images: [
@@ -56,7 +56,7 @@ export async function generateMetadata() {
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${meta.metaTitle} - ${siteName}`,
+        title: `${meta.metaTitle}`,
         description: meta.metaDescription,
         images: [siteImage],
         creator: '@qistmarket',
@@ -65,7 +65,7 @@ export async function generateMetadata() {
   } catch (error) {
     console.error('Error fetching shop metadata:', error);
     return {
-      title: 'Qist Market - Home',
+      title: 'Qist Market - Har Chez Qist Pey',
       description: 'Online Installment Shopping in Pakistan. Buy Electronics, Appliances, Furniture, and more on easy installments.',
       robots: { index: true, follow: true },
     };

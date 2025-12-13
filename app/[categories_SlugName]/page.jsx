@@ -5,27 +5,38 @@ import Footer1 from "@/components/footers/Footer1";
 import { redirect } from 'next/navigation';
 import DynamicPagesComp from '@/components/otherPages/DynamicPagesComp';
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
 export async function generateMetadata({ params }) {
-  const { categories_SlugName } = params;
+  const { categories_SlugName } = await params;
+
   const siteName = 'Qist Market';
   const baseUrl = 'https://www.qistmarket.pk';
 
   try {
-    const res = await fetch(`${BACKEND_URL}/api/pages/${categories_SlugName}`, { cache: 'no-store' });
+    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/pages/${categories_SlugName}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      return {
+        title: 'Page Not Found | Qist Market',
+        description: 'The requested page could not be found.',
+        robots: { index: false, follow: false },
+      };
+    }
+
     const page = await res.json();
 
-    if (!res.ok || !page || !page.isActive) {
+    if (!page || !page.isActive) {
       return {
-        title: 'Page Not Found - Qist Market',
-        robots: { index: true, follow: true },
+        title: 'Page Not Found | Qist Market',
+        description: 'The requested page could not be found.',
+        robots: { index: false, follow: false },
       };
     }
 
     return {
-      title: `${page.metaTitle} | ${siteName}`,
-      description: page.metaDescription,
+      title: `${page.metaTitle || page.title} | ${siteName}`,
+      description: page.metaDescription || page.description,
       keywords: page.metaKeywords,
       robots: {
         index: true,
@@ -36,46 +47,43 @@ export async function generateMetadata({ params }) {
       },
       metadataBase: new URL(baseUrl),
       openGraph: {
-        title: `${page.metaTitle} | ${siteName}`,
-        description: page.metaDescription,
-        siteName: siteName,
+        title: `${page.metaTitle || page.title} | ${siteName}`,
+        description: page.metaDescription || page.description,
+        siteName,
         locale: 'en_GB',
         type: 'website',
       },
       twitter: {
         card: 'summary_large_image',
-        title: `${page.metaTitle} | ${siteName}`,
-        description: page.metaDescription,
+        title: `${page.metaTitle || page.title} | ${siteName}`,
+        description: page.metaDescription || page.description,
         creator: '@qistmarket',
       },
     };
   } catch (error) {
     console.error('Error fetching page metadata:', error);
     return {
-      title: 'Page Not Found - Qist Market',
-      robots: { index: true, follow: true },
+      title: 'Page Not Found | Qist Market',
+      description: 'The requested page could not be found.',
+      robots: { index: false, follow: false },
     };
   }
 }
 
 export default async function DynamicPage({ params }) {
-  const { categories_SlugName } = params;
+  const { categories_SlugName } = await params;
 
-  let page;
-  try {
-    const res = await fetch(`${BACKEND_URL}/api/pages/${categories_SlugName}`, { cache: 'no-store' });
-    
-    if (!res.ok) {
-      redirect('/not-found');
-    }
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/pages/${categories_SlugName}`, {
+    cache: 'no-store',
+  });
 
-    page = await res.json();
+  if (!res.ok) {
+    redirect('/not-found');
+  }
 
-    if (!page || !page.isActive) {
-      redirect('/not-found');
-    }
-  } catch (error) {
-    console.error('Error fetching page:', error);
+  const page = await res.json();
+
+  if (!page || !page.isActive) {
     redirect('/not-found');
   }
 

@@ -4,9 +4,11 @@ import Header4 from "@/components/headers/Header4";
 import ProductsSearch from "@/components/products/ProductsSearch";
 
 export async function generateMetadata({ searchParams }) {
-  const query = searchParams.query || "";
-  const category = searchParams.category || "";
-  const subcategory = searchParams.subcategory || "";
+  const resolvedSearchParams = await searchParams;
+
+  const query = resolvedSearchParams.query ?? "";
+  const category = resolvedSearchParams.category ?? "";
+  const subcategory = resolvedSearchParams.subcategory ?? "";
 
   let title = "Search Results";
   if (query) title = `Search Results for "${query}"`;
@@ -29,7 +31,7 @@ export default function SearchPage() {
         <div className="container">
           <ul className="breakcrumbs">
             <li>
-              <Link href={`/`} className="body-small link">
+              <Link href="/" className="body-small link">
                 Home
               </Link>
             </li>
@@ -37,7 +39,7 @@ export default function SearchPage() {
               <i className="icon icon-arrow-right" />
             </li>
             <li>
-              <Link href={`/shop`} className="body-small link">
+              <Link href="/shop" className="body-small link">
                 Shop
               </Link>
             </li>

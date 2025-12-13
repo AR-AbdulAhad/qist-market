@@ -7,13 +7,16 @@ import Header4 from "@/components/headers/Header4";
 import ProductsSubCategory1 from "@/components/products/ProductsSubCategory1";
 
 export default function SubCategoryClient({ categorySlug, subCategorySlug }) {
-    const formatSlugName = (slug) => {
+  const formatSlugName = (slug) => {
     if (!slug) return "";
     return slug
-        .split("-")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" "); 
-    };
+      .split("-")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
+  const formattedCategory = formatSlugName(categorySlug);
+  const formattedSubCategory = formatSlugName(subCategorySlug);
 
   return (
     <>
@@ -22,30 +25,45 @@ export default function SubCategoryClient({ categorySlug, subCategorySlug }) {
         <div className="container">
           <ul className="breakcrumbs">
             <li>
-              <Link href={`/`} className="body-small link">
-                {" "}
-                Home{" "}
+              <Link href="/" className="body-small link">
+                Home
               </Link>
             </li>
             <li className="d-flex align-items-center">
               <i className="icon icon-arrow-right" />
             </li>
             <li>
-              <Link href={`/shop`} className="body-small link">
-                {" "}
-                Shop{" "}
+              <Link href="/shop" className="body-small link">
+                Shop
               </Link>
             </li>
             <li className="d-flex align-items-center">
               <i className="icon icon-arrow-right" />
             </li>
             <li>
-              <span className="body-small">{formatSlugName(subCategorySlug)} {formatSlugName(categorySlug)} Price in Pakistan</span>
+              <Link
+                href={`/category/${categorySlug}`}
+                className="body-small link"
+              >
+                {formattedCategory}
+              </Link>
+            </li>
+            <li className="d-flex align-items-center">
+              <i className="icon icon-arrow-right" />
+            </li>
+            <li>
+              <span className="body-small">
+                {formattedSubCategory} Price in Pakistan
+              </span>
             </li>
           </ul>
         </div>
       </div>
-      <ProductsSubCategory1 categorySlug={categorySlug} subCategorySlug={subCategorySlug}  />
+
+      <ProductsSubCategory1
+        categorySlug={categorySlug}
+        subCategorySlug={subCategorySlug}
+      />
       <Footer1 />
       <div className="overlay-filter" id="overlay-filter" />
     </>

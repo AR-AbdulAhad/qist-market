@@ -1,7 +1,10 @@
 import { redirect } from 'next/navigation';
+import CategoryClient from './CategoryClient';
 
 export async function generateMetadata({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/name/${params.categorySlug}`, {
+  const { categorySlug } = await params;
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/name/${categorySlug}`, {
     cache: 'no-store',
   });
 
@@ -10,15 +13,17 @@ export async function generateMetadata({ params }) {
     category = await res.json();
   }
 
-  const categoryName = category?.meta_title || params.categorySlug
-    .split("-")
+  const fallbackName = categorySlug
+    .split('-')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ") || 'Category';
+    .join(' ');
+
+  const categoryName = category?.meta_title || fallbackName || 'Category';
   const categoryDesc = category?.meta_description || `Browse ${categoryName} at the best prices in Pakistan`;
   const categoryKeywords = category?.meta_keywords || null;
   const siteName = 'Qist Market';
   const baseUrl = 'https://www.qistmarket.pk';
-  const categoryUrl = `${baseUrl}/category/${params.categorySlug}`;
+  const categoryUrl = `${baseUrl}/category/${categorySlug}`;
 
   return {
     title: `${categoryName} | ${siteName}`,
@@ -35,7 +40,7 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `${categoryName} | ${siteName}`,
       description: categoryDesc,
-      siteName: siteName,
+      siteName,
       locale: 'en_GB',
       type: 'website',
     },
@@ -48,29 +53,22 @@ export async function generateMetadata({ params }) {
   };
 }
 
-import CategoryClient from './CategoryClient';
-
 export default async function CategoryPage({ params }) {
-  
-    let product = null;
-  
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/name/${params.categorySlug}`, {
-        cache: 'no-store',
-      });
-  
-      if (!res.ok) {
-        redirect('/not-found');
-      }
-  
-      product = await res.json();
-  
-      if (!product || product.isDeleted || product.isActive === false) {
-        redirect('/not-found');
-      }
-    } catch (error) {
-      console.error('Product fetch failed:', error);
-      redirect('/not-found');
-    }
-  return <CategoryClient categorySlug={params.categorySlug} />;
+  const { categorySlug } = await params;
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/categories/name/${categorySlug}`, {
+    cache: 'no-store',
+  });
+
+  if (!res.ok) {
+    redirect('/not-found');
+  }
+
+  const category = await res.json();
+
+  if (!category || category.isDeleted || category.isActive === false) {
+    redirect('/not-found');
+  }
+
+  return <CategoryClient categorySlug={categorySlug} />;
 }

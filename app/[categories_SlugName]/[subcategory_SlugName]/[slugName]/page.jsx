@@ -1,7 +1,10 @@
 import { redirect } from 'next/navigation';
+import ProductDetailClient from './ProductDetailClient';
 
 export async function generateMetadata({ params }) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/product/name/${params.slugName}`, {
+  const { slugName } = await params;
+
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/product/name/${slugName}`, {
     cache: 'no-store',
   });
 
@@ -12,10 +15,10 @@ export async function generateMetadata({ params }) {
 
   const productName = product?.meta_title || 'Product';
   const productDesc = product?.meta_description || 'This is my product page.';
-  const productImage = product.ProductImage[0]?.url || '/default-image.png';
+  const productImage = product?.ProductImage?.[0]?.url || '/default-image.png';
   const siteName = 'Qist Market';
   const baseUrl = 'https://www.qistmarket.pk';
-  const productUrl = `${baseUrl}/${product?.category_slug_name}/${product?.subcategory_slug_name}/${params.slugName}`;
+  const productUrl = `${baseUrl}/${product?.category_slug_name}/${product?.subcategory_slug_name}/${slugName}`;
   const productKeywords = product?.meta_keywords;
 
   return {
@@ -34,7 +37,7 @@ export async function generateMetadata({ params }) {
       title: `${productName} | ${siteName}`,
       description: productDesc,
       url: productUrl,
-      siteName: siteName,
+      siteName,
       images: [
         {
           url: productImage,
@@ -56,29 +59,20 @@ export async function generateMetadata({ params }) {
   };
 }
 
-import ProductDetailClient from './ProductDetailClient';
-
 export default async function ProductDetailPage({ params }) {
-  const { slugName } = params;
+  const { slugName } = await params;
 
-  let product = null;
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/product/name/${slugName}`, {
+    cache: 'no-store',
+  });
 
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/product/name/${slugName}`, {
-      cache: 'no-store',
-    });
+  if (!res.ok) {
+    redirect('/not-found');
+  }
 
-    if (!res.ok) {
-      redirect('/not-found');
-    }
+  const product = await res.json();
 
-    product = await res.json();
-
-    if (!product || product.isDeleted || product.isActive === false) {
-      redirect('/not-found');
-    }
-  } catch (error) {
-    console.error('Product fetch failed:', error);
+  if (!product || product.isDeleted || product.isActive === false) {
     redirect('/not-found');
   }
 

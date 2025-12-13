@@ -1,11 +1,12 @@
 import { redirect } from 'next/navigation';
+import SubCategoryClient from './SubCategoryClient';
 
 export async function generateMetadata({ params }) {
+  const { categorySlug, subCategorySlug } = await params;
+
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subcategories/name/${params.subCategorySlug}`,
-    {
-      cache: 'no-store',
-    }
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subcategories/name/${subCategorySlug}`,
+    { cache: 'no-store' }
   );
 
   let subcategory = null;
@@ -13,7 +14,7 @@ export async function generateMetadata({ params }) {
     subcategory = await res.json();
   }
 
-  // Format slugs for fallback
+  // Helper to format slug into readable name
   const formatSlugName = (slug) => {
     if (!slug) return '';
     return slug
@@ -22,15 +23,20 @@ export async function generateMetadata({ params }) {
       .join(' ');
   };
 
-  const categoryName = formatSlugName(params.categorySlug) || 'Category';
-  const subcategoryName = subcategory?.meta_title || formatSlugName(params.categorySlug) || 'Category'; formatSlugName(params.subCategorySlug) || 'Subcategory';
+  const formattedCategory = formatSlugName(categorySlug);
+  const formattedSubCategory = formatSlugName(subCategorySlug);
+
+  const subcategoryName = subcategory?.meta_title || formattedSubCategory || 'Subcategory';
+  const categoryName = formattedCategory || 'Category';
+
   const subcategoryDesc =
     subcategory?.meta_description ||
-    `Browse ${categoryName} ${subcategoryName} at the best prices in Pakistan`;
+    `Browse ${subcategoryName} in ${categoryName} at the best prices in Pakistan`;
+
   const subcategoryKeywords = subcategory?.meta_keywords || null;
   const siteName = 'Qist Market';
   const baseUrl = 'https://www.qistmarket.pk';
-  const subcategoryUrl = `${baseUrl}/category/${params.categorySlug}/${params.subCategorySlug}`;
+  const subcategoryUrl = `${baseUrl}/category/${categorySlug}/${subCategorySlug}`;
 
   return {
     title: `${subcategoryName} | ${siteName}`,
@@ -48,7 +54,7 @@ export async function generateMetadata({ params }) {
       title: `${subcategoryName} | ${siteName}`,
       description: subcategoryDesc,
       url: subcategoryUrl,
-      siteName: siteName,
+      siteName,
       locale: 'en_GB',
       type: 'website',
     },
@@ -61,29 +67,25 @@ export async function generateMetadata({ params }) {
   };
 }
 
-import SubCategoryClient from './SubCategoryClient';
-
 export default async function SubCategoryPage({ params }) {
+  const { categorySlug, subCategorySlug } = await params;
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subcategories/name/${subCategorySlug}`,
+    { cache: 'no-store' }
+  );
+  if (!res.ok) {
+    redirect('/not-found');
+  }
 
-  let product = null;
-    
-      try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/subcategories/name/${params.subCategorySlug}`, {
-          cache: 'no-store',
-        });
-    
-        if (!res.ok) {
-          redirect('/not-found');
-        }
-    
-        product = await res.json();
-    
-        if (!product || product.isDeleted || product.isActive === false) {
-          redirect('/not-found');
-        }
-      } catch (error) {
-        console.error('Product fetch failed:', error);
-        redirect('/not-found');
-      }
-  return <SubCategoryClient categorySlug={params.categorySlug} subCategorySlug={params.subCategorySlug} />;
+  const subcategory = await res.json();
+  if (!subcategory || subcategory.isDeleted || subcategory.isActive === false) {
+    redirect('/not-found');
+  }
+
+  return (
+    <SubCategoryClient
+      categorySlug={categorySlug}
+      subCategorySlug={subCategorySlug}
+    />
+  );
 }

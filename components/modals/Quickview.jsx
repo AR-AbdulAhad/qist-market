@@ -109,7 +109,7 @@ export default function Quickview() {
         categories_SlugName: productData.categories_SlugName,
         subcategory_SlugName: productData.subcategory_SlugName,
         imageUrl: productData.imgSrc || productData.ProductImage?.[0]?.url,
-        altText: singleProduct.ProductImage?.[0]?.alt_text,
+        altText: productData.ProductImage?.[0]?.alt_text,
         selectedPlan: {
           id: selectedPlan.id,
           totalPrice: selectedPlan.totalPrice,

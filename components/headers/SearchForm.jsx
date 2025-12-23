@@ -23,7 +23,7 @@ export default function SearchForm({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/limit/categories`);
+        const response = await axios.get(`${BACKEND_URL}/api/categories`);
         setCategories(response.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);

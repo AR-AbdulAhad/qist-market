@@ -53,6 +53,7 @@ export default function Footer1({ fullWidth = false }) {
 
   const staticQuickLinksPages = [
     { title: "Track Your Order", slug: "track-your-order", category: "QUICK_LINKS" },
+    { title: "Our Blogs", slug: "blogs", category: "QUICK_LINKS" },
   ];
 
   // Combine dynamic pages from settings with static pages

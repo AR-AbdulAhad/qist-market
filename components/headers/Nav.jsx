@@ -35,6 +35,13 @@ export default function Nav() {
           <span>FAQs</span>
         </Link>
       </li>
+      <li
+        className={`nav-item ${pathname === "/blogs" ? "active" : ""}`}
+      >
+        <Link href="/blogs" className="item-link body-md-2 fw-semibold">
+          <span>Our Blogs</span>
+        </Link>
+      </li>
     </>
   );
 }

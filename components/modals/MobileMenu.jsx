@@ -21,7 +21,7 @@ export default function MobileMenu() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${BACKEND_URL}/api/limit/categories`);
+        const response = await fetch(`${BACKEND_URL}/api/categories`);
         const data = await response.json();
         setCategories(data);
       } catch (error) {
@@ -264,6 +264,13 @@ export default function MobileMenu() {
                     >
                       <Link href="/faqs" className="mb-menu-link">
                         <span>FAQs</span>
+                      </Link>
+                    </li>
+                    <li
+                      className={`nav-mb-item ${pathname === "/blogs" ? "active" : ""}`}
+                    >
+                      <Link href="/blogs" className="mb-menu-link">
+                        <span>Our Blogs</span>
                       </Link>
                     </li>
                     <li>

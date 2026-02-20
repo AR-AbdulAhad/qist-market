@@ -28,7 +28,7 @@
     "react-toastify": "^11.0.5",
     "sass": "^1.86.3",
     "simple-parallax-js": "^6.1.1",
-    "swiper": "^11.2.6",
+    "swiper": "^12.1.2",
     "uuid": "^13.0.0"
   }
 }

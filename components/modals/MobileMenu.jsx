@@ -273,6 +273,13 @@ export default function MobileMenu() {
                         <span>Our Blogs</span>
                       </Link>
                     </li>
+                    <li
+                      className={`nav-mb-item ${pathname === "/category/eid-offer" ? "active" : ""}`}
+                    >
+                      <Link href="/category/eid-offer" className="mb-menu-link">
+                        <span>Eid Offer</span>
+                      </Link>
+                    </li>
                     <li>
                       <Link href="/track-your-order" className="text-primary pt-3">Track your Order</Link>
                     </li>

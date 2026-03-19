@@ -42,6 +42,13 @@ export default function Nav() {
           <span>Our Blogs</span>
         </Link>
       </li>
+      <li
+        className={`nav-item ${pathname === "/category/eid-offer" ? "active" : ""}`}
+      >
+        <Link href="/category/eid-offer" className="item-link body-md-2 fw-semibold">
+          <span>Eid Offer</span>
+        </Link>
+      </li>
     </>
   );
 }

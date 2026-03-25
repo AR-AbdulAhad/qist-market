@@ -148,22 +148,42 @@ export default function RootLayout({ children }) {
   }, [pathname]);
 
   useEffect(() => {
-    const bootstrap = require("bootstrap");
-    const modalElements = document.querySelectorAll(".modal.show");
-    modalElements.forEach((modal) => {
-      const modalInstance = bootstrap.Modal.getInstance(modal);
-      if (modalInstance) {
-        modalInstance.hide();
-      }
-    });
+    // Hide any open modals or offcanvases on route change
+    if (typeof window !== "undefined") {
+      const bootstrap = require("bootstrap");
+      
+      const modalElements = document.querySelectorAll(".modal.show");
+      modalElements.forEach((modal) => {
+        const modalInstance = bootstrap.Modal.getInstance(modal);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+      });
 
-    const offcanvasElements = document.querySelectorAll(".offcanvas.show");
-    offcanvasElements.forEach((offcanvas) => {
-      const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
-      if (offcanvasInstance) {
-        offcanvasInstance.hide();
-      }
-    });
+      const offcanvasElements = document.querySelectorAll(".offcanvas.show");
+      offcanvasElements.forEach((offcanvas) => {
+        const offcanvasInstance = bootstrap.Offcanvas.getInstance(offcanvas);
+        if (offcanvasInstance) {
+          offcanvasInstance.hide();
+        }
+        // Force remove 'show' class just in case
+        offcanvas.classList.remove("show");
+      });
+
+      // Force cleanup for lingering Bootstrap artifacts and manual classes
+      const backdrops = document.querySelectorAll(".modal-backdrop, .offcanvas-backdrop, .overlay-filter");
+      backdrops.forEach((backdrop) => {
+        backdrop.classList.remove("show");
+        // Only remove if it's a bootstrap backdrop (they are usually created dynamically)
+        if (backdrop.classList.contains("modal-backdrop") || backdrop.classList.contains("offcanvas-backdrop")) {
+          backdrop.remove();
+        }
+      });
+      
+      document.body.classList.remove("modal-open", "offcanvas-open", "no-scroll");
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
+    }
   }, [pathname]);
 
   useEffect(() => {

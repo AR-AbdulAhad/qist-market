@@ -83,14 +83,14 @@ export default function ProductsCategory1({ categorySlug }) {
       if (window.innerWidth <= 1200) {
         document.querySelector(".sidebar-filter").classList.add("show");
         document.querySelector(".overlay-filter").classList.add("show");
-        document.body.classList.toggle("no-scroll");
+        document.body.classList.add("no-scroll");
       }
     };
 
     const handleCloseFilter = () => {
       document.querySelector(".sidebar-filter").classList.remove("show");
       document.querySelector(".overlay-filter").classList.remove("show");
-      document.body.classList.toggle("no-scroll");
+      document.body.classList.remove("no-scroll");
     };
 
     const openButtons = document.querySelectorAll("#filterShop, .sidebar-btn");
